@@ -1176,7 +1176,8 @@ const IMAGE_KEYS = [
 ];
 
 const CONFIG_KEYS = [
-  'pdf-path', 'groq-key', 'gemini-key'
+  'pdf-path', 'groq-key', 'gemini-key',
+  'cloudinary-cloud', 'cloudinary-preset'
 ];
 
 const ACHIEVEMENT_SHARED_KEYS = [
@@ -1421,6 +1422,9 @@ function defaultContent() {
     'ach-esport-images': 'images/activity-esport-1.png,images/activity-esport-2.png,images/activity-esport-3.png',
     'ach-gencom-images': 'images/activity-gencom-1.png,images/activity-gencom-2.png',
     'ach-ghost-images': 'images/activity-ghost-1.png,images/activity-ghost-2.png',
+
+    'cloudinary-cloud': '',
+    'cloudinary-preset': '',
 
     'pdf-path': 'images/portfolio กรกมล.pdf'
   };
@@ -1974,6 +1978,23 @@ function compressImage(file, maxW, maxH, quality) {
   });
 }
 
+function uploadToCloudinary(blob, fileName) {
+  const data = loadContent();
+  const cloudName = data['cloudinary-cloud'] || getVal('admin-cloudinary-cloud');
+  const uploadPreset = data['cloudinary-preset'] || getVal('admin-cloudinary-preset');
+  if (!cloudName || !uploadPreset) return null;
+
+  const fd = new FormData();
+  fd.append('file', blob, fileName);
+  fd.append('upload_preset', uploadPreset);
+
+  return fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    method: 'POST', body: fd
+  }).then(r => r.json()).then(res => {
+    return res.secure_url || null;
+  }).catch(() => null);
+}
+
 function uploadImage() {
   const input = document.getElementById('adminUploadInput');
   const file = input?.files?.[0];
@@ -1983,29 +2004,68 @@ function uploadImage() {
   statusEl.textContent = '⏳ กำลังบีบอัดรูป...';
 
   compressImage(file, 1920, 1920, 0.75).then(compressed => {
-    const pwd = sessionStorage.getItem('portfolio-admin-pwd') || 'admin123';
-    const fd = new FormData();
-    fd.append('image', compressed, file.name.replace(/\.[^.]+$/, '.jpg'));
-    fd.append('password', pwd);
+    const fileName = file.name.replace(/\.[^.]+$/, '.jpg');
+    const data = loadContent();
+    const cloudName = data['cloudinary-cloud'] || getVal('admin-cloudinary-cloud');
+    const uploadPreset = data['cloudinary-preset'] || getVal('admin-cloudinary-preset');
+    const useCloudinary = cloudName && uploadPreset;
 
-    statusEl.textContent = '⏳ กำลังอัปโหลด...';
-
-    fetch('/api/upload', { method: 'POST', body: fd })
-      .then(r => r.json())
-      .then(res => {
-        if (res.success) {
-          statusEl.textContent = '✅ อัปโหลดสำเร็จ: ' + res.path;
-          const preview = document.getElementById('uploadPreview');
-          preview.style.display = 'flex';
-          preview.innerHTML = '<img src="/' + res.path + '?t=' + Date.now() + '" alt=""><div><div class="path">' + res.path + '</div><button class="btn-outline" style="font-size:0.75rem;padding:0.3rem 0.6rem;margin-top:0.3rem;" onclick="navigator.clipboard.writeText(\'' + res.path + '\').then(()=>this.textContent=\'✅ คัดลอกแล้ว\')">📋 คัดลอก path</button></div>';
+    if (useCloudinary) {
+      statusEl.textContent = '⏳ กำลังอัปโหลดไป Cloudinary...';
+      uploadToCloudinary(compressed, fileName).then(url => {
+        if (url) {
+          showUploadResult(url, compressed);
           input.value = '';
-          loadUploads();
         } else {
-          statusEl.textContent = '❌ ' + (res.error || 'อัปโหลดล้มเหลว');
+          statusEl.textContent = '❌ อัปโหลด Cloudinary ล้มเหลว ตรวจสอบ Cloud Name และ Upload Preset';
         }
-      })
-      .catch(() => { statusEl.textContent = '❌ การเชื่อมต่อผิดพลาด'; });
+      });
+    } else {
+      statusEl.textContent = '⏳ กำลังอัปโหลด...';
+      const pwd = sessionStorage.getItem('portfolio-admin-pwd') || 'admin123';
+      const fd = new FormData();
+      fd.append('image', compressed, fileName);
+      fd.append('password', pwd);
+
+      fetch('/api/upload', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(res => {
+          if (res.success) {
+            showUploadResult(res.path, compressed);
+            input.value = '';
+            loadUploads();
+          } else {
+            statusEl.textContent = '❌ ' + (res.error || 'อัปโหลดล้มเหลว');
+          }
+        })
+        .catch(() => { statusEl.textContent = '❌ การเชื่อมต่อผิดพลาด'; });
+    }
   });
+}
+
+function showUploadResult(path, blob) {
+  const statusEl = document.getElementById('uploadStatus');
+  const preview = document.getElementById('uploadPreview');
+  const isUrl = path.startsWith('http');
+  const imgSrc = isUrl ? path : '/' + path + '?t=' + Date.now();
+  const displayPath = isUrl ? path : path;
+
+  statusEl.textContent = '✅ อัปโหลดสำเร็จ';
+  preview.style.display = 'flex';
+  preview.innerHTML = '<img src="' + imgSrc + '" alt=""><div><div class="path" style="word-break:break-all;">' + displayPath + '</div><button class="btn-outline" style="font-size:0.75rem;padding:0.3rem 0.6rem;margin-top:0.3rem;" onclick="navigator.clipboard.writeText(\'' + displayPath + '\').then(()=>this.textContent=\'✅ คัดลอกแล้ว\')">📋 คัดลอก</button><button class="btn-outline" style="font-size:0.75rem;padding:0.3rem 0.6rem;margin-top:0.3rem;margin-left:0.3rem;" onclick="addToDrawingList(\'' + displayPath.replace(/'/g, "\\'") + '\')">➕ เพิ่มในรายการรูปวาด</button></div>';
+
+  // Auto-fill Cloudinary URL into drawing list
+  if (isUrl) {
+    addToDrawingList(displayPath);
+  }
+}
+
+function addToDrawingList(path) {
+  const ta = document.getElementById('admin-drawings-list');
+  if (!ta) return;
+  const existing = ta.value.split('\n').map(s => s.trim()).filter(s => s);
+  if (existing.includes(path)) return;
+  ta.value = path + '\n' + existing.join('\n');
 }
 
 function loadUploads() {
