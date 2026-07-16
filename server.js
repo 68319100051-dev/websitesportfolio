@@ -295,15 +295,15 @@ app.post('/api/ai/chat', async (req, res) => {
 
 // Image upload
 app.post('/api/upload', (req, res) => {
-  const pwd = req.body?.password || req.query?.password || '';
-  if (!pwd || hash(pwd) !== adminPassword) {
-    return res.status(401).json({ success: false, error: 'Unauthorized' });
-  }
   upload.single('image')(req, res, (err) => {
     if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({ success: false, error: 'ไฟล์ใหญ่เกิน 10MB' });
     }
     if (err) return res.status(400).json({ success: false, error: 'Upload failed: ' + err.message });
+    const pwd = req.body?.password || req.query?.password || '';
+    if (!pwd || hash(pwd) !== adminPassword) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
     if (!req.file) return res.status(400).json({ success: false, error: 'ไม่มีไฟล์รูป' });
     const urlPath = 'images/uploads/' + req.file.filename;
     res.json({ success: true, path: urlPath, filename: req.file.filename });
