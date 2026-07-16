@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="จัดการเนื้อหาเว็บไซต์">
+  <title>จัดการเนื้อหา | Jet Konkamon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .admin-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      background: var(--bg-primary);
+    }
+    .admin-login-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 3rem 2.5rem;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+    }
+    .admin-login-box .icon { font-size: 3rem; margin-bottom: 1rem; }
+    .admin-login-box h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .admin-login-box p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .admin-login-box .input-group { text-align: left; }
+    .admin-login-box label { font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; }
+    .admin-login-box input { width: 100%; font-family: var(--font-sans); font-size: 0.95rem; padding: 0.8rem 1rem; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-primary); outline: none; transition: border-color var(--transition-fast); }
+    .admin-login-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .admin-login-box .error { color: #ef4444; font-size: 0.82rem; margin-top: 0.5rem; display: none; }
+    .admin-login-box .error.show { display: block; }
+    .admin-login-box .btn-primary { width: 100%; justify-content: center; margin-top: 1rem; }
+
+    .admin-dashboard-section { padding-top: calc(var(--navbar-height) + 2rem); padding-bottom: 3rem; }
+    .admin-dashboard-section h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .admin-dashboard-section > .desc { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
+    .admin-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem; }
+    .admin-card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
+
+    .admin-lang-tabs {
+      display: flex; gap: 0.5rem; margin-bottom: 1rem;
+    }
+    .admin-lang-tab {
+      padding: 0.4rem 1rem; border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; border: 1px solid var(--border-color); background: transparent; color: var(--text-secondary); transition: all var(--transition-fast);
+    }
+    .admin-lang-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .admin-lang-tab:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+    .admin-tab-pane { display: none; }
+    .admin-tab-pane.active { display: block; }
+
+    .admin-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .admin-field { margin-bottom: 0.75rem; }
+    .admin-field label { font-size: 0.82rem; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 0.25rem; }
+    .admin-field input,
+    .admin-field textarea { width: 100%; font-family: var(--font-sans); font-size: 0.9rem; padding: 0.65rem 0.85rem; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-primary); outline: none; resize: vertical; transition: border-color var(--transition-fast); }
+    .admin-field textarea { min-height: 70px; }
+    .admin-field input:focus,
+    .admin-field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .admin-actions-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; margin-top: 1.5rem; }
+    .admin-success { display: none; padding: 0.75rem 1rem; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.2); border-radius: var(--radius-sm); color: #22c55e; font-size: 0.85rem; font-weight: 500; margin-top: 1rem; text-align: center; }
+    .admin-success.show { display: block; }
+
+    @media (max-width: 600px) {
+      .admin-login-box { padding: 2rem 1.5rem; }
+      .admin-grid-2 { grid-template-columns: 1fr; }
+      .admin-card { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo">
+        <span class="dot"></span> Jet<span style="font-weight:400;color:var(--text-muted);">.</span>
+      </a>
+      <a href="index.html" class="btn-outline" style="padding:0.5rem 1rem;font-size:0.85rem;">← กลับหน้าแรก</a>
+    </div>
+  </nav>
+
+  <!-- LOGIN SECTION -->
+  <div class="admin-page" id="adminLoginSection">
+    <div class="admin-login-box">
+      <div class="icon">🔐</div>
+      <h1 data-i18n="admin-login-title">จัดการเนื้อหา</h1>
+      <p>กรอกรหัสผ่านเพื่อแก้ไขข้อมูลบนเว็บไซต์</p>
+      <div class="input-group">
+        <label data-i18n="admin-login-password">รหัสผ่าน</label>
+        <input type="password" id="adminPassword" placeholder="พิมพ์รหัสผ่าน..." onkeydown="if(event.key==='Enter') doLogin()">
+        <div class="error" id="adminError">❌ <span data-i18n="admin-login-error">รหัสผ่านไม่ถูกต้อง</span></div>
+        <button class="btn-primary" onclick="doLogin()" data-i18n="admin-login-btn">เข้าสู่ระบบ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD SECTION -->
+  <div id="adminDashboard" style="display:none;">
+    <div class="admin-dashboard-section">
+      <div class="container">
+        <h1>⚙️ จัดการเนื้อหาทุกหน้า</h1>
+        <p class="desc">แก้ไขข้อความต่าง ๆ บนเว็บไซต์ได้ที่นี่ — บันทึกแล้วเห็นผลทันที ไม่ต้องแก้โค้ด</p>
+
+        <div class="admin-card">
+          <h2>🏠 หน้าแรก — index.html</h2>
+          <div class="admin-lang-tabs">
+            <button class="admin-lang-tab active" id="adminTab-th-hero" onclick="tabAdmin('th-hero')" data-i18n="admin-tab-th">ภาษาไทย</button>
+            <button class="admin-lang-tab" id="adminTab-en-hero" onclick="tabAdmin('en-hero')" data-i18n="admin-tab-en">ภาษาอังกฤษ</button>
+          </div>
+          <div class="admin-tab-pane active" id="adminPane-th-hero">
+            <div class="admin-field"><label>Badge</label><input type="text" id="admin-th-hero-badge"></div>
+            <div class="admin-field"><label>ข้อความทักทาย</label><input type="text" id="admin-th-hero-greeting"></div>
+            <div class="admin-field"><label>ชื่อ</label><input type="text" id="admin-th-hero-name"></div>
+            <div class="admin-field"><label>คำอธิบายใต้ชื่อ</label><textarea id="admin-th-hero-title" rows="3"></textarea></div>
+            <div class="admin-grid-2">
+              <div class="admin-field"><label>สถิติ 1 — ตัวเลข</label><input type="text" id="admin-th-stat-1-num"></div>
+              <div class="admin-field"><label>สถิติ 1 — ป้าย</label><input type="text" id="admin-th-stat-1-label"></div>
+              <div class="admin-field"><label>สถิติ 2 — ตัวเลข</label><input type="text" id="admin-th-stat-2-num"></div>
+              <div class="admin-field"><label>สถิติ 2 — ป้าย</label><input type="text" id="admin-th-stat-2-label"></div>
+              <div class="admin-field"><label>สถิติ 3 — ตัวเลข</label><input type="text" id="admin-th-stat-3-num"></div>
+              <div class="admin-field"><label>สถิติ 3 — ป้าย</label><input type="text" id="admin-th-stat-3-label"></div>
+            </div>
+          </div>
+          <div class="admin-tab-pane" id="adminPane-en-hero">
+            <div class="admin-field"><label>Badge</label><input type="text" id="admin-en-hero-badge"></div>
+            <div class="admin-field"><label>Greeting</label><input type="text" id="admin-en-hero-greeting"></div>
+            <div class="admin-field"><label>Name</label><input type="text" id="admin-en-hero-name"></div>
+            <div class="admin-field"><label>Description under name</label><textarea id="admin-en-hero-title" rows="3"></textarea></div>
+            <div class="admin-grid-2">
+              <div class="admin-field"><label>Stat 1 — Number</label><input type="text" id="admin-en-stat-1-num"></div>
+              <div class="admin-field"><label>Stat 1 — Label</label><input type="text" id="admin-en-stat-1-label"></div>
+              <div class="admin-field"><label>Stat 2 — Number</label><input type="text" id="admin-en-stat-2-num"></div>
+              <div class="admin-field"><label>Stat 2 — Label</label><input type="text" id="admin-en-stat-2-label"></div>
+              <div class="admin-field"><label>Stat 3 — Number</label><input type="text" id="admin-en-stat-3-num"></div>
+              <div class="admin-field"><label>Stat 3 — Label</label><input type="text" id="admin-en-stat-3-label"></div>
+            </div>
+          </div>
+          <details style="margin-top:0.75rem;cursor:pointer;">
+            <summary style="font-size:0.85rem;color:var(--accent);font-weight:500;">🖼️ เปลี่ยนรูปภาพ</summary>
+            <div style="margin-top:0.75rem;padding:0.75rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+              <div class="admin-field"><label>รูปโปรไฟล์</label><input type="text" id="admin-img-hero-avatar" placeholder="images/portrait.jpg"></div>
+              <div class="admin-field"><label>พื้นหลัง 1</label><input type="text" id="admin-img-hero-bg-0" placeholder="images/bg/bg-0.jpg"></div>
+              <div class="admin-field"><label>พื้นหลัง 2</label><input type="text" id="admin-img-hero-bg-1" placeholder="images/bg/bg-1.jpg"></div>
+              <div class="admin-field"><label>พื้นหลัง 3</label><input type="text" id="admin-img-hero-bg-2" placeholder="images/bg/bg-2.jpg"></div>
+            </div>
+          </details>
+        </div>
+
+        <div class="admin-card">
+          <h2>👤 เกี่ยวกับ — about.html</h2>
+          <div class="admin-lang-tabs">
+            <button class="admin-lang-tab active" id="adminTab-th-about" onclick="tabAdmin('th-about')" data-i18n="admin-tab-th">ภาษาไทย</button>
+            <button class="admin-lang-tab" id="adminTab-en-about" onclick="tabAdmin('en-about')" data-i18n="admin-tab-en">ภาษาอังกฤษ</button>
+          </div>
+          <div class="admin-tab-pane active" id="adminPane-th-about">
+            <div class="admin-field"><label>คำอธิบายหน้า</label><textarea id="admin-th-desc-about" rows="2"></textarea></div>
+            <div class="admin-field"><label>คำคม / motto</label><textarea id="admin-th-about-motto" rows="2"></textarea></div>
+            <div class="admin-field"><label>ย่อหน้าที่ 1</label><textarea id="admin-th-about-p-1" rows="2"></textarea></div>
+            <div class="admin-field"><label>ย่อหน้าที่ 2</label><textarea id="admin-th-about-p-2" rows="2"></textarea></div>
+            <div class="admin-field"><label>ย่อหน้าที่ 3</label><textarea id="admin-th-about-p-3" rows="2"></textarea></div>
+            <div class="admin-field"><label>ย่อหน้าที่ 4</label><textarea id="admin-th-about-p-4" rows="2"></textarea></div>
+          </div>
+          <div class="admin-tab-pane" id="adminPane-en-about">
+            <div class="admin-field"><label>Page description</label><textarea id="admin-en-desc-about" rows="2"></textarea></div>
+            <div class="admin-field"><label>Motto / quote</label><textarea id="admin-en-about-motto" rows="2"></textarea></div>
+            <div class="admin-field"><label>Paragraph 1</label><textarea id="admin-en-about-p-1" rows="2"></textarea></div>
+            <div class="admin-field"><label>Paragraph 2</label><textarea id="admin-en-about-p-2" rows="2"></textarea></div>
+            <div class="admin-field"><label>Paragraph 3</label><textarea id="admin-en-about-p-3" rows="2"></textarea></div>
+            <div class="admin-field"><label>Paragraph 4</label><textarea id="admin-en-about-p-4" rows="2"></textarea></div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h2>💻 โปรเจกต์ — projects.html</h2>
+          <div class="admin-lang-tabs">
+            <button class="admin-lang-tab active" id="adminTab-th-projects" onclick="tabAdmin('th-projects')" data-i18n="admin-tab-th">ภาษาไทย</button>
+            <button class="admin-lang-tab" id="adminTab-en-projects" onclick="tabAdmin('en-projects')" data-i18n="admin-tab-en">ภาษาอังกฤษ</button>
+          </div>
+          <div class="admin-tab-pane active" id="adminPane-th-projects">
+            <div class="admin-field"><label>คำอธิบายหน้า</label><textarea id="admin-th-desc-projects" rows="2"></textarea></div>
+          </div>
+          <div class="admin-tab-pane" id="adminPane-en-projects">
+            <div class="admin-field"><label>Page description</label><textarea id="admin-en-desc-projects" rows="2"></textarea></div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h2>✏️ ภาพวาด — drawings.html</h2>
+          <div class="admin-lang-tabs">
+            <button class="admin-lang-tab active" id="adminTab-th-drawings" onclick="tabAdmin('th-drawings')" data-i18n="admin-tab-th">ภาษาไทย</button>
+            <button class="admin-lang-tab" id="adminTab-en-drawings" onclick="tabAdmin('en-drawings')" data-i18n="admin-tab-en">ภาษาอังกฤษ</button>
+          </div>
+          <div class="admin-tab-pane active" id="adminPane-th-drawings">
+            <div class="admin-field"><label>คำอธิบายหน้า</label><textarea id="admin-th-desc-drawings" rows="2"></textarea></div>
+          </div>
+          <div class="admin-tab-pane" id="adminPane-en-drawings">
+            <div class="admin-field"><label>Page description</label><textarea id="admin-en-desc-drawings" rows="2"></textarea></div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h2>📅 ประสบการณ์ — experience.html</h2>
+          <div class="admin-lang-tabs">
+            <button class="admin-lang-tab active" id="adminTab-th-experience" onclick="tabAdmin('th-experience')" data-i18n="admin-tab-th">ภาษาไทย</button>
+            <button class="admin-lang-tab" id="adminTab-en-experience" onclick="tabAdmin('en-experience')" data-i18n="admin-tab-en">ภาษาอังกฤษ</button>
+          </div>
+          <div class="admin-tab-pane active" id="adminPane-th-experience">
+            <div class="admin-field"><label>คำอธิบายหน้า</label><textarea id="admin-th-desc-experience" rows="2"></textarea></div>
+          </div>
+          <div class="admin-tab-pane" id="adminPane-en-experience">
+            <div class="admin-field"><label>Page description</label><textarea id="admin-en-desc-experience" rows="2"></textarea></div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h2>🏆 รางวัล — achievements.html</h2>
+          <div class="admin-lang-tabs">
+            <button class="admin-lang-tab active" id="adminTab-th-achievements" onclick="tabAdmin('th-achievements')" data-i18n="admin-tab-th">ภาษาไทย</button>
+            <button class="admin-lang-tab" id="adminTab-en-achievements" onclick="tabAdmin('en-achievements')" data-i18n="admin-tab-en">ภาษาอังกฤษ</button>
+          </div>
+          <div class="admin-tab-pane active" id="adminPane-th-achievements">
+            <div class="admin-field"><label>คำอธิบายหน้า</label><textarea id="admin-th-desc-achievements" rows="2"></textarea></div>
+          </div>
+          <div class="admin-tab-pane" id="adminPane-en-achievements">
+            <div class="admin-field"><label>Page description</label><textarea id="admin-en-desc-achievements" rows="2"></textarea></div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h2>🏆 ข้อมูลรางวัลและกิจกรรมแต่ละรายการ</h2>
+          <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:1rem;">แก้ไขชื่อ รายละเอียด และรูปของการ์ดรางวัล/กิจกรรม — details ใส่บรรทัดละ 1 ข้อ, images ใช้คอมม่า (,) คั่น</p>
+          <div class="admin-lang-tabs">
+            <button class="admin-lang-tab active" id="adminTab-th-achievement-data" onclick="tabAdmin('th-achievement-data')" data-i18n="admin-tab-th">ภาษาไทย</button>
+            <button class="admin-lang-tab" id="adminTab-en-achievement-data" onclick="tabAdmin('en-achievement-data')" data-i18n="admin-tab-en">ภาษาอังกฤษ</button>
+          </div>
+
+          <div class="admin-tab-pane active" id="adminPane-th-achievement-data">
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">🥇 รางวัลโมชั่นกราฟิก 2567 (motion)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>ชื่อรางวัล</label><input type="text" id="admin-th-ach-motion-title"></div>
+                <div class="admin-field"><label>หน่วยงาน</label><input type="text" id="admin-th-ach-motion-org"></div>
+                <div class="admin-field"><label>คำอธิบาย</label><textarea id="admin-th-ach-motion-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>รายละเอียด (บรรทัดละ 1 ข้อ)</label><textarea id="admin-th-ach-motion-details" rows="3"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">🥇 รางวัลโมชั่นกราฟิก 2566 (motion66)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>ชื่อรางวัล</label><input type="text" id="admin-th-ach-motion66-title"></div>
+                <div class="admin-field"><label>หน่วยงาน</label><input type="text" id="admin-th-ach-motion66-org"></div>
+                <div class="admin-field"><label>คำอธิบาย</label><textarea id="admin-th-ach-motion66-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>รายละเอียด (บรรทัดละ 1 ข้อ)</label><textarea id="admin-th-ach-motion66-details" rows="3"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">🎨 ออกแบบ LOGO (logo)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>ชื่อ</label><input type="text" id="admin-th-ach-logo-title"></div>
+                <div class="admin-field"><label>หน่วยงาน</label><input type="text" id="admin-th-ach-logo-org"></div>
+                <div class="admin-field"><label>คำอธิบาย</label><textarea id="admin-th-ach-logo-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>รายละเอียด (บรรทัดละ 1 ข้อ)</label><textarea id="admin-th-ach-logo-details" rows="2"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">📋 รองประธานชมรม (club)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>ชื่อ</label><input type="text" id="admin-th-ach-club-title"></div>
+                <div class="admin-field"><label>หน่วยงาน</label><input type="text" id="admin-th-ach-club-org"></div>
+                <div class="admin-field"><label>คำอธิบาย</label><textarea id="admin-th-ach-club-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>รายละเอียด (บรรทัดละ 1 ข้อ)</label><textarea id="admin-th-ach-club-details" rows="3"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">📹 ถ่ายทอดสด (stream)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>ชื่อ</label><input type="text" id="admin-th-ach-stream-title"></div>
+                <div class="admin-field"><label>หน่วยงาน</label><input type="text" id="admin-th-ach-stream-org"></div>
+                <div class="admin-field"><label>คำอธิบาย</label><textarea id="admin-th-ach-stream-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>รายละเอียด (บรรทัดละ 1 ข้อ)</label><textarea id="admin-th-ach-stream-details" rows="2"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">🎮 E-Sport Games (esport)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>ชื่อ</label><input type="text" id="admin-th-ach-esport-title"></div>
+                <div class="admin-field"><label>หน่วยงาน</label><input type="text" id="admin-th-ach-esport-org"></div>
+                <div class="admin-field"><label>คำอธิบาย</label><textarea id="admin-th-ach-esport-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>รายละเอียด (บรรทัดละ 1 ข้อ)</label><textarea id="admin-th-ach-esport-details" rows="3"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">🧩 Gen Com (gencom)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>ชื่อ</label><input type="text" id="admin-th-ach-gencom-title"></div>
+                <div class="admin-field"><label>หน่วยงาน</label><input type="text" id="admin-th-ach-gencom-org"></div>
+                <div class="admin-field"><label>คำอธิบาย</label><textarea id="admin-th-ach-gencom-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>รายละเอียด (บรรทัดละ 1 ข้อ)</label><textarea id="admin-th-ach-gencom-details" rows="2"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">👻 CVC Radio (ghost)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>ชื่อ</label><input type="text" id="admin-th-ach-ghost-title"></div>
+                <div class="admin-field"><label>หน่วยงาน</label><input type="text" id="admin-th-ach-ghost-org"></div>
+                <div class="admin-field"><label>คำอธิบาย</label><textarea id="admin-th-ach-ghost-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>รายละเอียด (บรรทัดละ 1 ข้อ)</label><textarea id="admin-th-ach-ghost-details" rows="2"></textarea></div>
+              </div>
+            </details>
+          </div>
+
+          <div class="admin-tab-pane" id="adminPane-en-achievement-data">
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">🥇 Motion Graphics 2025 (motion)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>Title</label><input type="text" id="admin-en-ach-motion-title"></div>
+                <div class="admin-field"><label>Organization</label><input type="text" id="admin-en-ach-motion-org"></div>
+                <div class="admin-field"><label>Description</label><textarea id="admin-en-ach-motion-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>Details (one per line)</label><textarea id="admin-en-ach-motion-details" rows="3"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">🥇 Motion Graphics 2024 (motion66)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>Title</label><input type="text" id="admin-en-ach-motion66-title"></div>
+                <div class="admin-field"><label>Organization</label><input type="text" id="admin-en-ach-motion66-org"></div>
+                <div class="admin-field"><label>Description</label><textarea id="admin-en-ach-motion66-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>Details (one per line)</label><textarea id="admin-en-ach-motion66-details" rows="3"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">🎨 LOGO Design (logo)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>Title</label><input type="text" id="admin-en-ach-logo-title"></div>
+                <div class="admin-field"><label>Organization</label><input type="text" id="admin-en-ach-logo-org"></div>
+                <div class="admin-field"><label>Description</label><textarea id="admin-en-ach-logo-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>Details (one per line)</label><textarea id="admin-en-ach-logo-details" rows="2"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">📋 Club Vice President (club)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>Title</label><input type="text" id="admin-en-ach-club-title"></div>
+                <div class="admin-field"><label>Organization</label><input type="text" id="admin-en-ach-club-org"></div>
+                <div class="admin-field"><label>Description</label><textarea id="admin-en-ach-club-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>Details (one per line)</label><textarea id="admin-en-ach-club-details" rows="3"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">📹 Live Stream (stream)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>Title</label><input type="text" id="admin-en-ach-stream-title"></div>
+                <div class="admin-field"><label>Organization</label><input type="text" id="admin-en-ach-stream-org"></div>
+                <div class="admin-field"><label>Description</label><textarea id="admin-en-ach-stream-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>Details (one per line)</label><textarea id="admin-en-ach-stream-details" rows="2"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">🎮 E-Sport Games (esport)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>Title</label><input type="text" id="admin-en-ach-esport-title"></div>
+                <div class="admin-field"><label>Organization</label><input type="text" id="admin-en-ach-esport-org"></div>
+                <div class="admin-field"><label>Description</label><textarea id="admin-en-ach-esport-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>Details (one per line)</label><textarea id="admin-en-ach-esport-details" rows="3"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">🧩 Gen Com (gencom)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>Title</label><input type="text" id="admin-en-ach-gencom-title"></div>
+                <div class="admin-field"><label>Organization</label><input type="text" id="admin-en-ach-gencom-org"></div>
+                <div class="admin-field"><label>Description</label><textarea id="admin-en-ach-gencom-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>Details (one per line)</label><textarea id="admin-en-ach-gencom-details" rows="2"></textarea></div>
+              </div>
+            </details>
+            <details style="margin-bottom:0.75rem;cursor:pointer;">
+              <summary style="font-size:0.88rem;font-weight:600;color:var(--accent);">👻 CVC Radio (ghost)</summary>
+              <div style="margin-top:0.75rem;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                <div class="admin-field"><label>Title</label><input type="text" id="admin-en-ach-ghost-title"></div>
+                <div class="admin-field"><label>Organization</label><input type="text" id="admin-en-ach-ghost-org"></div>
+                <div class="admin-field"><label>Description</label><textarea id="admin-en-ach-ghost-desc" rows="2"></textarea></div>
+                <div class="admin-field"><label>Details (one per line)</label><textarea id="admin-en-ach-ghost-details" rows="2"></textarea></div>
+              </div>
+            </details>
+          </div>
+
+          <details style="margin-top:0.75rem;cursor:pointer;">
+            <summary style="font-size:0.85rem;color:var(--accent);font-weight:500;">🖼️ รูปภาพและช่วงเวลา (ใช้ร่วมกันทั้งภาษา)</summary>
+            <div style="margin-top:0.75rem;padding:0.75rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+              <div class="admin-grid-2">
+                <div class="admin-field"><label>Motion 2567 — รูป</label><input type="text" id="admin-ach-motion-images" placeholder="images/award-motion-1.png,images/award-motion-2.png"></div>
+                <div class="admin-field"><label>Motion 2567 — ช่วงเวลา</label><input type="text" id="admin-ach-motion-period" placeholder="ปีการศึกษา 2567"></div>
+                <div class="admin-field"><label>Motion 2566 — รูป</label><input type="text" id="admin-ach-motion66-images" placeholder="images/award-motion66-1.png,..."></div>
+                <div class="admin-field"><label>Motion 2566 — ช่วงเวลา</label><input type="text" id="admin-ach-motion66-period" placeholder="ปีการศึกษา 2566"></div>
+                <div class="admin-field"><label>LOGO — รูป</label><input type="text" id="admin-ach-logo-images" placeholder="images/activity-logo-1.png"></div>
+                <div class="admin-field"><label>LOGO — ช่วงเวลา</label><input type="text" id="admin-ach-logo-period" placeholder="ภาคเรียนที่ 2/2567"></div>
+                <div class="admin-field"><label>ชมรม — รูป</label><input type="text" id="admin-ach-club-images" placeholder="images/activity-club-1.png,images/activity-club-2.png"></div>
+                <div class="admin-field"><label>ชมรม — ช่วงเวลา</label><input type="text" id="admin-ach-club-period" placeholder="ปัจจุบัน"></div>
+                <div class="admin-field"><label>ถ่ายทอดสด — รูป</label><input type="text" id="admin-ach-stream-images" placeholder="images/activity-stream-1.png,..."></div>
+                <div class="admin-field"><label>ถ่ายทอดสด — ช่วงเวลา</label><input type="text" id="admin-ach-stream-period"></div>
+                <div class="admin-field"><label>E-Sport — รูป</label><input type="text" id="admin-ach-esport-images" placeholder="images/activity-esport-1.png,..."></div>
+                <div class="admin-field"><label>E-Sport — ช่วงเวลา</label><input type="text" id="admin-ach-esport-period"></div>
+                <div class="admin-field"><label>Gen Com — รูป</label><input type="text" id="admin-ach-gencom-images" placeholder="images/activity-gencom-1.png,..."></div>
+                <div class="admin-field"><label>Gen Com — ช่วงเวลา</label><input type="text" id="admin-ach-gencom-period"></div>
+                <div class="admin-field"><label>CVC Radio — รูป</label><input type="text" id="admin-ach-ghost-images" placeholder="images/activity-ghost-1.png,..."></div>
+                <div class="admin-field"><label>CVC Radio — ช่วงเวลา</label><input type="text" id="admin-ach-ghost-period"></div>
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div class="admin-card">
+          <h2>📞 ติดต่อ — contact.html</h2>
+          <div class="admin-lang-tabs">
+            <button class="admin-lang-tab active" id="adminTab-th-contact" onclick="tabAdmin('th-contact')" data-i18n="admin-tab-th">ภาษาไทย</button>
+            <button class="admin-lang-tab" id="adminTab-en-contact" onclick="tabAdmin('en-contact')" data-i18n="admin-tab-en">ภาษาอังกฤษ</button>
+          </div>
+          <div class="admin-tab-pane active" id="adminPane-th-contact">
+            <div class="admin-field"><label>คำอธิบายหน้า</label><textarea id="admin-th-desc-contact" rows="2"></textarea></div>
+            <div class="admin-field"><label>หัวข้อ</label><input type="text" id="admin-th-contact-heading"></div>
+            <div class="admin-field"><label>คำอธิบายช่องทางติดต่อ</label><textarea id="admin-th-contact-desc" rows="2"></textarea></div>
+            <div class="admin-grid-2">
+              <div class="admin-field"><label>อีเมล</label><input type="text" id="admin-th-contact-email"></div>
+              <div class="admin-field"><label>GitHub</label><input type="text" id="admin-th-contact-github"></div>
+              <div class="admin-field"><label>LinkedIn</label><input type="text" id="admin-th-contact-linkedin"></div>
+            </div>
+          </div>
+          <div class="admin-tab-pane" id="adminPane-en-contact">
+            <div class="admin-field"><label>Page description</label><textarea id="admin-en-desc-contact" rows="2"></textarea></div>
+            <div class="admin-field"><label>Heading</label><input type="text" id="admin-en-contact-heading"></div>
+            <div class="admin-field"><label>Description</label><textarea id="admin-en-contact-desc" rows="2"></textarea></div>
+            <div class="admin-grid-2">
+              <div class="admin-field"><label>Email</label><input type="text" id="admin-en-contact-email"></div>
+              <div class="admin-field"><label>GitHub</label><input type="text" id="admin-en-contact-github"></div>
+              <div class="admin-field"><label>LinkedIn</label><input type="text" id="admin-en-contact-linkedin"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT DATA EDITOR (JSON) -->
+        <div class="admin-card">
+          <h2>💻 ข้อมูลโปรเจกต์ทั้งหมด (projectData)</h2>
+          <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.75rem;">แก้ไข JSON ของข้อมูลโปรเจกต์โดยตรง — แต่ละโปรเจกต์มี id (cyberhack, forest, plantfarm, ฯลฯ) ดูตัวอย่างจากค่าที่มีอยู่</p>
+          <div class="admin-field">
+            <label>Project Data JSON</label>
+            <textarea id="admin-projects-json" rows="12" style="font-family:var(--font-mono);font-size:0.82rem;line-height:1.4;"></textarea>
+          </div>
+        </div>
+
+        <!-- TIMELINE EDITOR (JSON) -->
+        <div class="admin-card">
+          <h2>📅 ไทม์ไลน์ (ประสบการณ์ + การศึกษา)</h2>
+          <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.75rem;">รูปแบบ: <code>{"work":[{"date":"...","title":"...","subtitle":"...","desc":"..."}],"education":[...]}</code></p>
+          <div class="admin-field">
+            <label>Timeline JSON</label>
+            <textarea id="admin-timeline-json" rows="10" style="font-family:var(--font-mono);font-size:0.82rem;line-height:1.4;"></textarea>
+          </div>
+        </div>
+
+        <!-- DRAWINGS EDITOR -->
+        <div class="admin-card">
+          <h2>✏️ จัดการรูปวาด (รายการไฟล์)</h2>
+          <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.75rem;">ใส่ path รูป 1 บรรทัดต่อ 1 รูป เช่น <code>images/drawings/drawing-0.jpg</code></p>
+          <div class="admin-field">
+            <label>รูปภาพทั้งหมด (บรรทัดละ 1 path)</label>
+            <textarea id="admin-drawings-list" rows="8" style="font-family:var(--font-mono);font-size:0.82rem;line-height:1.4;"></textarea>
+          </div>
+        </div>
+
+        <!-- MESSAGES VIEWER -->
+        <div class="admin-card">
+          <h2>📨 ข้อความจากฟอร์มติดต่อ</h2>
+          <button class="btn-outline" onclick="loadMessages()" style="font-size:0.85rem;margin-bottom:1rem;">🔄 โหลดข้อความล่าสุด</button>
+          <div id="adminMessagesList">
+            <p style="color:var(--text-muted);font-size:0.85rem;">กดปุ่มด้านบนเพื่อโหลดข้อความ</p>
+          </div>
+        </div>
+
+        <!-- ANALYTICS -->
+        <div class="admin-card">
+          <h2>📊 สถิติการเข้าชม</h2>
+          <button class="btn-outline" onclick="loadAnalytics()" style="font-size:0.85rem;margin-bottom:1rem;">🔄 โหลดสถิติ</button>
+          <div id="adminAnalytics">
+            <p style="color:var(--text-muted);font-size:0.85rem;">กดปุ่มด้านบนเพื่อดูสถิติ</p>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h2>📌 ส่วนท้าย (Footer) — ทุกหน้า</h2>
+          <div class="admin-lang-tabs">
+            <button class="admin-lang-tab active" id="adminTab-th-footer" onclick="tabAdmin('th-footer')" data-i18n="admin-tab-th">ภาษาไทย</button>
+            <button class="admin-lang-tab" id="adminTab-en-footer" onclick="tabAdmin('en-footer')" data-i18n="admin-tab-en">ภาษาอังกฤษ</button>
+          </div>
+          <div class="admin-tab-pane active" id="adminPane-th-footer">
+            <div class="admin-field"><label>ข้อความ footer</label><textarea id="admin-th-footer-text" rows="2"></textarea></div>
+          </div>
+          <div class="admin-tab-pane" id="adminPane-en-footer">
+            <div class="admin-field"><label>Footer text</label><textarea id="admin-en-footer-text" rows="2"></textarea></div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h2>🔐 ความปลอดภัย</h2>
+          <div class="admin-field">
+            <label>เปลี่ยนรหัสผ่าน (อย่างน้อย 6 ตัว — ปล่อยว่างถ้าไม่ต้องการเปลี่ยน)</label>
+            <input type="text" id="admin-new-password" placeholder="รหัสผ่านใหม่">
+          </div>
+          <div class="admin-field">
+            <label>🤖 Groq API Key (แนะนำ — ฟรี, เร็ว, ไม่ต้องใช้บัตร)</label>
+            <input type="text" id="admin-groq-key" placeholder="gsk_..." style="font-family:var(--font-mono);font-size:0.82rem;">
+          </div>
+          <div class="admin-field">
+            <label>🤖 Gemini API Key (ทางเลือกสำรอง)</label>
+            <input type="text" id="admin-gemini-key" placeholder="API Key" style="font-family:var(--font-mono);font-size:0.82rem;">
+          </div>
+          <div class="admin-field">
+            <label>📄 Path ไฟล์ Portfolio PDF</label>
+            <input type="text" id="admin-pdf-path" placeholder="images/portfolio.pdf" style="font-family:var(--font-mono);font-size:0.82rem;">
+          </div>
+        </div>
+
+        <div class="admin-actions-bar">
+          <button class="btn-primary" onclick="saveAdmin()">💾 บันทึกการเปลี่ยนแปลง</button>
+          <button class="btn-outline" onclick="logoutAdmin()">🚪 ออกจากระบบ</button>
+          <a href="index.html" class="btn-outline" style="text-decoration:none;">👁️ ดูหน้าแรก</a>
+        </div>
+        <div class="admin-success" id="adminSuccess">✅ บันทึกเรียบร้อยแล้ว! ข้อมูลอัปเดตบนหน้าเว็บทันที</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>checkAdminAuth();</script>
+</body>
+</html>

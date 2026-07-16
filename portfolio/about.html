@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="เกี่ยวกับ Jet Konkamon — AI Developer & Full-Stack Developer">
+  <title>เกี่ยวกับ | Jet Konkamon</title>
+  <meta property="og:title" content="เกี่ยวกับ Jet Konkamon | AI Developer & Full-Stack">
+  <meta property="og:description" content="รู้จัก Jet Konkamon — นักพัฒนา นักวาด และคนที่ชอบอะไรเกี่ยวกับเทคโนโลยีและการสร้างสรรค์">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <canvas id="particles"></canvas>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <nav class="navbar" role="navigation" aria-label="นำทางหลัก">
+    <div class="container">
+      <a href="index.html" class="nav-logo" aria-label="หน้าแรก">
+        <span class="dot"></span> Jet<span style="font-weight:400;color:var(--text-muted);">.</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" data-i18n="nav-home">หน้าแรก</a></li>
+        <li><a href="about.html" data-i18n="nav-about">เกี่ยวกับ</a></li>
+        <li><a href="projects.html" data-i18n="nav-projects">โปรเจกต์</a></li>
+        <li><a href="drawings.html" data-i18n="nav-drawings">ภาพวาด</a></li>
+        <li><a href="experience.html" data-i18n="nav-experience">ประสบการณ์</a></li>
+        <li><a href="achievements.html" data-i18n="nav-achievements">รางวัล</a></li>
+        <li><a href="guestbook.html" data-i18n="nav-guestbook">สมุดเยี่ยม</a></li>
+        <li><a href="contact.html" data-i18n="nav-contact">ติดต่อ</a></li>
+      </ul>
+      <div style="display:flex;align-items:center;">
+        <button class="lang-toggle" id="langToggle" aria-label="เปลี่ยนภาษา">EN</button>
+        <button class="menu-toggle" id="menuToggle" aria-label="เปิด/ปิดเมนู" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <button class="theme-toggle" id="themeToggle" aria-label="สลับโหมดมืด/สว่าง">
+          <span id="themeIcon">☀️</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+  <div class="page-hero">
+    <div class="container">
+      <span class="page-accent reveal" data-i18n="about-accent">เกี่ยวกับ</span>
+      <h1 class="reveal reveal-delay-1" data-i18n="about-title">รู้จักผมมากขึ้น</h1>
+      <p class="reveal reveal-delay-2" data-editable="desc-about">นักพัฒนาและนักวาดผู้หลงใหลในการสร้างสรรค์ — ทั้งในโลกโค้ดและบนกระดาษ</p>
+    </div>
+  </div>
+
+  <section id="about" style="padding-top:0;">
+    <div class="container">
+      <div class="about-hero-grid">
+        <div class="about-hero-img reveal">
+          <img src="images/jet-standing.png" alt="Jet Konkamon" loading="lazy">
+        </div>
+        <div class="about-hero-info reveal reveal-delay-1">
+          <p class="about-hero-name" data-editable="about-p-1">
+            ว่าไงครับ! ผม <strong>เจ็ท</strong> (Jet Konkamon) — นักพัฒนา นักวาด และคนที่ชอบอะไรเกี่ยวกับเทคโนโลยีและการสร้างสรรค์
+          </p>
+          <p class="about-hero-title">
+            <span class="highlight">AI Developer</span> & <span class="highlight">Full-Stack Developer</span>
+          </p>
+          <div class="about-info-card">
+            <div class="about-info-grid">
+              <span class="label">ชื่อเล่น:</span><span class="value">เจ็ท</span>
+              <span class="label">อายุ:</span><span class="value">19 ปี (16 ตุลาคม 2549)</span>
+              <span class="label">สัญชาติ:</span><span class="value">ไทย</span>
+              <span class="label">ศาสนา:</span><span class="value">พุทธ</span>
+              <span class="label">สาขาวิชา:</span><span class="value">เทคโนโลยีธุรกิจดิจิทัล</span>
+              <span class="label">สถานศึกษา:</span><span class="value">วิทยาลัยอาชีวศึกษาฉะเชิงเทรา</span>
+            </div>
+          </div>
+          <div class="about-hobbies">
+            <span>✏️ วาดรูป</span>
+            <span>💻 เขียนโปรแกรม</span>
+            <span>🎮 เล่นเกม</span>
+          </div>
+          <div class="about-motto" data-editable="about-motto">
+            "เทคโนโลยีคือเครื่องมือ — จินตนาการคือขีดจำกัด"
+          </div>
+        </div>
+      </div>
+
+      <div class="about-bio reveal">
+        <div class="about-bio-grid">
+          <p data-editable="about-p-2">
+            ผมเป็น <strong>AI Developer & Full-Stack Developer</strong> ที่มีประสบการณ์สร้างเว็บไซต์ เกม และระบบ AI มากมาย ชอบทดลองใช้ AI ใหม่ ๆ มาประยุกต์ใช้ในโปรเจกต์จริง ตั้งแต่ TensorFlow.js, Stable Diffusion, ไปจนถึง LLM อย่าง Gemini และ Claude
+          </p>
+          <p data-editable="about-p-3">
+            นอกจากสายเทคฯ ผมยังถนัดด้าน <strong>การวาดรูป</strong> ทั้งดิจิทัลและดั้งเดิม — นำศิลปะมาผสมกับเทคโนโลยีเพื่อสร้างผลงานที่โดดเด่น รวมถึงใช้ <strong>Adobe Master Collection</strong> สำหรับงานออกแบบกราฟิก และ <strong>Microsoft Office</strong> สำหรับงานเอกสารและนำเสนอ อีกทั้งยังมีทักษะ <strong>ซ่อมบำรุงคอมพิวเตอร์</strong> ในระดับสูง ดูแลทั้งฮาร์ดแวร์ ซอฟต์แวร์ และระบบเครือข่าย
+          </p>
+          <p data-editable="about-p-4">
+            ทุกโปรเจกต์คือการเรียนรู้ ผมเชื่อว่าเทคโนโลยีควรทำให้ชีวิตง่ายขึ้น และผมมุ่งมั่นที่จะสร้างสิ่งที่มีประโยชน์จริง
+          </p>
+        </div>
+      </div>
+
+      <div class="about-cards reveal reveal-delay-1">
+          <div class="skill-bar-item">
+            <div class="skill-bar-header">
+              <span>💻 Web Development</span>
+              <span class="skill-bar-pct">95%</span>
+            </div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" data-width="95" style="width:0"></div>
+            </div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-header">
+              <span>🎨 UI/UX Design</span>
+              <span class="skill-bar-pct">85%</span>
+            </div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" data-width="85" style="width:0"></div>
+            </div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-header">
+              <span>🧠 AI & Machine Learning</span>
+              <span class="skill-bar-pct">80%</span>
+            </div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" data-width="80" style="width:0"></div>
+            </div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-header">
+              <span>✏️ Graphic Design</span>
+              <span class="skill-bar-pct">90%</span>
+            </div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" data-width="90" style="width:0"></div>
+            </div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-header">
+              <span>🎬 Motion Graphics</span>
+              <span class="skill-bar-pct">85%</span>
+            </div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" data-width="85" style="width:0"></div>
+            </div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-header">
+              <span>🐍 Python & Automation</span>
+              <span class="skill-bar-pct">75%</span>
+            </div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" data-width="75" style="width:0"></div>
+            </div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-header">
+              <span>🗄️ Database & Backend</span>
+              <span class="skill-bar-pct">78%</span>
+            </div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" data-width="78" style="width:0"></div>
+            </div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-header">
+              <span>🔧 ซ่อมบำรุงคอมพิวเตอร์</span>
+              <span class="skill-bar-pct">90%</span>
+            </div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" data-width="90" style="width:0"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:3rem;" class="reveal">
+        <h3 class="skills-title">เครื่องมือที่ถนัด</h3>
+        <div class="skills-grid">
+          <div class="skill-badge"><span class="icon">⚛️</span> React</div>
+          <div class="skill-badge"><span class="icon">🟢</span> Next.js</div>
+          <div class="skill-badge"><span class="icon">🟦</span> TypeScript</div>
+          <div class="skill-badge"><span class="icon">🟢</span> Node.js</div>
+          <div class="skill-badge"><span class="icon">🐍</span> Python</div>
+          <div class="skill-badge"><span class="icon">🧠</span> TensorFlow.js</div>
+          <div class="skill-badge"><span class="icon">🎨</span> Stable Diffusion</div>
+          <div class="skill-badge"><span class="icon">✏️</span> Procreate</div>
+          <div class="skill-badge"><span class="icon">🎭</span> Photoshop</div>
+          <div class="skill-badge"><span class="icon">🎬</span> Premiere Pro</div>
+          <div class="skill-badge"><span class="icon">📊</span> Excel</div>
+          <div class="skill-badge"><span class="icon">📝</span> PowerPoint</div>
+          <div class="skill-badge"><span class="icon">🔥</span> Firebase</div>
+          <div class="skill-badge"><span class="icon">🐳</span> Docker</div>
+          <div class="skill-badge"><span class="icon">🗄️</span> PostgreSQL</div>
+          <div class="skill-badge"><span class="icon">🍃</span> MongoDB</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p><span data-editable="footer-text">ออกแบบและพัฒนาโดย <span>Jet Konkamon</span> &copy; 2026 สงวนลิขสิทธิ์</span></p>
+      <p style="margin-top:0.75rem;font-size:0.75rem;"><a href="admin.html" style="color:var(--text-muted);opacity:0.4;transition:opacity var(--transition-fast);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'" data-i18n="footer-admin">🔒 Admin</a></p>
+    </div>
+  </footer>
+  <button class="back-to-top" id="backToTop" aria-label="กลับด้านบน">↑</button>
+
+  <script src="script.js"></script>
+</body>
+</html>

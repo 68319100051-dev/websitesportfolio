@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guestbook | Jet Konkamon</title>
+  <meta name="description" content="ฝากข้อความถึง Jet Konkamon — พูดคุย ให้กำลังใจ หรือแชร์ไอเดีย">
+  <meta property="og:title" content="Guestbook | Jet Konkamon">
+  <meta property="og:description" content="ฝากข้อความถึง Jet Konkamon — พูดคุย ให้กำลังใจ หรือแชร์ไอเดีย">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .gb-form { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2.5rem; }
+    .gb-form-row { display: flex; gap: 0.75rem; }
+    .gb-form input, .gb-form textarea {
+      font-family: var(--font-sans); font-size: 0.9rem; padding: 0.7rem 1rem;
+      background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+      color: var(--text-primary); outline: none; transition: border-color var(--transition-fast);
+      resize: vertical;
+    }
+    .gb-form input:focus, .gb-form textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .gb-form textarea { min-height: 80px; }
+    .gb-form .gb-submit { align-self: flex-start; }
+    .gb-entry {
+      padding: 1rem 1.25rem; margin-bottom: 0.75rem;
+      background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md);
+      transition: border-color var(--transition-fast);
+    }
+    .gb-entry:hover { border-color: var(--accent); }
+    .gb-entry-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;
+    }
+    .gb-entry-name { font-weight: 600; font-size: 0.9rem; }
+    .gb-entry-date { font-size: 0.75rem; color: var(--text-muted); }
+    .gb-entry-msg { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; }
+    .gb-empty { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+    .gb-error { color: #ef4444; font-size: 0.85rem; display: none; }
+    .gb-success { color: #22c55e; font-size: 0.85rem; display: none; }
+    .gb-loading { text-align: center; padding: 2rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <nav class="navbar" role="navigation" aria-label="นำทางหลัก">
+    <div class="container">
+      <a href="index.html" class="nav-logo" aria-label="หน้าแรก">
+        <span class="dot"></span> Jet<span style="font-weight:400;color:var(--text-muted);">.</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" data-i18n="nav-home">หน้าแรก</a></li>
+        <li><a href="about.html" data-i18n="nav-about">เกี่ยวกับ</a></li>
+        <li><a href="projects.html" data-i18n="nav-projects">โปรเจกต์</a></li>
+        <li><a href="drawings.html" data-i18n="nav-drawings">ภาพวาด</a></li>
+        <li><a href="experience.html" data-i18n="nav-experience">ประสบการณ์</a></li>
+        <li><a href="achievements.html" data-i18n="nav-achievements">รางวัล</a></li>
+        <li><a href="guestbook.html" data-i18n="nav-guestbook">สมุดเยี่ยม</a></li>
+        <li><a href="contact.html" data-i18n="nav-contact">ติดต่อ</a></li>
+      </ul>
+      <div style="display:flex;align-items:center;">
+        <button class="lang-toggle" id="langToggle" aria-label="เปลี่ยนภาษา">EN</button>
+        <button class="menu-toggle" id="menuToggle" aria-label="เปิด/ปิดเมนู" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <button class="theme-toggle" id="themeToggle" aria-label="สลับโหมดมืด/สว่าง">
+          <span id="themeIcon">☀️</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+  <div class="page-hero">
+    <div class="container">
+      <span class="page-accent reveal">📝</span>
+      <h1 class="reveal reveal-delay-1" data-i18n="guestbook-title">Guestbook</h1>
+      <p class="reveal reveal-delay-2" data-i18n="guestbook-desc">ฝากข้อความถึงผม — พูดคุย ให้กำลังใจ หรือแชร์ไอเดีย ก็เขียนมาได้เลย</p>
+    </div>
+  </div>
+
+  <section style="padding-top:0;">
+    <div class="container" style="max-width:640px;">
+      <form class="gb-form reveal" id="guestbookForm">
+        <div class="gb-form-row">
+          <input type="text" id="gbName" placeholder="ชื่อของคุณ" required style="flex:1;">
+        </div>
+        <textarea id="gbMessage" placeholder="ข้อความ..." required></textarea>
+        <button type="submit" class="btn-primary gb-submit">📝 ฝากข้อความ</button>
+        <div class="gb-error" id="gbError">กรุณากรอกชื่อและข้อความ</div>
+        <div class="gb-success" id="gbSuccess">✅ ฝากข้อความเรียบร้อย!</div>
+      </form>
+      <div id="gbList"></div>
+    </div>
+  </section>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p>ออกแบบและพัฒนาโดย <span>Jet Konkamon</span> &copy; 2026 สงวนลิขสิทธิ์</p>
+      <p style="margin-top:0.75rem;font-size:0.75rem;"><a href="admin.html" style="color:var(--text-muted);opacity:0.4;transition:opacity var(--transition-fast);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'">🔒 Admin</a></p>
+    </div>
+  </footer>
+  <button class="back-to-top" id="backToTop" aria-label="กลับด้านบน">↑</button>
+
+  <script>
+    const gbList = document.getElementById('gbList');
+    const gbForm = document.getElementById('guestbookForm');
+    const gbName = document.getElementById('gbName');
+    const gbMessage = document.getElementById('gbMessage');
+    const gbError = document.getElementById('gbError');
+    const gbSuccess = document.getElementById('gbSuccess');
+
+    async function loadGB() {
+      gbList.innerHTML = '<div class="gb-loading">⏳ กำลังโหลด...</div>';
+      try {
+        const res = await fetch('/api/guestbook');
+        const data = await res.json();
+        if (!data.success || !data.entries.length) {
+          gbList.innerHTML = '<div class="gb-empty">📭 ยังไม่มีข้อความ — เป็นคนแรกที่ฝากข้อความเลย!</div>';
+          return;
+        }
+        gbList.innerHTML = data.entries.map(e => `
+          <div class="gb-entry">
+            <div class="gb-entry-header">
+              <span class="gb-entry-name">${escHtml(e.name)}</span>
+              <span class="gb-entry-date">${new Date(e.date).toLocaleDateString('th-TH')}</span>
+            </div>
+            <div class="gb-entry-msg">${escHtml(e.message)}</div>
+          </div>
+        `).join('');
+      } catch {
+        gbList.innerHTML = '<div class="gb-empty">❌ ไม่สามารถโหลดข้อความได้</div>';
+      }
+    }
+
+    function escHtml(s) {
+      const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+    }
+
+    if (gbForm) {
+      gbForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        gbError.style.display = 'none';
+        gbSuccess.style.display = 'none';
+        const name = gbName.value.trim();
+        const message = gbMessage.value.trim();
+        if (!name || !message) { gbError.style.display = 'block'; return; }
+        try {
+          const res = await fetch('/api/guestbook', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, message })
+          });
+          if (res.ok) {
+            gbSuccess.style.display = 'block';
+            gbForm.reset();
+            loadGB();
+            setTimeout(() => gbSuccess.style.display = 'none', 3000);
+          } else {
+            gbError.textContent = 'เกิดข้อผิดพลาด'; gbError.style.display = 'block';
+          }
+        } catch { gbError.textContent = 'เกิดข้อผิดพลาด'; gbError.style.display = 'block'; }
+      });
+    }
+
+    loadGB();
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

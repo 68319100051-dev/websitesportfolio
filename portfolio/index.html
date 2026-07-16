@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="พอร์ตโฟลิโอของ Jet Konkamon — AI Developer, Full-Stack Developer และนักวาดเส้นสาย">
+  <title>Jet Konkamon | AI Developer & Full-Stack</title>
+  <meta property="og:title" content="Jet Konkamon | AI Developer & Full-Stack Developer">
+  <meta property="og:description" content="พอร์ตโฟลิโอของ Jet Konkamon — AI Developer, Full-Stack Developer และนักวาดเส้นสาย">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <canvas id="particles"></canvas>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <nav class="navbar" role="navigation" aria-label="นำทางหลัก">
+    <div class="container">
+      <a href="index.html" class="nav-logo" aria-label="หน้าแรก">
+        <span class="dot"></span> Jet<span style="font-weight:400;color:var(--text-muted);">.</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" data-i18n="nav-home">หน้าแรก</a></li>
+        <li><a href="about.html" data-i18n="nav-about">เกี่ยวกับ</a></li>
+        <li><a href="projects.html" data-i18n="nav-projects">โปรเจกต์</a></li>
+        <li><a href="drawings.html" data-i18n="nav-drawings">ภาพวาด</a></li>
+        <li><a href="experience.html" data-i18n="nav-experience">ประสบการณ์</a></li>
+        <li><a href="achievements.html" data-i18n="nav-achievements">รางวัล</a></li>
+        <li><a href="guestbook.html" data-i18n="nav-guestbook">สมุดเยี่ยม</a></li>
+        <li><a href="contact.html" data-i18n="nav-contact">ติดต่อ</a></li>
+      </ul>
+      <div style="display:flex;align-items:center;">
+        <button class="lang-toggle" id="langToggle" aria-label="เปลี่ยนภาษา">EN</button>
+        <button class="menu-toggle" id="menuToggle" aria-label="เปิด/ปิดเมนู" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <button class="theme-toggle" id="themeToggle" aria-label="สลับโหมดมืด/สว่าง">
+          <span id="themeIcon">☀️</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+  <section id="hero">
+    <div class="hero-bg">
+      <img src="images/bg/bg-0.jpg" alt="" class="bg-cycle" data-editable-img="hero-bg-0">
+      <img src="images/bg/bg-1.jpg" alt="" class="bg-cycle" data-editable-img="hero-bg-1">
+      <img src="images/bg/bg-2.jpg" alt="" class="bg-cycle" data-editable-img="hero-bg-2">
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge reveal">
+        <span class="pulse"></span> <span data-editable="hero-badge">พร้อมรับงานใหม่</span>
+      </div>
+      <div class="hero-avatar-wrapper reveal reveal-delay-1">
+        <img src="images/portrait.jpg" alt="Jet Konkamon" class="hero-avatar" width="130" height="130" data-editable-img="hero-avatar">
+      </div>
+      <p class="hero-greeting reveal reveal-delay-2" data-editable="hero-greeting">👋 สวัสดีครับ ผมชื่อ</p>
+      <h1 class="hero-name reveal reveal-delay-2" data-editable="hero-name">Jet Konkamon</h1>
+      <p class="hero-title reveal reveal-delay-3" data-editable="hero-title">
+        <span class="highlight">AI Developer</span> & <span class="highlight">Full-Stack Developer</span><br>
+        นักวาดเส้นสายที่สร้างเทคโนโลยีให้มีชีวิต
+      </p>
+      <p class="hero-typing reveal reveal-delay-3">
+        <span class="typing-text"></span><span class="typing-cursor">|</span>
+      </p>
+      <div class="hero-buttons reveal reveal-delay-4">
+        <a href="presentation.html" class="btn-primary">
+          ดูสไลด์
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="contact.html" class="btn-outline">
+          ติดต่อผม
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </a>
+      </div>
+      <div class="hero-stats reveal reveal-delay-5">
+        <div class="hero-stat">
+          <div class="number" data-editable="stat-1-num">10+</div>
+          <div class="label" data-editable="stat-1-label">โปรเจกต์</div>
+        </div>
+        <div class="hero-stat">
+          <div class="number" data-editable="stat-2-num">5+</div>
+          <div class="label" data-editable="stat-2-label">ปีประสบการณ์</div>
+        </div>
+        <div class="hero-stat">
+          <div class="number" data-editable="stat-3-num">AI</div>
+          <div class="label" data-editable="stat-3-label">เชี่ยวชาญ</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p><span data-editable="footer-text">ออกแบบและพัฒนาโดย <span>Jet Konkamon</span> &copy; 2026 สงวนลิขสิทธิ์</span></p>
+      <p style="margin-top:0.75rem;font-size:0.75rem;"><a href="admin.html" style="color:var(--text-muted);opacity:0.4;transition:opacity var(--transition-fast);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'" data-i18n="footer-admin">🔒 Admin</a></p>
+    </div>
+  </footer>
+  <button class="back-to-top" id="backToTop" aria-label="กลับด้านบน">↑</button>
+
+  <div id="renderSplash" style="position:fixed;inset:0;z-index:99999;background:#0a0a15;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transition:opacity 0.6s;">
+    <div style="width:48px;height:48px;border:3px solid rgba(192,132,252,0.2);border-top-color:#c084fc;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+    <div style="text-align:center;">
+      <div style="font-size:1rem;font-weight:600;background:linear-gradient(135deg,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Jet Konkamon</div>
+      <div style="font-size:0.8rem;color:#8888a0;margin-top:0.3rem;">กำลังปลุกเซิร์ฟเวอร์...</div>
+    </div>
+    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    (function() {
+      const splash = document.getElementById('renderSplash');
+      let started = Date.now();
+      function check() {
+        fetch('/api/ping', { method: 'HEAD' }).then(r => {
+          if (r.ok) {
+            const elapsed = Date.now() - started;
+            const delay = Math.max(0, 600 - elapsed);
+            setTimeout(() => { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 600); }, delay);
+          } else { setTimeout(check, 500); }
+        }).catch(() => setTimeout(check, 500));
+      }
+      check();
+    })();
+  </script>
+</body>
+</html>

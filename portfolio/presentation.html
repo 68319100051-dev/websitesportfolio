@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jet Konkamon — Slide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0a15;
+      --card: #12121f;
+      --border: #1e1e35;
+      --accent: #c084fc;
+      --accent-2: #f472b6;
+      --accent-glow: rgba(192,132,252,0.2);
+      --text: #e8e8f0;
+      --text-muted: #8888a0;
+      --font-sans: 'Outfit', 'Noto Sans Thai', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius: 16px;
+    }
+    [data-theme="light"] {
+      --bg: #f5f5fa;
+      --card: #ffffff;
+      --border: #ddddee;
+      --text: #111128;
+      --text-muted: #707088;
+      --accent-glow: rgba(192,132,252,0.15);
+    }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    canvas#particles {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    }
+    .slide-container {
+      position: relative; z-index: 1;
+      width: 90vw; max-width: 780px;
+      height: 85vh; max-height: 520px;
+      perspective: 1200px;
+    }
+    .slide-track {
+      position: relative; width: 100%; height: 100%;
+    }
+    .slide {
+      position: absolute; inset: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem 2.8rem;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      opacity: 0; pointer-events: none;
+      transform: translateX(40px) scale(0.96) rotateY(-4deg);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      overflow: hidden;
+    }
+    .slide-bg {
+      position: absolute; inset: 0;
+      z-index: 0; pointer-events: none;
+      overflow: hidden;
+    }
+    .slide-bg img {
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: 0.08;
+      transition: opacity 0.5s;
+    }
+    .slide-bg.br img { object-position: right bottom; }
+    .slide-bg.bl img { object-position: left bottom; }
+    .slide-bg.tl img { object-position: left top; }
+    .slide-bg.tr img { object-position: right top; }
+    .slide > *:not(.slide-bg) { position: relative; z-index: 1; }
+    .slide.active {
+      opacity: 1; pointer-events: auto;
+      transform: translateX(0) scale(1) rotateY(0deg);
+    }
+    .slide.exit {
+      opacity: 0; transform: translateX(-40px) scale(0.96) rotateY(4deg);
+      pointer-events: none;
+    }
+    .slide-number {
+      position: absolute; top: 1.2rem; right: 1.5rem;
+      font-size: 0.75rem; color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .slide-icon { font-size: 2.8rem; margin-bottom: 0.6rem; }
+    .slide h1 {
+      font-size: 2.2rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.3rem;
+    }
+    .slide h2 {
+      font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;
+    }
+    .slide p, .slide li {
+      font-size: 0.95rem; line-height: 1.7;
+      color: var(--text-muted);
+    }
+    .slide ul { list-style: none; padding: 0; }
+    .slide ul li::before { content: '▸ '; color: var(--accent); }
+    .slide .highlight { color: var(--accent); -webkit-text-fill-color: var(--accent); }
+    .slide .sub { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+    .slide .flex-row {
+      display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.5rem;
+    }
+    .slide .tag {
+      padding: 0.3rem 0.8rem; border-radius: 999px;
+      background: var(--accent-glow); color: var(--accent);
+      font-size: 0.75rem; font-weight: 500;
+    }
+    .slide .contact-row {
+      display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.8rem;
+    }
+    .slide .contact-row a {
+      color: var(--text-muted); text-decoration: none;
+      font-size: 0.9rem; transition: color 0.2s;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .slide .contact-row a:hover { color: var(--accent); }
+    .slide .grid-2 {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.6rem;
+    }
+    .slide .stat-box {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 0.8rem 1rem; text-align: center;
+    }
+    .slide .stat-box .num { font-size: 1.6rem; font-weight: 800; color: var(--accent); }
+    .slide .stat-box .lbl { font-size: 0.75rem; color: var(--text-muted); }
+
+    .nav-bar {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      z-index: 10;
+      display: flex; align-items: center; gap: 1rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 999px; padding: 0.5rem 0.8rem;
+    }
+    .nav-bar button {
+      background: none; border: none; color: var(--text-muted);
+      font-size: 1.1rem; cursor: pointer; padding: 0.25rem 0.5rem;
+      border-radius: 999px; transition: all 0.2s;
+      font-family: var(--font-sans);
+    }
+    .nav-bar button:hover { color: var(--text); background: var(--accent-glow); }
+    .nav-bar .dots { display: flex; gap: 0.35rem; }
+    .nav-bar .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border); cursor: pointer; transition: all 0.25s;
+    }
+    .nav-bar .dot.active { background: var(--accent); width: 20px; border-radius: 4px; }
+    .nav-bar .close-btn {
+      color: var(--text-muted); font-size: 0.9rem; padding: 0.25rem 0.7rem;
+      border-left: 1px solid var(--border); border-radius: 0;
+    }
+    .nav-bar .close-btn:hover { color: #ef4444; }
+    .theme-toggle-bar {
+      position: fixed; top: 1.2rem; right: 1.2rem; z-index: 10;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 999px; padding: 0.3rem 0.6rem;
+      cursor: pointer; font-size: 1rem;
+      transition: background 0.2s;
+    }
+
+    @media (max-width: 640px) {
+      .slide-container { width: 95vw; height: 80vh; max-height: none; }
+      .slide { padding: 1.8rem 1.5rem; }
+      .slide h1 { font-size: 1.6rem; }
+      .slide h2 { font-size: 1.1rem; }
+      .slide p { font-size: 0.85rem; }
+      .slide .grid-2 { grid-template-columns: 1fr; }
+      .nav-bar { gap: 0.5rem; padding: 0.4rem 0.6rem; font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <div class="theme-toggle-bar" id="themeToggle">🌙</div>
+
+  <div class="slide-container">
+    <div class="slide-track" id="slideTrack">
+      <!-- 1: Title -->
+      <div class="slide active" data-index="0">
+        <div class="slide-bg"><img src="images/jet-standing.png" alt="" style="object-position: center 80%;"></div>
+        <span class="slide-number">1 / 8</span>
+        <div class="slide-icon">🚀</div>
+        <h1>Jet Konkamon</h1>
+        <p style="font-size:1.05rem;color:var(--text);margin-bottom:0.3rem;">AI Developer · Full-Stack · Digital Artist</p>
+        <p>นักพัฒนาและนักวาดเส้นสายที่สร้างเทคโนโลยีให้มีชีวิต</p>
+        <p class="sub">kk.jetkonkamon@gmail.com</p>
+      </div>
+      <!-- 2: About -->
+      <div class="slide" data-index="1">
+        <div class="slide-bg"><img src="images/portrait.jpg" alt="" style="object-position: center 25%;"></div>
+        <span class="slide-number">2 / 8</span>
+        <div class="slide-icon">👋</div>
+        <h2>ว่าไงครับ!</h2>
+        <p>ผม <span class="highlight">เจ็ท (กรกมล)</span> — ปัจจุบันเรียนอยู่ ปวส. เทคโนโลยีธุรกิจดิจิทัล<br>ที่วิทยาลัยอาชีวศึกษาฉะเชิงเทรา</p>
+        <p style="margin-top:0.6rem;">ชอบสร้างทั้ง <span class="highlight">เว็บแอป</span>, <span class="highlight">AI</span>, และ <span class="highlight">กราฟิก</span> — ชอบอะไรที่ได้ทั้งคิดและลงมือทำ</p>
+      </div>
+      <!-- 3: Skills -->
+      <div class="slide" data-index="2">
+        <div class="slide-bg bl"><img src="images/project-cyberhack.png" alt=""></div>
+        <span class="slide-number">3 / 8</span>
+        <div class="slide-icon">⚡</div>
+        <h2>ความถนัด</h2>
+        <div class="grid-2">
+          <div class="stat-box"><div class="num">AI</div><div class="lbl">LLM · RAG · Prompt</div></div>
+          <div class="stat-box"><div class="num">Web</div><div class="lbl">Node.js · React · Express</div></div>
+          <div class="stat-box"><div class="num">Design</div><div class="lbl">Motion · Logo · UI</div></div>
+          <div class="stat-box"><div class="num">Tools</div><div class="lbl">Git · Figma · Canva</div></div>
+        </div>
+      </div>
+      <!-- 4: Projects -->
+      <div class="slide" data-index="3">
+        <div class="slide-bg br"><img src="images/project-forest.png" alt=""></div>
+        <span class="slide-number">4 / 8</span>
+        <div class="slide-icon">💻</div>
+        <h2>โปรเจกต์เด่น</h2>
+        <ul>
+          <li><strong>CyberHack Game</strong> — เกมทายคำศัพท์รักษาความปลอดภัย</li>
+          <li style="margin-top:0.3rem;"><strong>Plant Farm Manager</strong> — ระบบจัดการฟาร์มด้วย IoT + AI</li>
+          <li style="margin-top:0.3rem;"><strong>AI Product Classifier</strong> — จำแนกหมวดหมู่สินค้าอัตโนมัติ</li>
+          <li style="margin-top:0.3rem;"><strong>Jet Music</strong> — แอปสตรีมเพลงข้ามแพลตฟอร์ม</li>
+        </ul>
+      </div>
+      <!-- 5: Work -->
+      <div class="slide" data-index="4">
+        <div class="slide-bg"><img src="images/bg/bg-2.jpg" alt="" style="object-position: 55% center;"></div>
+        <span class="slide-number">5 / 8</span>
+        <div class="slide-icon">💼</div>
+        <h2>ประสบการณ์</h2>
+        <p><strong>ฝึกงานแผนก MIS</strong><br><span class="sub">สี่พระยา — ปัจจุบัน</span></p>
+        <p style="margin-top:0.6rem;"><strong>ฝึกงาน + ทำงานต่อ — Programmer</strong><br><span class="sub">Neo International — 2024</span></p>
+        <p style="margin-top:0.4rem;">ดูแลระบบสารสนเทศ พัฒนาและบำรุงรักษาระบบภายในองค์กร</p>
+      </div>
+      <!-- 6: Awards -->
+      <div class="slide" data-index="5">
+        <div class="slide-bg"><img src="images/award-motion-1.png" alt="" style="object-position: 30% center;"></div>
+        <span class="slide-number">6 / 8</span>
+        <div class="slide-icon">🏆</div>
+        <h2>รางวัล</h2>
+        <ul>
+          <li>🥇 <strong>Motion Graphics</strong> — ชนะเลิศเหรียญทอง ระดับจังหวัด ปี 2568</li>
+          <li style="margin-top:0.3rem;">🥇 <strong>Motion Graphics</strong> — ชนะเลิศเหรียญทอง ระดับจังหวัด ปี 2567</li>
+          <li style="margin-top:0.3rem;">🏅 <strong>LOGO Design</strong> — เข้าร่วมการประกวด</li>
+        </ul>
+      </div>
+      <!-- 7: Activities -->
+      <div class="slide" data-index="6">
+        <div class="slide-bg bl"><img src="images/activity-esport-1.png" alt=""></div>
+        <span class="slide-number">7 / 8</span>
+        <div class="slide-icon">🎭</div>
+        <h2>กิจกรรม</h2>
+        <ul>
+          <li>รองประธานชมรมเทคโนโลยีธุรกิจดิจิทัล</li>
+          <li style="margin-top:0.3rem;">ควบคุมกล้อง + กราฟิก ถ่ายทอดสดระดับชาติ</li>
+          <li style="margin-top:0.3rem;">หัวหน้าทีมไลฟ์สด / กราฟิก E-Sport Games 2024</li>
+          <li style="margin-top:0.3rem;">ดำเนินงานโครงการ Gen Com และ CVC Radio</li>
+        </ul>
+      </div>
+      <!-- 8: Contact -->
+      <div class="slide" data-index="7">
+        <div class="slide-bg"><img src="images/ai-avatar.png" alt="" style="object-fit: contain; width: 50%; height: 50%; object-position: right bottom; opacity: 0.1;"></div>
+        <span class="slide-number">8 / 8</span>
+        <div class="slide-icon">📬</div>
+        <h2>ช่องทางติดต่อ</h2>
+        <div class="contact-row">
+          <a href="mailto:kk.jetkonkamon@gmail.com">📧 kk.jetkonkamon@gmail.com</a>
+          <a href="https://github.com/JETJET29" target="_blank">🐙 GitHub</a>
+          <a href="https://linkedin.com/in/jet-konkamon" target="_blank">💼 LinkedIn</a>
+        </div>
+        <p style="margin-top:1.2rem;">หรือกด <span class="highlight">✕</span> ด้านล่าง แล้วดูผลงานเต็ม ๆ ได้ที่เว็บของผม!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <button id="prevSlide">‹</button>
+    <div class="dots" id="dots"></div>
+    <button id="nextSlide">›</button>
+    <button class="close-btn" id="closeSlide">✕ ปิด</button>
+  </div>
+
+  <script>
+    // Particles
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    for (let i = 0; i < 50; i++) {
+      particles.push({
+        x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
+        s: Math.random() * 2 + 0.5, o: Math.random() * 0.4 + 0.1
+      });
+    }
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(192,132,252,' + p.o + ')'; ctx.fill();
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Slideshow
+    const track = document.getElementById('slideTrack');
+    const slides = track.querySelectorAll('.slide');
+    const dots = document.getElementById('dots');
+    let current = 0;
+    const total = slides.length;
+
+    slides.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => goTo(i));
+      dots.appendChild(dot);
+    });
+
+    function goTo(idx) {
+      if (idx < 0 || idx >= total || idx === current) return;
+      slides.forEach((s, i) => {
+        s.classList.remove('active', 'exit');
+        if (i === current) s.classList.add('exit');
+        if (i === idx) s.classList.add('active');
+      });
+      dots.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+      current = idx;
+    }
+
+    document.getElementById('prevSlide').addEventListener('click', () => goTo(current - 1));
+    document.getElementById('nextSlide').addEventListener('click', () => goTo(current + 1));
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === ' ') goTo(current + 1);
+      if (e.key === 'ArrowLeft') goTo(current - 1);
+      if (e.key === 'Escape') window.close();
+    });
+
+    document.getElementById('closeSlide').addEventListener('click', () => window.history.back());
+
+    // Theme
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      themeToggle.textContent = next === 'dark' ? '🌙' : '☀️';
+    });
+
+    // Touch swipe
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
+    document.addEventListener('touchend', e => {
+      const diff = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) > 60) diff > 0 ? goTo(current + 1) : goTo(current - 1);
+    });
+  </script>
+</body>
+</html>

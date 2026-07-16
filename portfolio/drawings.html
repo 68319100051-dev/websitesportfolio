@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="รวมภาพวาดลายเส้นของ Jet Konkamon">
+  <title>ภาพวาด | Jet Konkamon</title>
+  <meta property="og:title" content="ภาพวาดโดย Jet Konkamon">
+  <meta property="og:description" content="รวมภาพวาดลายเส้นดินสอของ Jet Konkamon — ทุกเส้นมีเรื่องราว">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <canvas id="particles"></canvas>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <nav class="navbar" role="navigation" aria-label="นำทางหลัก">
+    <div class="container">
+      <a href="index.html" class="nav-logo" aria-label="หน้าแรก">
+        <span class="dot"></span> Jet<span style="font-weight:400;color:var(--text-muted);">.</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" data-i18n="nav-home">หน้าแรก</a></li>
+        <li><a href="about.html" data-i18n="nav-about">เกี่ยวกับ</a></li>
+        <li><a href="projects.html" data-i18n="nav-projects">โปรเจกต์</a></li>
+        <li><a href="drawings.html" class="active" data-i18n="nav-drawings">ภาพวาด</a></li>
+        <li><a href="experience.html" data-i18n="nav-experience">ประสบการณ์</a></li>
+        <li><a href="achievements.html" data-i18n="nav-achievements">รางวัล</a></li>
+        <li><a href="guestbook.html" data-i18n="nav-guestbook">สมุดเยี่ยม</a></li>
+        <li><a href="contact.html" data-i18n="nav-contact">ติดต่อ</a></li>
+      </ul>
+      <div style="display:flex;align-items:center;">
+        <button class="lang-toggle" id="langToggle" aria-label="เปลี่ยนภาษา">EN</button>
+        <button class="menu-toggle" id="menuToggle" aria-label="เปิด/ปิดเมนู" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <button class="theme-toggle" id="themeToggle" aria-label="สลับโหมดมืด/สว่าง">
+          <span id="themeIcon">☀️</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+  <div class="page-hero">
+    <div class="container">
+      <span class="page-accent reveal" data-i18n="drawings-accent">✏️ ภาพวาด</span>
+      <h1 class="reveal reveal-delay-1" data-i18n="drawings-title">แกลเลอรีภาพวาด</h1>
+      <p class="reveal reveal-delay-2" data-editable="desc-drawings">รวมภาพวาดลายเส้นดินสอ — ทุกเส้นมีเรื่องราว</p>
+    </div>
+  </div>
+
+  <section id="drawings" style="padding-top:0;">
+    <div class="container">
+      <div class="drawings-grid" id="drawingsGrid"></div>
+    </div>
+  </section>
+  </div>
+
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">✕</button>
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev">‹</button>
+    <img class="lightbox-img" id="lightboxImg" alt="">
+    <button class="lightbox-nav lightbox-next" id="lightboxNext">›</button>
+    <div class="lightbox-counter" id="lightboxCounter"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p><span data-editable="footer-text">ออกแบบและพัฒนาโดย <span>Jet Konkamon</span> &copy; 2026 สงวนลิขสิทธิ์</span></p>
+      <p style="margin-top:0.75rem;font-size:0.75rem;"><a href="admin.html" style="color:var(--text-muted);opacity:0.4;transition:opacity var(--transition-fast);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'" data-i18n="footer-admin">🔒 Admin</a></p>
+    </div>
+  </footer>
+  <button class="back-to-top" id="backToTop" aria-label="กลับด้านบน">↑</button>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ติดต่อ Jet Konkamon — AI Developer & Full-Stack Developer">
+  <title>ติดต่อ | Jet Konkamon</title>
+  <meta property="og:title" content="ติดต่อ Jet Konkamon">
+  <meta property="og:description" content="ช่องทางติดต่อ Jet Konkamon — ส่งข้อความหรือพูดคุยเรื่องงานได้ที่นี่">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <canvas id="particles"></canvas>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <nav class="navbar" role="navigation" aria-label="นำทางหลัก">
+    <div class="container">
+      <a href="index.html" class="nav-logo" aria-label="หน้าแรก">
+        <span class="dot"></span> Jet<span style="font-weight:400;color:var(--text-muted);">.</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" data-i18n="nav-home">หน้าแรก</a></li>
+        <li><a href="about.html" data-i18n="nav-about">เกี่ยวกับ</a></li>
+        <li><a href="projects.html" data-i18n="nav-projects">โปรเจกต์</a></li>
+        <li><a href="drawings.html" data-i18n="nav-drawings">ภาพวาด</a></li>
+        <li><a href="experience.html" data-i18n="nav-experience">ประสบการณ์</a></li>
+        <li><a href="achievements.html" data-i18n="nav-achievements">รางวัล</a></li>
+        <li><a href="guestbook.html" data-i18n="nav-guestbook">สมุดเยี่ยม</a></li>
+        <li><a href="contact.html" data-i18n="nav-contact">ติดต่อ</a></li>
+      </ul>
+      <div style="display:flex;align-items:center;">
+        <button class="lang-toggle" id="langToggle" aria-label="เปลี่ยนภาษา">EN</button>
+        <button class="menu-toggle" id="menuToggle" aria-label="เปิด/ปิดเมนู" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <button class="theme-toggle" id="themeToggle" aria-label="สลับโหมดมืด/สว่าง">
+          <span id="themeIcon">☀️</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+  <div class="page-hero">
+    <div class="container">
+      <span class="page-accent reveal" data-i18n="contact-accent">06 — ติดต่อ</span>
+      <h1 class="reveal reveal-delay-1" data-i18n="contact-title">มาคุยกัน</h1>
+      <p class="reveal reveal-delay-2" data-editable="desc-contact">มีโปรเจกต์หรือไอเดีย? ส่งข้อความมาได้เลย</p>
+    </div>
+  </div>
+
+  <section id="contact" style="padding-top:0;">
+    <div class="container">
+      <div class="contact-grid">
+        <form class="contact-form reveal" id="contactForm" novalidate>
+          <div class="form-group">
+            <label for="name" data-i18n="contact-form-name">ชื่อ</label>
+            <input type="text" id="name" name="name" placeholder="ชื่อของคุณ" required autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="email" data-i18n="contact-form-email">อีเมล</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="message" data-i18n="contact-form-message">ข้อความ</label>
+            <textarea id="message" name="message" placeholder="อยากพูดคุยเรื่องอะไร?" required></textarea>
+          </div>
+          <button type="submit" class="form-submit" data-i18n="contact-form-submit">ส่งข้อความ</button>
+        </form>
+        <div class="contact-info reveal reveal-delay-2">
+          <h3 data-editable="contact-heading">ช่องทางติดต่อ</h3>
+          <p data-editable="contact-desc">เปิดรับทุกโอกาส ทั้งงานฟรีแลนซ์ ร่วมมือ หรือแค่พูดคุยเรื่องเทค</p>
+          <div class="contact-links">
+            <a href="mailto:konkamon4643@gmail.com" class="contact-link-item">
+              <span class="icon-circle">✉️</span>
+              <span data-editable="contact-email">konkamon4643@gmail.com</span>
+            </a>
+            <a href="https://github.com/JetKomon" target="_blank" rel="noopener noreferrer" class="contact-link-item">
+              <span class="icon-circle">🐙</span>
+              <span data-editable="contact-github">github.com/JetKomon</span>
+            </a>
+            <a href="https://linkedin.com/in/jetkonkamon" target="_blank" rel="noopener noreferrer" class="contact-link-item">
+              <span class="icon-circle">💼</span>
+              <span data-editable="contact-linkedin">linkedin.com/in/jetkonkamon</span>
+            </a>
+            <a href="https://www.facebook.com/uw.jet" target="_blank" rel="noopener noreferrer" class="contact-link-item">
+              <span class="icon-circle">📘</span>
+              <span>facebook.com/uw.jet</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p><span data-editable="footer-text">ออกแบบและพัฒนาโดย <span>Jet Konkamon</span> &copy; 2026 สงวนลิขสิทธิ์</span></p>
+      <p style="margin-top:0.75rem;font-size:0.75rem;"><a href="admin.html" style="color:var(--text-muted);opacity:0.4;transition:opacity var(--transition-fast);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'" data-i18n="footer-admin">🔒 Admin</a></p>
+    </div>
+  </footer>
+  <button class="back-to-top" id="backToTop" aria-label="กลับด้านบน">↑</button>
+
+  <script src="script.js"></script>
+</body>
+</html>

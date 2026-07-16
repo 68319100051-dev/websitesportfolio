@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — ไม่พบหน้า | Jet Konkamon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .error-page {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      flex-direction: column; text-align: center; padding: 2rem;
+    }
+    .error-code {
+      font-family: var(--font-mono); font-size: clamp(5rem, 15vw, 10rem); font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      line-height: 1; letter-spacing: -0.05em;
+    }
+    .error-title { font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 700; margin: 1rem 0 0.5rem; }
+    .error-desc { color: var(--text-secondary); font-size: 0.95rem; max-width: 400px; margin-bottom: 2rem; }
+    .error-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="error-page">
+    <div class="error-code">404</div>
+    <h1 class="error-title">ไม่พบหน้าที่คุณหา</h1>
+    <p class="error-desc">หรือหน้านี้อาจถูกย้ายไปที่อื่น หรือลบไปแล้ว — กลับไปหน้าแรกเพื่อเริ่มต้นใหม่</p>
+    <div class="error-actions">
+      <a href="index.html" class="btn-primary">← กลับหน้าแรก</a>
+      <a href="projects.html" class="btn-outline">ดูผลงาน</a>
+    </div>
+  </div>
+
+  <script>
+    const c=document.getElementById('particles'); if(c){ const x=c.getContext('2d'); let p=[]; function r(){c.width=innerWidth;c.height=innerHeight} r(); addEventListener('resize',r); for(let i=0;i<60;i++) p.push({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-0.5)*0.5,vy:(Math.random()-0.5)*0.5,s:Math.random()*2+0.5}); (function a(){ x.clearRect(0,0,c.width,c.height); p.forEach(q=>{ q.x+=q.vx; q.y+=q.vy; if(q.x<0||q.x>c.width) q.vx*=-1; if(q.y<0||q.y>c.height) q.vy*=-1; x.beginPath(); x.arc(q.x,q.y,q.s,0,Math.PI*2); x.fillStyle='rgba(192,132,252,0.15)'; x.fill() }); requestAnimationFrame(a) })() }
+  </script>
+</body>
+</html>

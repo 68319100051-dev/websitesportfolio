@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ผลงานโปรเจกต์ของ Jet Konkamon — AI Developer & Full-Stack Developer">
+  <title>โปรเจกต์ | Jet Konkamon</title>
+  <meta property="og:title" content="ผลงานโปรเจกต์ | Jet Konkamon">
+  <meta property="og:description" content="รวมโปรเจกต์ของ Jet Konkamon — เกม, เว็บแอป, AI, และระบบต่าง ๆ">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <canvas id="particles"></canvas>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <nav class="navbar" role="navigation" aria-label="นำทางหลัก">
+    <div class="container">
+      <a href="index.html" class="nav-logo" aria-label="หน้าแรก">
+        <span class="dot"></span> Jet<span style="font-weight:400;color:var(--text-muted);">.</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" data-i18n="nav-home">หน้าแรก</a></li>
+        <li><a href="about.html" data-i18n="nav-about">เกี่ยวกับ</a></li>
+        <li><a href="projects.html" data-i18n="nav-projects">โปรเจกต์</a></li>
+        <li><a href="drawings.html" data-i18n="nav-drawings">ภาพวาด</a></li>
+        <li><a href="experience.html" data-i18n="nav-experience">ประสบการณ์</a></li>
+        <li><a href="achievements.html" data-i18n="nav-achievements">รางวัล</a></li>
+        <li><a href="guestbook.html" data-i18n="nav-guestbook">สมุดเยี่ยม</a></li>
+        <li><a href="contact.html" data-i18n="nav-contact">ติดต่อ</a></li>
+      </ul>
+      <div style="display:flex;align-items:center;">
+        <button class="lang-toggle" id="langToggle" aria-label="เปลี่ยนภาษา">EN</button>
+        <button class="menu-toggle" id="menuToggle" aria-label="เปิด/ปิดเมนู" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <button class="theme-toggle" id="themeToggle" aria-label="สลับโหมดมืด/สว่าง">
+          <span id="themeIcon">☀️</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+  <div class="page-hero">
+    <div class="container">
+      <span class="page-accent reveal" data-i18n="projects-accent">02 — โปรเจกต์</span>
+      <h1 class="reveal reveal-delay-1" data-i18n="projects-title">ผลงานที่สร้าง</h1>
+      <p class="reveal reveal-delay-2" data-editable="desc-projects">รวมโปรเจกต์ที่ผมสร้าง ตั้งแต่เว็บไซต์ AI ไปจนถึงเกมออนไลน์</p>
+    </div>
+  </div>
+
+  <section id="projects" style="padding-top:0;">
+    <div class="container">
+
+      <div class="project-disclaimer reveal" data-i18n="projects-disclaimer">⚠️ ทุกโปรเจกต์ยังเป็น Demo อยู่ระหว่างการพัฒนา — ฟีเจอร์ต่าง ๆ อาจยังไม่สมบูรณ์</div>
+
+      <div class="project-filters reveal">
+        <div class="project-filter-tabs">
+          <button class="project-filter-tab active" data-filter="all">ทั้งหมด</button>
+          <button class="project-filter-tab" data-filter="game">🎮 เกม</button>
+          <button class="project-filter-tab" data-filter="web">💻 เว็บแอป</button>
+          <button class="project-filter-tab" data-filter="ai">🤖 AI</button>
+        </div>
+        <div class="project-search-wrap">
+          <svg class="project-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="project-search" id="projectSearch" placeholder="ค้นหาโปรเจกต์..." autocomplete="off">
+        </div>
+      </div>
+
+      <h2 class="project-category-title reveal">
+        <span>🎮 เกม</span>
+        <span class="badge games">3 โปรเจกต์</span>
+      </h2>
+      <div class="projects-grid">
+
+
+
+        <article class="project-card reveal" data-project="forest" data-category="game">
+          <div class="project-thumb">
+            <img src="images/project-forest.png" alt="Lost in the Forest cover" loading="lazy">
+            <span class="project-badge render">⏳ Render</span>
+          </div>
+          <div class="project-body">
+            <span class="project-status live"><span class="dot"></span> ออนไลน์</span>
+            <div class="project-category">Game / Multiplayer / AI</div>
+            <h3>Lost in the Forest</h3>
+            <p>เกมกระดานเอาตัวรอดออนไลน์ 4 คน 7 วัน มี 10 Class, ระบบ Battle, AI Narrator (Claude), รองรับ Docker deploy</p>
+            <div class="project-tags">
+              <span>Node.js</span><span>Express</span><span>Socket.IO</span><span>Claude API</span><span>Docker</span>
+            </div>
+            <div class="project-links">
+              <a href="https://forest-survivalgame.onrender.com/" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                เล่น
+              </a>
+              <a href="https://github.com/JetKomon" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                โค้ด
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-project="cyberhack" data-category="game">
+          <div class="project-thumb">
+            <img src="images/project-cyberhack.png" alt="CyberHack cover" loading="lazy">
+          </div>
+          <div class="project-body">
+            <span class="project-status live"><span class="dot"></span> ออนไลน์</span>
+            <div class="project-category">Game / AI</div>
+            <h3>CyberHack: Programmer vs Rogue AI</h3>
+            <p>เกมพิมพ์สัมผัสธีม Cyberpunk สุดมันส์ ผู้เล่นรับบทเป็นโปรแกรมเมอร์ที่ต้องต่อสู้กับ Rogue AI ด้วยการพิมพ์คำสั่งโค้ดให้ถูกต้องและรวดเร็ว</p>
+            <div class="project-tags">
+              <span>Vanilla JS</span><span>TypeScript</span><span>Vite 5</span><span>HTML5</span>
+            </div>
+            <div class="project-links">
+              <a href="https://68319100051-dev.github.io/typing-game/" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                เล่น
+              </a>
+              <a href="https://github.com/JetKomon" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                โค้ด
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-project="plantfarm" data-category="game">
+          <div class="project-thumb">
+            <img src="images/project-plantfarm.png" alt="Plant Farm cover" loading="lazy">
+          </div>
+          <div class="project-body">
+            <span class="project-status live"><span class="dot"></span> ออนไลน์</span>
+            <div class="project-category">Game / Simulation</div>
+            <h3>Plant Farm</h3>
+            <p>เกมปลูกผักออนไลน์ ปลูก รดน้ำ เก็บเกี่ยว และขยายฟาร์มของคุณให้เติบโต</p>
+            <div class="project-tags">
+              <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>Vercel</span>
+            </div>
+            <div class="project-links">
+              <a href="https://plant-farm-psi.vercel.app/" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                เล่น
+              </a>
+              <a href="https://github.com/JetKomon" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                โค้ด
+              </a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <h2 class="project-category-title reveal" style="margin-top:4rem;">
+        <span>💻 โปรแกรม & เว็บแอป</span>
+        <span class="badge apps">8 โปรเจกต์</span>
+      </h2>
+      <div class="projects-grid">
+
+        <article class="project-card reveal" data-project="formfiller" data-category="ai">
+          <div class="project-thumb">
+            <img src="images/project-formfiller.png" alt="AI Google Form Filler cover" loading="lazy">
+            <span class="project-badge render">⏳ Render</span>
+          </div>
+          <div class="project-body">
+            <span class="project-status live"><span class="dot"></span> ออนไลน์</span>
+            <div class="project-category">Automation / AI</div>
+            <h3>AI Google Form Filler</h3>
+            <p>เครื่องกรอก Google Form อัตโนมัติด้วย AI รองรับหลายรูปแบบ กำหนดจำนวน และปัญญาประดิษฐ์ช่วยกรอก</p>
+            <div class="project-tags">
+              <span>Python</span><span>Selenium</span><span>AI</span><span>Automation</span>
+            </div>
+            <div class="project-links">
+              <a href="https://google-form-ai-assistant.onrender.com/" target="_blank" rel="noopener noreferrer" class="modal-link-live">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                เปิดดู
+              </a>
+              <a href="https://github.com/JetKomon" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                โค้ด
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-project="jetmusic" data-category="web">
+          <div class="project-thumb">
+            <img src="images/project-jetmusic.png" alt="Jet Music cover" loading="lazy">
+          </div>
+          <div class="project-body">
+            <span class="project-status live"><span class="dot"></span> ออนไลน์</span>
+            <div class="project-category">Music / Web App</div>
+            <h3>Jet Music</h3>
+            <p>แพลตฟอร์มฟังเพลงออนไลน์ สตรีมเพลง สร้างเพลย์ลิสต์ และค้นหาเพลงโปรดได้อย่างง่ายดาย</p>
+            <div class="project-tags">
+              <span>Next.js</span><span>React</span><span>TypeScript</span><span>Vercel</span>
+            </div>
+            <div class="project-links">
+              <a href="https://jet-music.vercel.app/" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                เปิด
+              </a>
+              <a href="https://github.com/JetKomon" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                โค้ด
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-project="drawstudio" data-category="web">
+          <div class="project-thumb">
+            <img src="images/project-drawstudio.png" alt="Draw Studio cover" loading="lazy">
+          </div>
+          <div class="project-body">
+            <span class="project-status live"><span class="dot"></span> ออนไลน์</span>
+            <div class="project-category">Creative / Web App</div>
+            <h3>Draw Studio</h3>
+            <p>เว็บวาดรูปออนไลน์ รองรับการวาดด้วยเมาส์/แท็บเล็ต ปรับขนาด画笔 เปลี่ยนสี และบันทึกเป็นรูปภาพ</p>
+            <div class="project-tags">
+              <span>HTML5 Canvas</span><span>Fabric.js</span><span>JavaScript</span><span>Vercel</span>
+            </div>
+            <div class="project-links">
+              <a href="https://drawstudio.vercel.app/" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                เปิด
+              </a>
+              <a href="https://github.com/JetKomon" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                โค้ด
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-project="fileguard" data-category="web">
+          <div class="project-thumb">
+            <img src="images/project-fileguard.png" alt="File Guard cover" loading="lazy">
+          </div>
+          <div class="project-body">
+            <span class="project-status live"><span class="dot"></span> ออนไลน์</span>
+            <div class="project-category">Utility / Web App</div>
+            <h3>File Guard</h3>
+            <p>โปรแกรมตรวจสอบไดรฟ์ จัดแยกหมวดหมู่ไฟล์ และแสดงสถานะการทำงาน แบบเรียลไทม์</p>
+            <div class="project-tags">
+              <span>React</span><span>TypeScript</span><span>Vite</span><span>Vercel</span><span>กำลังพัฒนา</span>
+            </div>
+            <div class="project-links">
+              <a href="https://file-guard-gr2o.vercel.app/" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                เปิด
+              </a>
+              <a href="https://github.com/JetKomon" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                โค้ด
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-project="portfolio" data-category="web">
+          <div class="project-thumb-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="project-body">
+            <span class="project-status dev"><span class="dot"></span> กำลังพัฒนา ไม่สามารถเปิดดูได้</span>
+            <div class="project-category">Portfolio / AI</div>
+            <h3>AI Developer Portfolio</h3>
+            <p>เว็บไซต์พอร์ตโฟลิโอส่วนตัวที่มี AI Chatbot ผู้ช่วย (Gemini), 3D Globe (Three.js), GitHub Contribution Heatmap และ Particle Effects</p>
+            <div class="project-tags">
+              <span>HTML/CSS/JS</span><span>Three.js</span><span>Gemini AI</span><span>Node.js</span>
+            </div>
+            <div class="project-links">
+              <a href="https://github.com/JetKomon" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                โค้ด
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-project="shuttle" data-category="web">
+          <div class="project-thumb-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="project-body">
+            <span class="project-status dev"><span class="dot"></span> กำลังพัฒนา ไม่สามารถเปิดดูได้</span>
+            <div class="project-category">Enterprise / Full-Stack</div>
+            <h3>Microchip Shuttle Portal</h3>
+            <p>ระบบจัดการรถ shuttle สำหรับพนักงาน Microchip Technology มี 3 บทบาท (Employee/Driver/Admin), แผนที่ Leaflet, Export Excel, รองรับ 2 ภาษา</p>
+            <div class="project-tags">
+              <span>React</span><span>TypeScript</span><span>Vite</span><span>Leaflet</span>
+            </div>
+            <div class="project-links">
+              <a href="https://github.com/JetKomon" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                โค้ด
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-project="peoplecounter" data-category="ai">
+          <div class="project-thumb-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="project-body">
+            <span class="project-status dev"><span class="dot"></span> กำลังพัฒนา ไม่สามารถเปิดดูได้</span>
+            <div class="project-category">AI / Computer Vision</div>
+            <h3>โปรแกรมตรวจจับคน</h3>
+            <p>แอปตรวจจับและนับจำนวนคนแบบเรียลไทม์ ใช้ TensorFlow.js + MoveNet MultiPose รองรับทั้งอัปโหลดรูปและกล้องสด</p>
+            <div class="project-tags">
+              <span>HTML/CSS/JS</span><span>TensorFlow.js</span><span>MoveNet</span>
+            </div>
+            <div class="project-links">
+              <a href="https://github.com/JetKomon" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                โค้ด
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-project="telegrambot" data-category="ai">
+          <div class="project-thumb-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <div class="project-body">
+            <span class="project-status dev"><span class="dot"></span> กำลังพัฒนา ไม่สามารถเปิดดูได้</span>
+            <div class="project-category">Bot / AI / Automation</div>
+            <h3>Enterprise Telegram AI Bot</h3>
+            <p>บอท Telegram อัจฉริยะ 50+ คำสั่ง รองรับ AI หลายตัว (Gemini, Claude, GPT-4o), RAG Memory, สร้างรูป, วิเคราะห์ PDF, Google Suite integration</p>
+            <div class="project-tags">
+              <span>Python</span><span>Multi-AI SDK</span><span>ChromaDB</span><span>SQLAlchemy</span>
+            </div>
+            <div class="project-links">
+              <a href="https://github.com/JetKomon" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                โค้ด
+              </a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <!-- PROJECT MODAL -->
+  <div class="modal-overlay" id="projectModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="ปิด">✕</button>
+      <div class="modal-header">
+        <div class="project-category" id="modalCategory"></div>
+        <h2 id="modalTitle"></h2>
+        <span class="project-status" id="modalStatus"></span>
+      </div>
+      <div class="modal-section">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> เกี่ยวกับโปรเจกต์</h3>
+        <p id="modalDescription"></p>
+        <div style="margin-top:0.75rem;padding:0.6rem 1rem;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:8px;font-size:0.82rem;color:var(--accent-3);display:flex;align-items:center;gap:0.5rem;">
+          <span>⚠️</span>
+          <span>กำลังพัฒนา อาจจะมีบั๊ก — ถ้าเจอปัญหาแจ้งได้เลยครับ</span>
+        </div>
+      </div>
+      <div class="modal-section">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> เทคโนโลยีที่ใช้</h3>
+        <div class="modal-tags" id="modalTech"></div>
+      </div>
+      <div class="modal-section">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> ความสามารถ</h3>
+        <ul id="modalFeatures"></ul>
+      </div>
+      <div class="modal-links" id="modalLinks"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p><span data-editable="footer-text">ออกแบบและพัฒนาโดย <span>Jet Konkamon</span> &copy; 2026 สงวนลิขสิทธิ์</span></p>
+      <p style="margin-top:0.75rem;font-size:0.75rem;"><a href="admin.html" style="color:var(--text-muted);opacity:0.4;transition:opacity var(--transition-fast);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'" data-i18n="footer-admin">🔒 Admin</a></p>
+    </div>
+  </footer>
+  <button class="back-to-top" id="backToTop" aria-label="กลับด้านบน">↑</button>
+
+  <script src="script.js"></script>
+</body>
+</html>

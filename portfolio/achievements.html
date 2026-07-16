@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="รางวัลและผลงานของ Jet Konkamon — AI Developer & Full-Stack Developer">
+  <title>รางวัลและผลงาน | Jet Konkamon</title>
+  <meta property="og:title" content="รางวัลและผลงาน | Jet Konkamon">
+  <meta property="og:description" content="รางวัล เกียรติประวัติ และกิจกรรมที่ Jet Konkamon เคยทำ">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <canvas id="particles"></canvas>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <nav class="navbar" role="navigation" aria-label="นำทางหลัก">
+    <div class="container">
+      <a href="index.html" class="nav-logo" aria-label="หน้าแรก">
+        <span class="dot"></span> Jet<span style="font-weight:400;color:var(--text-muted);">.</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" data-i18n="nav-home">หน้าแรก</a></li>
+        <li><a href="about.html" data-i18n="nav-about">เกี่ยวกับ</a></li>
+        <li><a href="projects.html" data-i18n="nav-projects">โปรเจกต์</a></li>
+        <li><a href="drawings.html" data-i18n="nav-drawings">ภาพวาด</a></li>
+        <li><a href="experience.html" data-i18n="nav-experience">ประสบการณ์</a></li>
+        <li><a href="achievements.html" data-i18n="nav-achievements">รางวัล</a></li>
+        <li><a href="guestbook.html" data-i18n="nav-guestbook">สมุดเยี่ยม</a></li>
+        <li><a href="contact.html" data-i18n="nav-contact">ติดต่อ</a></li>
+      </ul>
+      <div style="display:flex;align-items:center;">
+        <button class="lang-toggle" id="langToggle" aria-label="เปลี่ยนภาษา">EN</button>
+        <button class="menu-toggle" id="menuToggle" aria-label="เปิด/ปิดเมนู" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <button class="theme-toggle" id="themeToggle" aria-label="สลับโหมดมืด/สว่าง">
+          <span id="themeIcon">☀️</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+  <div class="page-hero">
+    <div class="container">
+      <span class="page-accent reveal" data-i18n="achievements-accent">05 — รางวัลและผลงาน</span>
+      <h1 class="reveal reveal-delay-1" data-i18n="achievements-title">รางวัลและผลงานที่ภาคภูมิใจ</h1>
+      <p class="reveal reveal-delay-2" data-editable="desc-achievements">ใบรับรองและรางวัลที่ได้รับ</p>
+    </div>
+  </div>
+
+  <section id="achievements" style="padding-top:2rem;">
+    <div class="container">
+      <div class="achievements-grid">
+        <div class="project-category-title reveal" style="grid-column:1/-1;margin-top:0;">
+          <span>🏆 รางวัลและการแข่งขัน</span>
+        </div>
+        <div class="achievement-card reveal" data-ach="motion">
+          <img src="images/award-motion-1.png" alt="รางวัลโมชั่นกราฟิก 2567" loading="lazy">
+          <div class="achievement-body">
+            <h3>🥇 รางวัลชนะเลิศ มาตรฐานระดับเหรียญทอง</h3>
+            <p>ทักษะพัฒนาสื่อประชาสัมพันธ์ โมชั่นกราฟิก ระดับ ปวช. ระดับจังหวัดฉะเชิงเทรา ปีการศึกษา 2567</p>
+          </div>
+        </div>
+        <div class="achievement-card reveal reveal-delay-1" data-ach="motion66">
+          <img src="images/award-motion66-1.png" alt="รางวัลโมชั่นกราฟิก 2566" loading="lazy">
+          <div class="achievement-body">
+            <h3>🥇 รางวัลชนะเลิศ มาตรฐานระดับเหรียญทอง</h3>
+            <p>ทักษะพัฒนาสื่อประชาสัมพันธ์ โมชั่นกราฟิก ระดับ ปวช. ระดับจังหวัดฉะเชิงเทรา ปีการศึกษา 2566</p>
+          </div>
+        </div>
+        <div class="achievement-card reveal reveal-delay-2" data-ach="logo">
+          <img src="images/activity-logo-1.png" alt="ออกแบบ LOGO" loading="lazy">
+          <div class="achievement-body">
+            <h3>🎨 เข้าร่วมการแข่งขันออกแบบตราสัญลักษณ์ (LOGO)</h3>
+            <p>แผนกวิชาเทคโนโลยีธุรกิจดิจิทัล วิทยาลัยอาชีวศึกษาฉะเชิงเทรา ภาคเรียนที่ 2/2567</p>
+          </div>
+        </div>
+
+        <div class="project-category-title reveal" style="grid-column:1/-1;">
+          <span>📋 กิจกรรมและผลงาน</span>
+        </div>
+        <div class="achievement-card reveal reveal-delay-1" data-ach="club">
+          <img src="images/activity-club-1.png" alt="รองประธานชมรมฯ" loading="lazy">
+          <div class="achievement-body">
+            <h3>รองประธานชมรมวิชาชีพเทคโนโลยีธุรกิจดิจิทัล</h3>
+            <p>ปฏิบัติหน้าที่รองประธานชมรมฯ ดูแลและประสานงานกิจกรรมของชมรมวิชาชีพเทคโนโลยีธุรกิจดิจิทัล</p>
+          </div>
+        </div>
+        <div class="achievement-card reveal reveal-delay-1" data-ach="stream">
+          <img src="images/activity-stream-1.png" alt="ถ่ายทอดสด" loading="lazy">
+          <div class="achievement-body">
+            <h3>ควบคุมกล้องและเบื้องหลังการถ่ายทอดสด</h3>
+            <p>ควบคุมกล้องและเบื้องหลัง พร้อมทำกราฟิกการรับรางวัลการประเมินศูนย์บ่มเพาะการอาชีวศึกษาระดับชาติ</p>
+          </div>
+        </div>
+        <div class="achievement-card reveal reveal-delay-1" data-ach="esport">
+          <img src="images/activity-esport-1.png" alt="E-Sport Games" loading="lazy">
+          <div class="achievement-body">
+            <h3>หัวหน้าทีมไลฟ์สดและหัวหน้าทีมกราฟิก</h3>
+            <p>หัวหน้าทีมไลฟ์สดและทีมกราฟิก E-Sport Games 2024 ถ่ายทอดสดการแข่งขันทักษะวิชาชีพ</p>
+          </div>
+        </div>
+        <div class="achievement-card reveal reveal-delay-1" data-ach="gencom">
+          <img src="images/activity-gencom-1.png" alt="Gen Com" loading="lazy">
+          <div class="achievement-body">
+            <h3>หัวหน้าทีมกราฟิกและดำเนินงาน</h3>
+            <p>คณะกรรมการดำเนินงานโครงการตอบปัญหา Gen Com — ดูแลกราฟิกและประสานงานให้กิจกรรมราบรื่น</p>
+          </div>
+        </div>
+        <div class="achievement-card reveal reveal-delay-2" data-ach="ghost">
+          <img src="images/activity-ghost-1.png" alt="CVC RADIO" loading="lazy">
+          <div class="achievement-body">
+            <h3>ดำเนินงานเบื้องหลังและทำกราฟิกรายการ</h3>
+            <p>คณะกรรมการดำเนินงานโครงการเล่าเรื่องผี CVC RADIO — ดูแลเบื้องหลังและกราฟิกรายการ</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <!-- ACHIEVEMENT MODAL -->
+  <div class="modal-overlay" id="achModal">
+    <div class="modal" style="max-width:560px;">
+      <button class="modal-close" id="achModalClose">✕</button>
+      <div id="achModalImages" style="display:none;margin:-2rem -2rem 1.5rem;border-radius:var(--radius-lg) var(--radius-lg) 0 0;overflow:hidden;max-height:260px;"></div>
+      <div class="modal-header" style="padding-right:0;">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;flex-wrap:wrap;">
+          <span id="achModalOrg" style="font-size:0.78rem;font-weight:600;color:var(--accent);background:var(--accent-glow);padding:0.25rem 0.75rem;border-radius:999px;text-transform:uppercase;letter-spacing:0.05em;font-family:var(--font-mono);"></span>
+          <span id="achModalPeriod" style="font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);"></span>
+        </div>
+        <h2 id="achModalTitle" style="font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;line-height:1.3;background:linear-gradient(135deg,var(--text-primary) 40%,var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0;"></h2>
+      </div>
+      <div class="modal-section">
+        <p id="achModalDesc" style="color:var(--text-secondary);font-size:0.95rem;line-height:1.75;"></p>
+      </div>
+      <div class="modal-section" id="achModalDetailsSection">
+        <h3 style="display:flex;align-items:center;gap:0.45rem;font-size:0.82rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">🏆 รายละเอียด</h3>
+        <ul id="achModalDetails" style="list-style:none;padding:0;margin:0;"></ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="lightbox" id="achLightbox">
+    <button class="lightbox-close" id="achLightboxClose">✕</button>
+    <button class="lightbox-nav lightbox-prev" id="achLightboxPrev">‹</button>
+    <img class="lightbox-img" id="achLightboxImg" src="" alt="">
+    <button class="lightbox-nav lightbox-next" id="achLightboxNext">›</button>
+    <span class="lightbox-counter" id="achLightboxCounter"></span>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p><span data-editable="footer-text">ออกแบบและพัฒนาโดย <span>Jet Konkamon</span> &copy; 2026 สงวนลิขสิทธิ์</span></p>
+      <p style="margin-top:0.75rem;font-size:0.75rem;"><a href="admin.html" style="color:var(--text-muted);opacity:0.4;transition:opacity var(--transition-fast);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'" data-i18n="footer-admin">🔒 Admin</a></p>
+    </div>
+  </footer>
+  <button class="back-to-top" id="backToTop" aria-label="กลับด้านบน">↑</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
