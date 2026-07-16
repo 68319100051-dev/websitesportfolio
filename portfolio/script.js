@@ -1423,8 +1423,8 @@ function defaultContent() {
     'ach-gencom-images': 'images/activity-gencom-1.png,images/activity-gencom-2.png',
     'ach-ghost-images': 'images/activity-ghost-1.png,images/activity-ghost-2.png',
 
-    'cloudinary-cloud': '',
-    'cloudinary-preset': '',
+    'cloudinary-cloud': 'mo8znakk',
+    'cloudinary-preset': 'portfolio',
 
     'pdf-path': 'images/portfolio กรกมล.pdf'
   };
