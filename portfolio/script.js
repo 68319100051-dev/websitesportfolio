@@ -1531,6 +1531,7 @@ function applyContent() {
   renderTimeline(data);
   renderDrawings(data);
   renderProjects(data);
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 }
 
 // ============================================================
