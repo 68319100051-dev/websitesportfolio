@@ -2,12 +2,32 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'portfolio', 'data.json');
 const DEFAULT_PASSWORD = 'admin123';
 let adminPassword = DEFAULT_PASSWORD;
+
+const UPLOAD_DIR = path.join(__dirname, 'portfolio', 'images', 'uploads');
+if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, UPLOAD_DIR),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname) || '.jpg';
+    cb(null, Date.now() + '-' + Math.random().toString(36).slice(2, 8) + ext);
+  }
+});
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)$/i;
+    cb(null, allowed.test(path.extname(file.originalname)));
+  }
+});
 
 app.use(express.json({ limit: '5mb' }));
 app.use(express.static(path.join(__dirname, 'portfolio')));
@@ -271,6 +291,49 @@ app.post('/api/ai/chat', async (req, res) => {
     } catch { continue; }
   }
   return res.status(502).json({ success: false, error: 'All models failed' });
+});
+
+// Image upload
+app.post('/api/upload', (req, res) => {
+  const pwd = req.body?.password || req.query?.password || '';
+  if (!pwd || hash(pwd) !== adminPassword) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+  upload.single('image')(req, res, (err) => {
+    if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ success: false, error: 'ไฟล์ใหญ่เกิน 10MB' });
+    }
+    if (err) return res.status(400).json({ success: false, error: 'Upload failed: ' + err.message });
+    if (!req.file) return res.status(400).json({ success: false, error: 'ไม่มีไฟล์รูป' });
+    const urlPath = 'images/uploads/' + req.file.filename;
+    res.json({ success: true, path: urlPath, filename: req.file.filename });
+  });
+});
+
+// List uploaded images
+app.get('/api/uploads', (req, res) => {
+  fs.readdir(UPLOAD_DIR, (err, files) => {
+    if (err) return res.json({ success: true, files: [] });
+    const images = files
+      .filter(f => /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)$/i.test(f))
+      .map(f => ({ name: f, path: 'images/uploads/' + f, url: '/images/uploads/' + f }));
+    res.json({ success: true, files: images });
+  });
+});
+
+// Delete uploaded image
+app.post('/api/upload/delete', (req, res) => {
+  const pwd = req.body?.password || req.query?.password || '';
+  if (!pwd || hash(pwd) !== adminPassword) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+  const filename = req.body?.filename;
+  if (!filename) return res.status(400).json({ success: false, error: 'No filename' });
+  const filePath = path.join(UPLOAD_DIR, path.basename(filename));
+  fs.unlink(filePath, (err) => {
+    if (err) return res.status(404).json({ success: false, error: 'File not found' });
+    res.json({ success: true });
+  });
 });
 
 app.get('*', (req, res) => {

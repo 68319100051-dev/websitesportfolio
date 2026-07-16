@@ -1834,6 +1834,8 @@ function showDashboard() {
 
   // Load drawings list
   setVal('admin-drawings-list', loadDrawingList().join('\n'));
+
+  loadUploads();
 }
 
 function tabAdmin(lang) {
@@ -1934,6 +1936,75 @@ function saveAdmin() {
     success.classList.add('show');
     setTimeout(() => success.classList.remove('show'), 3000);
   }
+}
+
+// Image upload functions
+function uploadImage() {
+  const input = document.getElementById('adminUploadInput');
+  const file = input?.files?.[0];
+  if (!file) { document.getElementById('uploadStatus').textContent = '⚠️ กรุณาเลือกรูปก่อน'; return; }
+
+  const pwd = sessionStorage.getItem('portfolio-admin-pwd') || 'admin123';
+  const fd = new FormData();
+  fd.append('image', file);
+  fd.append('password', pwd);
+
+  const statusEl = document.getElementById('uploadStatus');
+  statusEl.textContent = '⏳ กำลังอัปโหลด...';
+
+  fetch('/api/upload', { method: 'POST', body: fd })
+    .then(r => r.json())
+    .then(res => {
+      if (res.success) {
+        statusEl.textContent = '✅ อัปโหลดสำเร็จ: ' + res.path;
+        const preview = document.getElementById('uploadPreview');
+        preview.style.display = 'flex';
+        preview.innerHTML = '<img src="/' + res.path + '?t=' + Date.now() + '" alt=""><div><div class="path">' + res.path + '</div><button class="btn-outline" style="font-size:0.75rem;padding:0.3rem 0.6rem;margin-top:0.3rem;" onclick="navigator.clipboard.writeText(\'' + res.path + '\').then(()=>this.textContent=\'✅ คัดลอกแล้ว\')">📋 คัดลอก path</button></div>';
+        input.value = '';
+        loadUploads();
+      } else {
+        statusEl.textContent = '❌ ' + (res.error || 'อัปโหลดล้มเหลว');
+      }
+    })
+    .catch(err => { statusEl.textContent = '❌ การเชื่อมต่อผิดพลาด'; });
+}
+
+function loadUploads() {
+  fetch('/api/uploads')
+    .then(r => r.json())
+    .then(res => {
+      const grid = document.getElementById('uploadGrid');
+      if (!grid) return;
+      if (!res.success || !res.files?.length) {
+        grid.innerHTML = '<p style="color:var(--text-muted);font-size:0.82rem;">ยังไม่มีรูปที่อัปโหลด</p>';
+        return;
+      }
+      const pwd = sessionStorage.getItem('portfolio-admin-pwd') || 'admin123';
+      grid.innerHTML = res.files.map(f =>
+        '<div class="upload-item">' +
+          '<img src="/' + f.path + '?t=' + Date.now() + '" alt="" loading="lazy">' +
+          '<div class="upload-info">' + f.name.slice(-20) + '</div>' +
+          '<div class="upload-actions">' +
+            '<button onclick="navigator.clipboard.writeText(\'' + f.path + '\').then(()=>this.textContent=\'✅\')" title="คัดลอก path">📋</button>' +
+            '<button class="del" onclick="deleteUpload(\'' + f.name + '\',\'' + pwd + '\')" title="ลบ">🗑️</button>' +
+          '</div>' +
+        '</div>'
+      ).join('');
+    });
+}
+
+function deleteUpload(filename, pwd) {
+  if (!confirm('ลบ ' + filename + '?')) return;
+  fetch('/api/upload/delete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ filename, password: pwd })
+  })
+    .then(r => r.json())
+    .then(res => {
+      if (res.success) loadUploads();
+      else alert('❌ ' + (res.error || 'ลบไม่สำเร็จ'));
+    });
 }
 
 function logoutAdmin() {
