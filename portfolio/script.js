@@ -1437,7 +1437,14 @@ function syncFromServer() {
   fetchAPI('/data').then(res => {
     if (res?.success && res.data && Object.keys(res.data).length) {
       localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(res.data));
-      applyContent();
+      fetchAPI('/timeline').then(tlRes => {
+        if (tlRes?.success && tlRes.timeline) {
+          const merged = JSON.parse(localStorage.getItem(ADMIN_STORAGE_KEY)) || {};
+          merged.timeline = tlRes.timeline;
+          localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(merged));
+        }
+        applyContent();
+      }).catch(() => applyContent());
     }
   });
 }
@@ -1531,7 +1538,10 @@ function applyContent() {
 // ============================================================
 
 function renderTimeline(data) {
-  const tl = data?.timeline || null;
+  let tl = data?.timeline || null;
+  if (!tl) {
+    tl = loadTimelineData();
+  }
   if (!tl) return;
 
   // Work timeline
