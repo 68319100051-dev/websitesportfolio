@@ -1939,34 +1939,62 @@ function saveAdmin() {
 }
 
 // Image upload functions
+function compressImage(file, maxW, maxH, quality) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > maxW) { h = h * maxW / w; w = maxW; }
+        if (h > maxH) { w = w * maxH / h; h = maxH; }
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        c.toBlob((blob) => {
+          blob.name = file.name;
+          resolve(blob);
+        }, 'image/jpeg', quality);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 function uploadImage() {
   const input = document.getElementById('adminUploadInput');
   const file = input?.files?.[0];
   if (!file) { document.getElementById('uploadStatus').textContent = '⚠️ กรุณาเลือกรูปก่อน'; return; }
 
-  const pwd = sessionStorage.getItem('portfolio-admin-pwd') || 'admin123';
-  const fd = new FormData();
-  fd.append('image', file);
-  fd.append('password', pwd);
-
   const statusEl = document.getElementById('uploadStatus');
-  statusEl.textContent = '⏳ กำลังอัปโหลด...';
+  statusEl.textContent = '⏳ กำลังบีบอัดรูป...';
 
-  fetch('/api/upload', { method: 'POST', body: fd })
-    .then(r => r.json())
-    .then(res => {
-      if (res.success) {
-        statusEl.textContent = '✅ อัปโหลดสำเร็จ: ' + res.path;
-        const preview = document.getElementById('uploadPreview');
-        preview.style.display = 'flex';
-        preview.innerHTML = '<img src="/' + res.path + '?t=' + Date.now() + '" alt=""><div><div class="path">' + res.path + '</div><button class="btn-outline" style="font-size:0.75rem;padding:0.3rem 0.6rem;margin-top:0.3rem;" onclick="navigator.clipboard.writeText(\'' + res.path + '\').then(()=>this.textContent=\'✅ คัดลอกแล้ว\')">📋 คัดลอก path</button></div>';
-        input.value = '';
-        loadUploads();
-      } else {
-        statusEl.textContent = '❌ ' + (res.error || 'อัปโหลดล้มเหลว');
-      }
-    })
-    .catch(err => { statusEl.textContent = '❌ การเชื่อมต่อผิดพลาด'; });
+  compressImage(file, 1920, 1920, 0.75).then(compressed => {
+    const pwd = sessionStorage.getItem('portfolio-admin-pwd') || 'admin123';
+    const fd = new FormData();
+    fd.append('image', compressed, file.name.replace(/\.[^.]+$/, '.jpg'));
+    fd.append('password', pwd);
+
+    statusEl.textContent = '⏳ กำลังอัปโหลด...';
+
+    fetch('/api/upload', { method: 'POST', body: fd })
+      .then(r => r.json())
+      .then(res => {
+        if (res.success) {
+          statusEl.textContent = '✅ อัปโหลดสำเร็จ: ' + res.path;
+          const preview = document.getElementById('uploadPreview');
+          preview.style.display = 'flex';
+          preview.innerHTML = '<img src="/' + res.path + '?t=' + Date.now() + '" alt=""><div><div class="path">' + res.path + '</div><button class="btn-outline" style="font-size:0.75rem;padding:0.3rem 0.6rem;margin-top:0.3rem;" onclick="navigator.clipboard.writeText(\'' + res.path + '\').then(()=>this.textContent=\'✅ คัดลอกแล้ว\')">📋 คัดลอก path</button></div>';
+          input.value = '';
+          loadUploads();
+        } else {
+          statusEl.textContent = '❌ ' + (res.error || 'อัปโหลดล้มเหลว');
+        }
+      })
+      .catch(() => { statusEl.textContent = '❌ การเชื่อมต่อผิดพลาด'; });
+  });
 }
 
 function loadUploads() {
