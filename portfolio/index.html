@@ -52,12 +52,13 @@
 
   <div class="page-wrapper">
   <section id="hero">
-    <div class="hero-bg">
-      <img src="images/bg/bg-0.jpg" alt="" class="bg-cycle" data-editable-img="hero-bg-0">
-      <img src="images/bg/bg-1.jpg" alt="" class="bg-cycle" data-editable-img="hero-bg-1">
-      <img src="images/bg/bg-2.jpg" alt="" class="bg-cycle" data-editable-img="hero-bg-2">
+    <div class="hero-bg hero-profile">
+      <div class="hero-profile-top"><span>JET KONKAMON</span><span>PORTFOLIO / 2026</span></div>
+      <img src="images/jet-standing.png" alt="Jet Konkamon ในชุดสูท" class="hero-professional-photo" fetchpriority="high">
+      <div class="hero-profile-bottom">AI DEVELOPMENT <span>·</span> FULL-STACK DEVELOPMENT</div>
     </div>
     <div class="hero-content">
+      <p class="hero-eyebrow reveal" data-i18n="home-eyebrow">PORTFOLIO / AI & WEB DEVELOPMENT</p>
       <div class="hero-badge reveal">
         <span class="pulse"></span> <span data-editable="hero-badge">พร้อมรับงานใหม่</span>
       </div>
@@ -73,13 +74,14 @@
       <p class="hero-typing reveal reveal-delay-3">
         <span class="typing-text"></span><span class="typing-cursor">|</span>
       </p>
+      <p class="hero-summary reveal reveal-delay-3" data-i18n="home-summary">ผมออกแบบและพัฒนาเว็บแอปที่ใช้งานได้จริง โดยผสานการพัฒนาระบบ AI และงานออกแบบให้เป็นประสบการณ์ที่เรียบง่ายสำหรับผู้ใช้</p>
       <div class="hero-buttons reveal reveal-delay-4">
         <a href="projects.html" class="btn-primary">
-          ดูโปรเจกต์
+          <span data-i18n="home-projects-cta">ดูผลงาน</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
         <a href="contact.html" class="btn-outline">
-          ติดต่อผม
+          <span data-i18n="home-contact-cta">ติดต่อร่วมงาน</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         </a>
       </div>
@@ -98,6 +100,49 @@
         </div>
       </div>
     </div>
+  </section>
+  <section class="home-work" id="selected-work" aria-labelledby="home-work-title">
+    <div class="home-section-heading">
+      <div>
+        <span class="home-kicker" data-i18n="home-work-kicker">SELECTED WORK / ผลงานที่คัดเลือก</span>
+        <h2 id="home-work-title" data-i18n="home-work-title">ผลงานที่สะท้อนวิธีทำงาน</h2>
+      </div>
+      <a href="projects.html" class="home-all-link" data-i18n="home-work-all">ดูโปรเจกต์ทั้งหมด <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="home-work-grid">
+      <a href="projects.html#formfiller" class="home-work-card">
+        <div class="home-work-image"><img src="images/project-formfiller.png" alt="ภาพตัวอย่าง AI Google Form Filler" loading="lazy"></div>
+        <div class="home-work-body">
+          <span class="home-work-type">01 / AI AUTOMATION</span>
+          <h3>AI Google Form Filler <span aria-hidden="true">↗</span></h3>
+          <p data-i18n="home-work-formfiller">เครื่องมือใช้ AI ช่วยกรอกแบบฟอร์ม เพื่อให้งานซ้ำ ๆ ทำได้เร็วและเป็นระบบขึ้น</p>
+        </div>
+      </a>
+      <a href="projects.html#jetmusic" class="home-work-card">
+        <div class="home-work-image"><img src="images/project-jetmusic.png" alt="ภาพตัวอย่าง Jet Music" loading="lazy"></div>
+        <div class="home-work-body">
+          <span class="home-work-type">02 / WEB APPLICATION</span>
+          <h3>Jet Music <span aria-hidden="true">↗</span></h3>
+          <p data-i18n="home-work-jetmusic">เว็บแอปฟังเพลงที่ให้ความสำคัญกับการค้นหา การจัดเพลย์ลิสต์ และการใช้งานที่ลื่นไหล</p>
+        </div>
+      </a>
+      <a href="projects.html#forest" class="home-work-card">
+        <div class="home-work-image"><img src="images/project-forest.png" alt="ภาพตัวอย่าง Lost in the Forest" loading="lazy"></div>
+        <div class="home-work-body">
+          <span class="home-work-type">03 / GAME & REAL-TIME</span>
+          <h3>Lost in the Forest <span aria-hidden="true">↗</span></h3>
+          <p data-i18n="home-work-forest">เกมออนไลน์แบบหลายผู้เล่นที่เชื่อมการทำงานแบบเรียลไทม์กับระบบเล่าเรื่องด้วย AI</p>
+        </div>
+      </a>
+    </div>
+  </section>
+  <section class="home-contact-strip" aria-labelledby="home-contact-title">
+    <div>
+      <span class="home-kicker" data-i18n="home-contact-kicker">LET'S WORK TOGETHER</span>
+      <h2 id="home-contact-title" data-i18n="home-contact-title">มาสร้างผลงานที่ดีร่วมกัน</h2>
+      <p data-i18n="home-contact-desc">หากมีโปรเจกต์หรือโอกาสที่เหมาะสม ยินดีพูดคุยและแลกเปลี่ยนแนวคิดครับ</p>
+    </div>
+    <a href="contact.html" class="btn-primary" data-i18n="home-contact-cta">ติดต่อร่วมงาน</a>
   </section>
   </div>
 
