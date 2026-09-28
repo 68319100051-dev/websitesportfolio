@@ -1111,7 +1111,20 @@ const i18n = {
     'achievements-title': 'รางวัลและผลงานที่ภาคภูมิใจ',
     'contact-accent': '06 — ติดต่อ',
     'contact-title': 'ช่องทางติดต่อ',
-    'projects-disclaimer': '⚠️ ทุกโปรเจกต์ยังเป็น Demo อยู่ระหว่างการพัฒนา — ฟีเจอร์ต่าง ๆ อาจยังไม่สมบูรณ์'
+    'home-eyebrow': 'PORTFOLIO / AI & WEB DEVELOPMENT',
+    'home-summary': 'ผมออกแบบและพัฒนาเว็บแอปที่ใช้งานได้จริง โดยผสานการพัฒนาระบบ AI และงานออกแบบให้เป็นประสบการณ์ที่เรียบง่ายสำหรับผู้ใช้',
+    'home-projects-cta': 'ดูผลงาน',
+    'home-contact-cta': 'ติดต่อร่วมงาน',
+    'home-work-kicker': 'SELECTED WORK / ผลงานที่คัดเลือก',
+    'home-work-title': 'ผลงานที่สะท้อนวิธีทำงาน',
+    'home-work-all': 'ดูโปรเจกต์ทั้งหมด ↗',
+    'home-work-formfiller': 'เครื่องมือใช้ AI ช่วยกรอกแบบฟอร์ม เพื่อให้งานซ้ำ ๆ ทำได้เร็วและเป็นระบบขึ้น',
+    'home-work-jetmusic': 'เว็บแอปฟังเพลงที่ให้ความสำคัญกับการค้นหา การจัดเพลย์ลิสต์ และการใช้งานที่ลื่นไหล',
+    'home-work-forest': 'เกมออนไลน์แบบหลายผู้เล่นที่เชื่อมการทำงานแบบเรียลไทม์กับระบบเล่าเรื่องด้วย AI',
+    'home-contact-kicker': "LET'S WORK TOGETHER",
+    'home-contact-title': 'มาสร้างผลงานที่ดีร่วมกัน',
+    'home-contact-desc': 'หากมีโปรเจกต์หรือโอกาสที่เหมาะสม ยินดีพูดคุยและแลกเปลี่ยนแนวคิดครับ',
+    'projects-disclaimer': 'ผลงานบางรายการอยู่ระหว่างการพัฒนา รายละเอียดและความพร้อมใช้งานแสดงไว้ในแต่ละโปรเจกต์'
   },
   en: {
     'nav-home': 'Home',
@@ -1164,7 +1177,20 @@ const i18n = {
     'guestbook-desc': 'Leave a message — chat, encourage, or share your ideas!',
     'contact-accent': '06 — Contact',
     'contact-title': 'Contact Channels',
-    'projects-disclaimer': '⚠️ All projects are Demo versions under development — features may not be complete'
+    'home-eyebrow': 'PORTFOLIO / AI & WEB DEVELOPMENT',
+    'home-summary': 'I design and build practical web applications, combining AI development and thoughtful design into clear experiences for people.',
+    'home-projects-cta': 'View work',
+    'home-contact-cta': 'Get in touch',
+    'home-work-kicker': 'SELECTED WORK',
+    'home-work-title': 'Projects that show how I work',
+    'home-work-all': 'View all projects ↗',
+    'home-work-formfiller': 'An AI-assisted form tool that makes repetitive tasks faster and more structured.',
+    'home-work-jetmusic': 'A music web app focused on discovery, playlists, and a smooth listening experience.',
+    'home-work-forest': 'A multiplayer online game combining real-time interactions with AI-assisted storytelling.',
+    'home-contact-kicker': "LET'S WORK TOGETHER",
+    'home-contact-title': 'Let’s build something useful together',
+    'home-contact-desc': 'I’m open to discussing projects, opportunities, and ideas that are a good fit.',
+    'projects-disclaimer': 'Some projects are still in development. Availability is shown on each project.'
   }
 };
 
