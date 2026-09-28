@@ -1,0 +1,14 @@
+services:
+  - type: web
+    runtime: static
+    name: konkamon-portfolio-static
+    buildCommand: node build-static.js
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://konkamon-portfolio.onrender.com/api/*
+      - type: rewrite
+        source: /images/uploads/*
+        destination: https://konkamon-portfolio.onrender.com/images/uploads/*
+
