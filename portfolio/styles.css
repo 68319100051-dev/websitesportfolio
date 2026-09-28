@@ -2030,3 +2030,155 @@ html.theme-changing * {
 
 /* Keep the first screen readable immediately, even while scripts or images load. */
 #hero .reveal { opacity: 1; transform: none; transition: none; }
+
+/* Mobile usability: full navigation, comfortable touch targets, focused forms. */
+@media (max-width: 900px) {
+  .menu-toggle {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    margin-left: .25rem;
+  }
+  .menu-toggle[aria-expanded="true"] svg { display: none; }
+  .menu-toggle[aria-expanded="true"]::after {
+    content: '×';
+    color: var(--text-primary);
+    font-size: 1.7rem;
+    line-height: 1;
+  }
+  .nav-links,
+  .nav-links.open {
+    top: var(--navbar-height);
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(100dvh - var(--navbar-height));
+    max-height: none;
+    padding: 1.1rem clamp(1rem, 5vw, 2rem) calc(2rem + env(safe-area-inset-bottom));
+    background: var(--bg-primary);
+    backdrop-filter: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: .15rem;
+    border-top: 1px solid var(--border-color);
+  }
+  .nav-links li { width: 100%; }
+  .nav-links a,
+  .nav-links.open a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 52px;
+    padding: .75rem 1rem;
+    border-radius: 9px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    text-align: left;
+  }
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: var(--accent);
+    background: var(--bg-card-hover);
+    box-shadow: none;
+  }
+  body.menu-open { overflow: hidden; }
+}
+@media (max-width: 700px) {
+  .navbar .container { padding-inline: 1rem; }
+  .lang-toggle,
+  .theme-toggle {
+    min-width: 44px;
+    min-height: 44px;
+    display: grid;
+    place-items: center;
+    margin-left: .3rem;
+  }
+  #hero {
+    padding-top: calc(var(--navbar-height) + 1.8rem);
+    padding-bottom: 3rem;
+    gap: 1.75rem;
+  }
+  #hero .hero-name {
+    font-size: clamp(2.5rem, 10vw, 3.7rem);
+    overflow-wrap: anywhere;
+  }
+  .hero-summary { line-height: 1.7; }
+  .hero-profile { height: 340px; }
+  .home-work { padding-block: 3.75rem; }
+  .home-section-heading h2,
+  .home-contact-strip h2 { font-size: clamp(1.8rem, 7vw, 2.5rem); }
+  .home-work-card,
+  .project-card,
+  .achievement-card { border-radius: 12px; }
+  .project-filter-tab {
+    min-height: 44px;
+    padding-inline: 1rem;
+    font-size: .88rem;
+  }
+  .project-search { min-height: 48px; font-size: 1rem; }
+  .project-links a { min-height: 44px; padding-block: .5rem; }
+  .form-group input,
+  .form-group textarea { min-height: 48px; font-size: 1rem; }
+  .form-submit { width: 100%; min-height: 50px; align-self: stretch; }
+  .contact-link-item { min-height: 50px; }
+  .ai-bubble {
+    width: 48px;
+    height: 48px;
+    right: max(.85rem, env(safe-area-inset-right));
+    bottom: max(.85rem, env(safe-area-inset-bottom));
+  }
+  .ai-bubble img { width: 34px; height: 34px; }
+  .back-to-top {
+    width: 44px;
+    height: 44px;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: calc(4.4rem + env(safe-area-inset-bottom));
+  }
+  .ai-chat-overlay { align-items: flex-end; }
+  .ai-chat,
+  .ai-chat-overlay.open .ai-chat {
+    width: 100%;
+    max-width: 100%;
+    max-height: min(85dvh, 740px);
+    margin: 0;
+    border-radius: 20px 20px 0 0;
+    border-bottom: 0;
+  }
+  .ai-chat-header { min-height: 64px; }
+  .ai-chat-close { width: 44px; height: 44px; }
+  .ai-chat-msgs { min-height: 0; max-height: none; }
+  .ai-chat-input { min-height: 44px; font-size: 1rem; }
+  .ai-chat-send { min-width: 44px; min-height: 44px; }
+}
+@media (max-width: 380px) {
+  #hero .hero-name { font-size: clamp(2.15rem, 9.5vw, 2.7rem); }
+  #hero .hero-buttons { flex-direction: column; }
+  #hero .hero-buttons a {
+    width: 100%;
+    min-height: 50px;
+    justify-content: center;
+  }
+  .hero-profile { height: 300px; }
+  .hero-profile-top,
+  .hero-profile-bottom { font-size: .52rem; }
+  .home-work-body { padding: 1rem; }
+}
+@media (hover: none) {
+  .home-work-card:hover,
+  .project-card:hover,
+  .achievement-card:hover { transform: none; }
+}
+
+@media (max-width: 700px) {
+  .page-hero {
+    padding: calc(var(--navbar-height) + 1.5rem) 1.25rem 1.5rem;
+  }
+  .page-hero h1 { font-size: clamp(1.9rem, 8vw, 2.5rem); }
+  .page-hero p { font-size: .95rem; }
+  .modal-close { width: 44px; height: 44px; top: .65rem; right: .65rem; }
+  .modal-header { padding-right: 2.75rem; }
+}
