@@ -2027,3 +2027,6 @@ html.theme-changing * {
   .hero-profile-top, .hero-profile-bottom { left: 1rem; right: 1rem; font-size: .57rem; }
   .home-work-body { padding: 1.2rem; }
 }
+
+/* Keep the first screen readable immediately, even while scripts or images load. */
+#hero .reveal { opacity: 1; transform: none; transition: none; }
