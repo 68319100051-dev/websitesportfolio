@@ -2183,21 +2183,49 @@ html.theme-changing * {
   .modal-header { padding-right: 2.75rem; }
 }
 
-/* ARGO project cover */
-.project-thumb.argo-thumb {
-  display: flex; align-items: center; padding: 1.75rem;
-  color: #fff;
-  background: radial-gradient(circle at 78% 18%, rgba(106, 77, 255, 0.33), transparent 42%), linear-gradient(135deg, #151c36 0%, #161731 55%, #25145b 100%);
-}
-.argo-thumb-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; }
-.argo-thumb-icon { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 0.8rem; border-radius: 12px; background: linear-gradient(135deg, #7161ff, #5325da); box-shadow: 0 8px 24px rgba(83, 37, 218, 0.35); }
-.argo-thumb-icon svg { width: 31px; height: 31px; }
-.argo-thumb-name { font-family: var(--font-sans); font-size: 2.2rem; font-weight: 800; line-height: 1; letter-spacing: 0.08em; }
-.argo-thumb-caption { margin-top: 0.45rem; font-family: var(--font-mono); font-size: 0.67rem; font-weight: 600; letter-spacing: 0.22em; color: #bfc3e9; }
-.argo-thumb-orbit { position: absolute; right: -58px; bottom: -132px; width: 310px; height: 310px; border: 1px solid rgba(174, 156, 255, 0.2); border-radius: 50%; box-shadow: 0 0 0 38px rgba(174, 156, 255, 0.045), 0 0 0 79px rgba(174, 156, 255, 0.03); }
-
 /* Fill the scholarship cards while keeping their key subjects in frame. */
 .achievement-card[data-ach="siphraya"] img,
 .achievement-card[data-ach="banpho"] img { object-fit: cover; }
 .achievement-card[data-ach="siphraya"] img { object-position: center 44%; }
 .achievement-card[data-ach="banpho"] img { object-position: center 62%; }
+
+/* ARGO case study */
+.argo-project-links { flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; }
+.argo-project-links .argo-preview-button {
+  padding: 0.58rem 0.9rem; border-radius: 999px;
+  background: var(--accent); color: #140c20; font-weight: 700;
+}
+.argo-project-links .argo-preview-button:hover { background: var(--accent-light); color: #140c20; }
+.argo-preview-page { min-height: 100vh; background: var(--bg-primary); color: var(--text-primary); }
+.argo-preview-nav { border-bottom: 1px solid var(--border-color); background: var(--bg-secondary); }
+.argo-preview-nav .container { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 72px; }
+.argo-preview-brand { color: var(--text-primary); font-weight: 800; font-size: 1.05rem; text-decoration: none; }
+.argo-preview-back { color: var(--text-secondary); font-size: 0.88rem; text-decoration: none; }
+.argo-preview-back:hover { color: var(--accent-light); }
+.argo-preview-main { padding: 4.5rem 0 6rem; }
+.argo-preview-kicker { color: var(--accent); font: 600 0.72rem var(--font-mono); letter-spacing: 0.16em; }
+.argo-preview-main h1 { margin: 0.9rem 0 1rem; font-size: clamp(2.25rem, 5vw, 4rem); line-height: 1.12; letter-spacing: -0.045em; }
+.argo-preview-lead { max-width: 720px; color: var(--text-secondary); font-size: 1.05rem; line-height: 1.8; }
+.argo-preview-notice { max-width: 850px; margin: 2rem 0 3rem; padding: 1.25rem 1.5rem; border: 1px solid var(--border-light); border-left: 3px solid var(--accent); border-radius: var(--radius-md); background: var(--bg-card); color: var(--text-secondary); line-height: 1.75; }
+.argo-preview-notice strong { color: var(--text-primary); }
+.argo-preview-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+.argo-preview-figure { min-width: 0; margin: 0; overflow: hidden; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-card); }
+.argo-preview-figure:first-child { grid-column: 1 / -1; }
+.argo-preview-figure a { display: block; overflow: hidden; background: #f5f6fa; }
+.argo-preview-figure img { display: block; width: 100%; height: auto; transition: transform var(--transition-med); }
+.argo-preview-figure a:hover img { transform: scale(1.025); }
+.argo-preview-figure figcaption { padding: 1.25rem 1.4rem 1.45rem; }
+.argo-preview-figure figcaption span { color: var(--accent); font: 600 0.68rem var(--font-mono); letter-spacing: 0.12em; }
+.argo-preview-figure figcaption h2 { margin: 0.5rem 0 0.35rem; font-size: 1.15rem; }
+.argo-preview-figure figcaption p { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.65; }
+.argo-preview-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2.5rem; }
+.argo-preview-actions a { display: inline-flex; align-items: center; padding: 0.75rem 1.1rem; border: 1px solid var(--border-light); border-radius: 999px; color: var(--text-primary); text-decoration: none; font-weight: 600; }
+.argo-preview-actions a:first-child { background: var(--accent); border-color: var(--accent); color: #140c20; }
+.argo-preview-actions a:hover { border-color: var(--accent); }
+@media (max-width: 700px) {
+  .argo-preview-main { padding: 3rem 0 4rem; }
+  .argo-preview-grid { grid-template-columns: 1fr; gap: 1.1rem; }
+  .argo-preview-figure:first-child { grid-column: auto; }
+  .argo-preview-notice { padding: 1rem; }
+  .argo-preview-figure figcaption { padding: 1rem; }
+}
