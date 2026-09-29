@@ -2521,3 +2521,191 @@ html.theme-changing * {
   .hero-gacha-rotor, .hero-gacha-hint { transition: none !important; }
   .hero-gacha-face::before { animation: none !important; }
 }
+
+/* Subpages: carry the homepage's editorial palette through the portfolio. */
+.page-wrapper .page-hero {
+  overflow: hidden;
+  isolation: isolate;
+  border-bottom: 1px solid var(--border-color);
+  background:
+    radial-gradient(circle at 82% 16%, var(--accent-glow), transparent 34%),
+    linear-gradient(125deg, var(--bg-primary) 55%, var(--bg-secondary));
+}
+.page-wrapper .page-hero::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: min(45vw, 560px);
+  aspect-ratio: 1;
+  right: -8%;
+  top: -105%;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  box-shadow: 0 0 0 58px var(--accent-glow), 0 0 0 116px var(--accent-glow);
+  pointer-events: none;
+}
+.page-wrapper .page-hero h1 { max-width: 18ch; line-height: 1.18; }
+.page-wrapper .page-hero p { max-width: 650px; line-height: 1.75; }
+.page-wrapper .page-accent {
+  border-color: var(--border-color);
+  background: var(--bg-card);
+}
+
+/* About: framed portrait and readable story blocks. */
+#about .about-hero-grid { gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+#about .about-hero-img {
+  min-height: 480px;
+  align-items: flex-end;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(196, 173, 122, .21), transparent 46%),
+    linear-gradient(145deg, #2d3a2f, #111a15 80%);
+  box-shadow: 0 24px 55px rgba(0, 0, 0, .13);
+}
+#about .about-hero-img::before {
+  width: 72%;
+  padding-bottom: 72%;
+  border: 1px solid rgba(221, 201, 158, .26);
+  background: transparent;
+  opacity: 1;
+}
+#about .about-hero-img img {
+  width: auto;
+  max-width: 100%;
+  height: 480px;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, .26));
+}
+#about .about-hero-name { padding-top: 0; }
+#about .about-bio-grid { gap: 1rem; }
+#about .about-bio-grid p {
+  min-width: 0;
+  margin: 0;
+  padding: 1.4rem 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--bg-card);
+}
+#about .about-bio-grid p:first-child {
+  grid-column: 1 / -1;
+  border-left: 3px solid var(--accent);
+  font-size: 1.04rem;
+}
+#about .about-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; }
+#about .skill-bar-item {
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+
+/* Projects and awards: give browsing controls and image cards a clear frame. */
+#projects .project-filters {
+  padding: .85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--bg-card);
+}
+#projects .projects-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); }
+#projects .project-card { display: flex; flex-direction: column; }
+#projects .project-body { display: flex; flex-direction: column; flex: 1; }
+#projects .project-tags { margin-top: auto; }
+#projects .project-links { flex-wrap: wrap; gap: .65rem 1rem; }
+#achievements .achievement-card {
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .06);
+}
+#achievements .achievement-body { padding: 1.35rem; }
+#achievements .achievement-body h3 { line-height: 1.45; }
+#achievements .achievement-body p { line-height: 1.65; }
+
+/* Experience: cards make dates, places and descriptions easier to scan. */
+#education .section-header,
+#experience .section-header { max-width: 800px; margin-inline: auto; text-align: left; }
+#education .timeline,
+#experience .timeline { max-width: 800px; }
+#education .timeline-item,
+#experience .timeline-item {
+  margin-bottom: 1rem;
+  padding: 1.35rem 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--bg-card);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .04);
+}
+#education .timeline-item:last-child,
+#experience .timeline-item:last-child { margin-bottom: 0; }
+#education .timeline-item:first-child::before,
+#experience .timeline-item:first-child::before {
+  content: '';
+  position: absolute;
+  left: -3rem;
+  top: 1.65rem;
+  width: 14px;
+  height: 14px;
+  border: 3px solid var(--bg-primary);
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+#education .timeline-dot,
+#experience .timeline-dot { top: 1.65rem; }
+#education .timeline-item p,
+#experience .timeline-item p { line-height: 1.65; }
+
+/* Contact and guestbook: clear surfaces for the primary action. */
+#contact .contact-grid { max-width: 1050px; gap: 1.25rem; align-items: stretch; }
+#contact .contact-form,
+#contact .contact-info,
+.page-wrapper .gb-form {
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  background: var(--bg-card);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, .05);
+}
+#contact .contact-info { justify-content: flex-start; gap: 1rem; }
+#contact .contact-link-item {
+  min-width: 0;
+  padding: .55rem .7rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-primary);
+  overflow-wrap: anywhere;
+}
+#contact .form-submit { min-height: 48px; color: #191a16; }
+[data-theme="light"] #contact .form-submit { color: #fff; }
+.page-wrapper .gb-form { margin-bottom: 1.25rem; }
+.page-wrapper .gb-empty {
+  border: 1px dashed var(--border-light);
+  border-radius: 14px;
+  background: var(--bg-card);
+}
+
+@media (max-width: 900px) {
+  #about .about-hero-img { min-height: 0; max-width: 470px; width: 100%; margin-inline: auto; }
+  #about .about-hero-img img { height: min(58vw, 450px); }
+  #education .timeline-item:first-child::before,
+  #experience .timeline-item:first-child::before { left: -2rem; }
+}
+@media (max-width: 700px) {
+  .page-wrapper .page-hero::after { width: 65vw; top: -45%; right: -30%; }
+  #about .about-bio-grid { grid-template-columns: 1fr; }
+  #about .about-bio-grid p:first-child { grid-column: auto; }
+  #about .about-cards { grid-template-columns: 1fr; }
+  #about .about-hero-img img { height: min(85vw, 390px); }
+  #projects .project-filters { padding: .7rem; }
+  #education .timeline-item,
+  #experience .timeline-item { padding: 1rem 1.1rem; }
+  #contact .contact-form,
+  #contact .contact-info { padding: 1.25rem; }
+  #contact .form-submit,
+  .page-wrapper .gb-submit { align-self: stretch; width: 100%; justify-content: center; }
+}
+@media (max-width: 380px) {
+  #education .timeline-item:first-child::before,
+  #experience .timeline-item:first-child::before { left: -1.5rem; }
+}
