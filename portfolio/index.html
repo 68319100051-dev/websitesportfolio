@@ -52,13 +52,25 @@
 
   <div class="page-wrapper">
   <section id="hero">
-    <div class="hero-bg hero-profile">
-      <div class="hero-profile-top"><span>JET KONKAMON</span><span>PORTFOLIO / 2026</span></div>
-      <img src="images/jet-standing.png" alt="Jet Konkamon ในชุดสูท" class="hero-professional-photo" fetchpriority="high">
-      <div class="hero-profile-chip hero-profile-chip-ai" aria-hidden="true"><span>01 / FOCUS</span><strong>AI SYSTEMS</strong></div>
-      <div class="hero-profile-chip hero-profile-chip-web" aria-hidden="true"><span>02 / BUILD</span><strong>WEB APPS</strong></div>
-      <div class="hero-profile-bottom">AI DEVELOPMENT <span>·</span> FULL-STACK DEVELOPMENT</div>
-    </div>
+    <button class="hero-bg hero-profile hero-gacha" id="heroGachaCard" type="button" aria-label="การ์ดนักพัฒนา: AI Systems และ Web Apps กดเพื่อดูอีกด้าน" aria-pressed="false">
+      <span class="hero-gacha-rotor" aria-hidden="true">
+        <span class="hero-gacha-face hero-gacha-front">
+          <span class="hero-profile-top"><span>JET KONKAMON</span><span>PORTFOLIO / 2026</span></span>
+          <img src="images/jet-standing.png" alt="" class="hero-professional-photo" fetchpriority="high">
+          <span class="hero-profile-chip hero-profile-chip-ai"><span>01 / FOCUS</span><strong>AI SYSTEMS</strong></span>
+          <span class="hero-profile-chip hero-profile-chip-web"><span>02 / BUILD</span><strong>WEB APPS</strong></span>
+          <span class="hero-profile-bottom">AI DEVELOPMENT <span>·</span> FULL-STACK DEVELOPMENT</span>
+        </span>
+        <span class="hero-gacha-face hero-gacha-back">
+          <span class="hero-profile-top"><span>JET KONKAMON</span><span>CREATIVE / 2026</span></span>
+          <img src="images/jet-night-cutout.webp" alt="" class="hero-professional-photo" decoding="async">
+          <span class="hero-profile-chip hero-profile-chip-ai"><span>01 / CREATE</span><strong>UI / UX</strong></span>
+          <span class="hero-profile-chip hero-profile-chip-web"><span>02 / CRAFT</span><strong>CREATIVE CODE</strong></span>
+          <span class="hero-profile-bottom">UI / UX <span>·</span> CREATIVE DEVELOPMENT</span>
+        </span>
+      </span>
+      <span class="hero-gacha-hint" aria-hidden="true">↻ <span>กดเพื่อสลับการ์ด</span></span>
+    </button>
     <div class="hero-content">
       <p class="hero-eyebrow reveal" data-i18n="home-eyebrow">PORTFOLIO / AI & WEB DEVELOPMENT</p>
       <div class="hero-badge reveal">
