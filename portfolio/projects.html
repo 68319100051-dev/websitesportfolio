@@ -108,29 +108,23 @@
         </article>
 
         <article class="project-card reveal" id="argo" data-project="argo" data-category="web">
-          <div class="project-thumb argo-thumb" role="img" aria-label="ARGO Inventory System ระบบบริหารคลังสินค้า">
-            <div class="argo-thumb-content">
-              <span class="argo-thumb-icon" aria-hidden="true">
-                <svg viewBox="0 0 48 48" fill="none"><path d="m24 7 8 5v9l-8 5-8-5v-9l8-5Z" stroke="currentColor" stroke-width="2.5"/><path d="m16 21-8 5v9l8 5 8-5v-9M32 21l8 5v9l-8 5-8-5" stroke="currentColor" stroke-width="2.5"/><path d="m16 21 8 5 8-5M16 40l8-5 8 5" stroke="currentColor" stroke-width="2.5"/></svg>
-              </span>
-              <span class="argo-thumb-name">ARGO</span>
-              <span class="argo-thumb-caption">INVENTORY SYSTEM</span>
-            </div>
-            <span class="argo-thumb-orbit" aria-hidden="true"></span>
+          <div class="project-thumb">
+            <img src="images/argo-dashboard.png" alt="ภาพตัวอย่างแดชบอร์ด ARGO Inventory" loading="lazy">
           </div>
           <div class="project-body">
             <span class="project-status live"><span class="dot"></span> ออนไลน์ · ต้องเข้าสู่ระบบ</span>
             <div class="project-category">Inventory / Web App / AI</div>
             <h3>ARGO Inventory System</h3>
-            <p>ระบบบริหารคลังสินค้าและสต็อก รองรับการรับเข้า เบิกออก และโอนย้ายสินค้า พร้อมสแกน QR ดูรายงาน และใช้ AI ช่วยวิเคราะห์</p>
+            <p>ระบบบริหารคลังสินค้าและสต็อกที่นำไปใช้งานจริงในบริษัทแห่งหนึ่ง พร้อมงานรับเข้า เบิกออก โอนย้าย สแกน QR และ AI ช่วยวิเคราะห์</p>
             <div class="project-tags">
               <span>Inventory</span><span>QR Code</span><span>AI</span><span>Vercel</span>
             </div>
-            <div class="project-links">
-              <a href="https://argo-phi-five.vercel.app/auth/login" target="_blank" rel="noopener noreferrer">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                เปิดหน้าเข้าสู่ระบบ
+            <div class="project-links argo-project-links">
+              <a href="argo-preview.html" class="argo-preview-button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="2"/><path d="m21 17-6-6-8 8"/></svg>
+                ดูตัวอย่างระบบภายใน
               </a>
+              <a href="https://argo-phi-five.vercel.app/auth/login" target="_blank" rel="noopener noreferrer">หน้าเข้าสู่ระบบ ↗</a>
             </div>
           </div>
         </article>
@@ -398,7 +392,7 @@
       <div class="modal-section">
         <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> เกี่ยวกับโปรเจกต์</h3>
         <p id="modalDescription"></p>
-        <div style="margin-top:0.75rem;padding:0.6rem 1rem;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:8px;font-size:0.82rem;color:var(--accent-3);display:flex;align-items:center;gap:0.5rem;">
+        <div id="projectDevelopmentNote" style="margin-top:0.75rem;padding:0.6rem 1rem;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:8px;font-size:0.82rem;color:var(--accent-3);display:flex;align-items:center;gap:0.5rem;">
           <span>⚠️</span>
           <span>กำลังพัฒนา อาจจะมีบั๊ก — ถ้าเจอปัญหาแจ้งได้เลยครับ</span>
         </div>
