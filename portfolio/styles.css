@@ -656,6 +656,13 @@ body:not(:has(#hero)) #particles { opacity: 1; }
   background: rgba(59,130,246,0.9); color: #fff;
   backdrop-filter: blur(4px);
 }
+.project-badge.featured {
+  background: linear-gradient(120deg, #e5cf92, #a77b39);
+  color: #1c2019;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  font-weight: 700;
+}
 .project-card:hover .project-thumb { transform: scale(1.02); }
 .project-thumb-placeholder {
   width: 100%; height: 220px;
@@ -1942,6 +1949,7 @@ html.theme-changing * {
 .home-work-image {
   aspect-ratio: 16 / 10;
   overflow: hidden;
+  position: relative;
   background: var(--bg-card-hover);
   border-bottom: 1px solid var(--border-color);
 }
