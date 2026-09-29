@@ -2182,3 +2182,22 @@ html.theme-changing * {
   .modal-close { width: 44px; height: 44px; top: .65rem; right: .65rem; }
   .modal-header { padding-right: 2.75rem; }
 }
+
+/* ARGO project cover */
+.project-thumb.argo-thumb {
+  display: flex; align-items: center; padding: 1.75rem;
+  color: #fff;
+  background: radial-gradient(circle at 78% 18%, rgba(106, 77, 255, 0.33), transparent 42%), linear-gradient(135deg, #151c36 0%, #161731 55%, #25145b 100%);
+}
+.argo-thumb-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; }
+.argo-thumb-icon { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 0.8rem; border-radius: 12px; background: linear-gradient(135deg, #7161ff, #5325da); box-shadow: 0 8px 24px rgba(83, 37, 218, 0.35); }
+.argo-thumb-icon svg { width: 31px; height: 31px; }
+.argo-thumb-name { font-family: var(--font-sans); font-size: 2.2rem; font-weight: 800; line-height: 1; letter-spacing: 0.08em; }
+.argo-thumb-caption { margin-top: 0.45rem; font-family: var(--font-mono); font-size: 0.67rem; font-weight: 600; letter-spacing: 0.22em; color: #bfc3e9; }
+.argo-thumb-orbit { position: absolute; right: -58px; bottom: -132px; width: 310px; height: 310px; border: 1px solid rgba(174, 156, 255, 0.2); border-radius: 50%; box-shadow: 0 0 0 38px rgba(174, 156, 255, 0.045), 0 0 0 79px rgba(174, 156, 255, 0.03); }
+
+/* Fill the scholarship cards while keeping their key subjects in frame. */
+.achievement-card[data-ach="siphraya"] img,
+.achievement-card[data-ach="banpho"] img { object-fit: cover; }
+.achievement-card[data-ach="siphraya"] img { object-position: center 44%; }
+.achievement-card[data-ach="banpho"] img { object-position: center 62%; }
