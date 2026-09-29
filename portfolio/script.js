@@ -280,21 +280,18 @@ const projectData = {
     title: 'Jet Music',
     category: 'Music / Web & Android',
     status: '<span class="project-status live"><span class="dot"></span> ออนไลน์</span>',
-    description: 'แพลตฟอร์มฟังเพลงออนไลน์แบบ PWA รองรับการสตรีมจาก YouTube และ SoundCloud มีระบบจัดการเพลย์ลิสต์ แสดงเนื้อเพลง และระบบเล่นต่อเนื่องแบบ Background บน Android ผ่าน Capacitor',
-    tech: ['Next.js 16', 'React 19', 'TypeScript', 'Capacitor 8', 'Supabase', 'Upstash Redis'],
+    production: true,
+    description: 'โปรเจ็กต์ฟังเพลงที่เปิดใช้งานได้ทั้งบนเว็บและแอป Android พร้อมเพลย์ลิสต์ เนื้อเพลง และการเล่นเพลงต่อเนื่อง ออกแบบให้เข้าถึงเพลงโปรดได้สะดวกในชีวิตประจำวัน',
+    tech: ['TypeScript'],
     features: [
-      'สตรีมเพลงจาก YouTube และ SoundCloud',
+      'ฟังเพลงได้ทั้งบนเว็บและแอป Android',
       'สร้างและจัดการเพลย์ลิสต์ส่วนตัว',
       'แสดงเนื้อเพลงแบบซิงค์',
-      'PWA รองรับการใช้งานแบบ Offline',
-      'Background Audio Playback บน Android',
-      'Redis Cache เพื่อประสิทธิภาพ',
-      'Supabase สำหรับเก็บข้อมูลผู้ใช้',
-      'รองรับทั้ง Web และ Android',
+      'เล่นเพลงต่อเนื่องขณะใช้งานแอป Android',
+      'ดาวน์โหลดแอป Android ได้จากเว็บไซต์',
     ],
     live: 'https://jet-music.vercel.app/',
-    code: 'https://github.com/JetKomon',
-    note: '📱 แอป Android พัฒนาเสร็จแล้ว ดาวน์โหลดได้จากเว็บไซต์ Jet Music ผ่านลิงก์ด้านล่าง'
+    note: '⭐ โปรเจ็กต์แนะนำ — ลองใช้งาน Jet Music บนเว็บ หรือดาวน์โหลดแอป Android ได้จากเว็บไซต์ผ่านลิงก์ด้านล่าง'
   },
   drawstudio: {
     title: 'Draw Studio',
@@ -442,6 +439,7 @@ const modalCategory = document.getElementById('modalCategory');
 const modalStatus = document.getElementById('modalStatus');
 const modalDescription = document.getElementById('modalDescription');
 const modalTech = document.getElementById('modalTech');
+const modalTechHeadingText = document.getElementById('modalTechHeadingText');
 const modalFeatures = document.getElementById('modalFeatures');
 const modalLinks = document.getElementById('modalLinks');
 
@@ -453,6 +451,7 @@ function openModal(id) {
   modalCategory.textContent = data.category;
   modalStatus.innerHTML = data.status;
   modalDescription.textContent = data.description;
+  if (modalTechHeadingText) modalTechHeadingText.textContent = id === 'jetmusic' ? 'ภาษาที่ใช้พัฒนา' : 'เทคโนโลยีที่ใช้';
   const developmentNote = document.getElementById('projectDevelopmentNote');
   if (developmentNote) developmentNote.style.display = data.production ? 'none' : 'flex';
 
@@ -1179,7 +1178,8 @@ const i18n = {
     'home-work-title': 'ผลงานที่สะท้อนวิธีทำงาน',
     'home-work-all': 'ดูโปรเจกต์ทั้งหมด ↗',
     'home-work-formfiller': 'เครื่องมือใช้ AI ช่วยกรอกแบบฟอร์ม เพื่อให้งานซ้ำ ๆ ทำได้เร็วและเป็นระบบขึ้น',
-    'home-work-jetmusic': 'แพลตฟอร์มฟังเพลงบนเว็บ พร้อมแอป Android ที่ดาวน์โหลดได้จากเว็บไซต์',
+    'home-work-featured': '★ โปรเจ็กต์แนะนำ',
+    'home-work-jetmusic': 'ลองฟังเพลง จัดเพลย์ลิสต์ และดาวน์โหลดแอป Android ได้จากเว็บไซต์ Jet Music',
     'home-work-forest': 'เกมออนไลน์แบบหลายผู้เล่นที่เชื่อมการทำงานแบบเรียลไทม์กับระบบเล่าเรื่องด้วย AI',
     'home-contact-kicker': "LET'S WORK TOGETHER",
     'home-contact-title': 'มาสร้างผลงานที่ดีร่วมกัน',
@@ -1245,7 +1245,8 @@ const i18n = {
     'home-work-title': 'Projects that show how I work',
     'home-work-all': 'View all projects ↗',
     'home-work-formfiller': 'An AI-assisted form tool that makes repetitive tasks faster and more structured.',
-    'home-work-jetmusic': 'A music platform for the web, with an Android app available to download from its website.',
+    'home-work-featured': '★ Featured project',
+    'home-work-jetmusic': 'Listen to music, make playlists, and download the Android app from the Jet Music website.',
     'home-work-forest': 'A multiplayer online game combining real-time interactions with AI-assisted storytelling.',
     'home-contact-kicker': "LET'S WORK TOGETHER",
     'home-contact-title': 'Let’s build something useful together',
@@ -1857,7 +1858,7 @@ function doLogin() {
   const pwd = document.getElementById('adminPassword')?.value;
   if (!pwd) return;
 
-  const localPwd = localStorage.getItem('portfolio-admin-password') || 'admin123';
+  const localPwd = localStorage.getItem('portfolio-admin-password');
 
   fetchAPI('/verify', {
     method: 'POST',
@@ -1865,13 +1866,13 @@ function doLogin() {
   }).then(res => {
     if (res?.success) {
       loginSuccess(pwd);
-    } else if (pwd === localPwd) {
+    } else if (localPwd && pwd === localPwd) {
       loginSuccess(pwd);
     } else {
       document.getElementById('adminError')?.classList.add('show');
     }
   }).catch(() => {
-    if (pwd === localPwd) {
+    if (localPwd && pwd === localPwd) {
       loginSuccess(pwd);
     } else {
       document.getElementById('adminError')?.classList.add('show');
@@ -2108,7 +2109,7 @@ function uploadImage() {
       });
     } else {
       statusEl.textContent = '⏳ กำลังอัปโหลด...';
-      const pwd = sessionStorage.getItem('portfolio-admin-pwd') || 'admin123';
+      const pwd = sessionStorage.getItem('portfolio-admin-pwd') || '';
       const fd = new FormData();
       fd.append('image', compressed, fileName);
       fd.append('password', pwd);
@@ -2164,7 +2165,7 @@ function loadUploads() {
         grid.innerHTML = '<p style="color:var(--text-muted);font-size:0.82rem;">ยังไม่มีรูปที่อัปโหลด</p>';
         return;
       }
-      const pwd = sessionStorage.getItem('portfolio-admin-pwd') || 'admin123';
+      const pwd = sessionStorage.getItem('portfolio-admin-pwd') || '';
       grid.innerHTML = res.files.map(f =>
         '<div class="upload-item">' +
           '<img src="/' + f.path + '?t=' + Date.now() + '" alt="" loading="lazy">' +
@@ -2221,34 +2222,13 @@ if (langToggle) {
 
   // AI ไม่ต้องใช้ localStorage key แล้ว — เรียกผ่าน backend
 
-  const AI_SYSTEM_PROMPT_TH = `คุณคือผู้ช่วยเว็บไซต์พอร์ตโฟลิโอของ Jet Konkamon (นายกรกมล พุทธคาวี)
-ข้อมูลเกี่ยวกับ Jet:
-- ชื่อ: Jet Konkamon (นายกรกมล พุทธคาวี) ชื่อเล่น เจ็ท
-- อายุ 19 ปี เกิด 16 ตุลาคม 2549 เชื้อชาติไทย ศาสนาพุทธ
-- ตำแหน่ง: AI Developer & Full-Stack Developer และนักวาดเส้นสาย
-- การศึกษา: กำลังศึกษาสาขาเทคโนโลยีธุรกิจดิจิทัล วิทยาลัยอาชีวศึกษาฉะเชิงเทรา
-- สนใจและถนัดด้าน AI, Full-Stack Development, การวาดรูป, ออกแบบกราฟิก
-- ทักษะ: JavaScript, TypeScript, Python, Node.js, React, Next.js, TensorFlow.js, Stable Diffusion, AI (Gemini, Claude, GPT), Adobe Master Collection (Photoshop, Illustrator, Premiere Pro, After Effects), Microsoft Office, Firebase, Docker, PostgreSQL, MongoDB
-- ผลงานเด่น: Lost in the Forest (เกม Multiplayer 4 คน + AI Narrator), CyberHack (เกมพิมพ์สัมผัส), Plant Farm (เกมปลูกผัก), Jet Music (แพลตฟอร์มเพลง), Draw Studio (เว็บวาดรูป), File Guard, Enterprise Telegram AI Bot (50+ คำสั่ง), AI Google Form Filler, AI Person Counter
-- รางวัล: ชนะเลิศเหรียญทองโมชั่นกราฟิก ระดับจังหวัด 2 ปีซ้อน (2566, 2567)
-- กิจกรรม: รองประธานชมรมเทคโนโลยีธุรกิจดิจิทัล, ควบคุมกล้องถ่ายทอดสด, หัวหน้าทีมกราฟิกอีสปอร์ต, กรรมการดำเนินงาน Gen Com และ CVC Radio
-- งานอดิเรก: วาดรูป, เขียนโปรแกรม, เล่นเกม
-
-ตอบคำถามเกี่ยวกับ Jet และพอร์ตโฟลิโอของเขาเป็นภาษาไทย เป็นกันเอง กระชับ มีประโยชน์`;
+  const AI_SYSTEM_PROMPT_TH = `คุณคือผู้ช่วยเว็บไซต์พอร์ตโฟลิโอของ Jet Konkamon
+ตอบคำถามเกี่ยวกับผลงานและทักษะที่แสดงบนเว็บไซต์เป็นภาษาไทยอย่างกระชับ
+หากไม่มีข้อมูลในเว็บไซต์ ให้บอกตามตรงว่าไม่ทราบ`;
 
   const AI_SYSTEM_PROMPT_EN = `You are the AI assistant for Jet Konkamon's portfolio website.
-About Jet:
-- Name: Jet Konkamon (Mr. Krakamon Puttakawee) Nickname: Jet
-- 19 years old, born October 16, 2006, Thai, Buddhist
-- Role: AI Developer & Full-Stack Developer, also a sketch artist
-- Education: Studying Digital Business Technology at Chachoengsao Vocational College
-- Skills: JavaScript, TypeScript, Python, Node.js, React, Next.js, TensorFlow.js, Stable Diffusion, AI (Gemini, Claude, GPT), Adobe Master Collection, Microsoft Office, Firebase, Docker, PostgreSQL, MongoDB
-- Key projects: Lost in the Forest (Multiplayer game + AI Narrator), CyberHack (typing game), Plant Farm, Jet Music, Draw Studio, File Guard, Enterprise Telegram AI Bot, AI Google Form Filler, AI Person Counter
-- Awards: Gold medal Motion Graphics, provincial level, 2 consecutive years (2024, 2025)
-- Activities: Vice President of Digital Business Tech Club, Live stream camera operator, E-Sport Graphics Team Lead, Gen Com & CVC Radio committee
-- Hobbies: Drawing, programming, gaming
-
-Answer questions about Jet and his portfolio in English. Be friendly, concise, and helpful.`;
+Answer questions about projects and skills shown on the website concisely in English.
+If the website does not provide an answer, say that you do not know.`;
 
   const lang = localStorage.getItem('portfolio-lang') || 'th';
   const greetingText = lang === 'th'
