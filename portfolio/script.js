@@ -259,7 +259,7 @@ const projectData = {
   },
   jetmusic: {
     title: 'Jet Music',
-    category: 'Music / Web App',
+    category: 'Music / Web & Android',
     status: '<span class="project-status live"><span class="dot"></span> ออนไลน์</span>',
     description: 'แพลตฟอร์มฟังเพลงออนไลน์แบบ PWA รองรับการสตรีมจาก YouTube และ SoundCloud มีระบบจัดการเพลย์ลิสต์ แสดงเนื้อเพลง และระบบเล่นต่อเนื่องแบบ Background บน Android ผ่าน Capacitor',
     tech: ['Next.js 16', 'React 19', 'TypeScript', 'Capacitor 8', 'Supabase', 'Upstash Redis'],
@@ -275,7 +275,7 @@ const projectData = {
     ],
     live: 'https://jet-music.vercel.app/',
     code: 'https://github.com/JetKomon',
-    note: '📱 เวอร์ชันแอปมือถือ (Android) ยังไม่พร้อมใช้งาน — ตอนนี้เล่นบนเว็บเบราว์เซอร์ก่อนได้เลยครับ'
+    note: '📱 แอป Android พัฒนาเสร็จแล้ว ดาวน์โหลดได้จากเว็บไซต์ Jet Music ผ่านลิงก์ด้านล่าง'
   },
   drawstudio: {
     title: 'Draw Studio',
@@ -1131,7 +1131,7 @@ const i18n = {
     'home-work-title': 'ผลงานที่สะท้อนวิธีทำงาน',
     'home-work-all': 'ดูโปรเจกต์ทั้งหมด ↗',
     'home-work-formfiller': 'เครื่องมือใช้ AI ช่วยกรอกแบบฟอร์ม เพื่อให้งานซ้ำ ๆ ทำได้เร็วและเป็นระบบขึ้น',
-    'home-work-jetmusic': 'เว็บแอปฟังเพลงที่ให้ความสำคัญกับการค้นหา การจัดเพลย์ลิสต์ และการใช้งานที่ลื่นไหล',
+    'home-work-jetmusic': 'แพลตฟอร์มฟังเพลงบนเว็บ พร้อมแอป Android ที่ดาวน์โหลดได้จากเว็บไซต์',
     'home-work-forest': 'เกมออนไลน์แบบหลายผู้เล่นที่เชื่อมการทำงานแบบเรียลไทม์กับระบบเล่าเรื่องด้วย AI',
     'home-contact-kicker': "LET'S WORK TOGETHER",
     'home-contact-title': 'มาสร้างผลงานที่ดีร่วมกัน',
@@ -1197,7 +1197,7 @@ const i18n = {
     'home-work-title': 'Projects that show how I work',
     'home-work-all': 'View all projects ↗',
     'home-work-formfiller': 'An AI-assisted form tool that makes repetitive tasks faster and more structured.',
-    'home-work-jetmusic': 'A music web app focused on discovery, playlists, and a smooth listening experience.',
+    'home-work-jetmusic': 'A music platform for the web, with an Android app available to download from its website.',
     'home-work-forest': 'A multiplayer online game combining real-time interactions with AI-assisted storytelling.',
     'home-contact-kicker': "LET'S WORK TOGETHER",
     'home-contact-title': 'Let’s build something useful together',
