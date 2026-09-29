@@ -30,7 +30,7 @@ const splashStart = home.indexOf('  <div id="renderSplash"');
 const scriptTag = home.indexOf('  <script src="script.js"></script>', splashStart);
 if (splashStart < 0 || scriptTag < 0) throw new Error('Splash markup changed; review the build script.');
 home = home.slice(0, splashStart) + home.slice(scriptTag);
-const pollStart = home.indexOf('  <script>\n    (function() {\n      const splash = document.getElementById(\'renderSplash\');');
+const pollStart = home.search(/  <script>\r?\n    \(function\(\) \{\r?\n      const splash = document\.getElementById\('renderSplash'\);/);
 const pollEnd = home.indexOf('  </script>', pollStart);
 if (pollStart < 0 || pollEnd < 0) throw new Error('Splash script changed; review the build script.');
 home = home.slice(0, pollStart) + home.slice(pollEnd + '  </script>'.length);

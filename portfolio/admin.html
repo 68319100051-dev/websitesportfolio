@@ -481,8 +481,8 @@
 
         <!-- DRAWINGS EDITOR -->
         <div class="admin-card">
-          <h2>✏️ จัดการรูปวาด (รายการไฟล์)</h2>
-          <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.75rem;">ใส่ path รูป 1 บรรทัดต่อ 1 รูป เช่น <code>images/drawings/drawing-0.jpg</code></p>
+          <h2>✏️ รายการภาพวาดเดิม</h2>
+          <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.75rem;">รายการนี้เป็นข้อมูลเดิมบน Render และอาจหายเมื่อเซิร์ฟเวอร์รีสตาร์ต ภาพวาดใหม่ให้ใช้ปุ่มอัปโหลดถาวรด้านล่าง</p>
           <div class="admin-field">
             <label>รูปภาพทั้งหมด (บรรทัดละ 1 path)</label>
             <textarea id="admin-drawings-list" rows="8" style="font-family:var(--font-mono);font-size:0.82rem;line-height:1.4;"></textarea>
@@ -523,10 +523,7 @@
 
         <div class="admin-card">
           <h2>🔐 ความปลอดภัย</h2>
-          <div class="admin-field">
-            <label>เปลี่ยนรหัสผ่าน (อย่างน้อย 6 ตัว — ปล่อยว่างถ้าไม่ต้องการเปลี่ยน)</label>
-            <input type="text" id="admin-new-password" placeholder="รหัสผ่านใหม่">
-          </div>
+          <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.75rem;">เปลี่ยนรหัสผ่านแอดมินที่ Render → Environment → ADMIN_PASSWORD</p>
           <div class="admin-field">
             <label>🤖 Groq API Key (แนะนำ — ฟรี, เร็ว, ไม่ต้องใช้บัตร)</label>
             <input type="text" id="admin-groq-key" placeholder="gsk_..." style="font-family:var(--font-mono);font-size:0.82rem;">
@@ -542,28 +539,14 @@
         </div>
 
         <div class="admin-card">
-          <h2>☁️ Cloudinary — เก็บรูปถาวร</h2>
-          <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.75rem;">สมัครฟรีที่ <a href="https://cloudinary.com" target="_blank" style="color:var(--accent);">cloudinary.com</a> → Dashboard ดู Cloud Name → Settings > Upload > Upload Presets > สร้าง preset ใหม่ เลือก Unsigned แล้วใส่ด้านล่าง</p>
-          <div class="admin-field">
-            <label>Cloud Name</label>
-            <input type="text" id="admin-cloudinary-cloud" placeholder="your-cloud-name" style="font-family:var(--font-mono);font-size:0.82rem;">
-          </div>
-          <div class="admin-field">
-            <label>Upload Preset (Unsigned)</label>
-            <input type="text" id="admin-cloudinary-preset" placeholder="your_preset" style="font-family:var(--font-mono);font-size:0.82rem;">
-          </div>
-        </div>
-
-        <div class="admin-card">
-          <h2>🖼️ อัปโหลดรูปภาพ</h2>
-          <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.75rem;">อัปโหลดรูปจากมือถือหรือคอมฯ แล้วคัดลอก path ไปวางในฟิลด์รูปภาพด้านบน</p>
+          <h2>🖼️ เพิ่มภาพวาดแบบถาวร</h2>
+          <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.75rem;">เลือกรูปจากมือถือหรือคอมฯ แล้วกดอัปโหลด รูปจะเก็บบน Cloudinary และเข้าหน้าภาพวาดอัตโนมัติภายในประมาณ 1 นาที ไม่ต้องกดบันทึกการเปลี่ยนแปลง</p>
           <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
             <input type="file" id="adminUploadInput" accept="image/*" style="flex:1;min-width:160px;padding:0.5rem;background:var(--input-bg);border:1px solid var(--border-color);border-radius:var(--radius-sm);color:var(--text-primary);font-size:0.85rem;">
-            <button class="btn-primary" onclick="uploadImage()" style="font-size:0.85rem;">📤 อัปโหลด</button>
+            <button class="btn-primary" onclick="uploadImage()" style="font-size:0.85rem;">📤 เพิ่มภาพวาด</button>
           </div>
           <div id="uploadPreview" class="upload-preview" style="display:none;"></div>
           <div id="uploadStatus" style="font-size:0.82rem;color:var(--text-secondary);margin-top:0.5rem;"></div>
-          <div id="uploadGrid" class="upload-grid"></div>
         </div>
 
         <div class="admin-actions-bar">
@@ -576,7 +559,7 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=durable-drawings-20260929"></script>
   <script>checkAdminAuth();</script>
 </body>
 </html>

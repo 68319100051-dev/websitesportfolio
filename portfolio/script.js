@@ -820,81 +820,8 @@ tiltCards.forEach(card => {
 });
 
 // ============================================================
-// DRAWINGS GALLERY
-// ============================================================
-(function() {
-  const grid = document.getElementById('drawingsGrid');
-  if (!grid) return;
-
-  const data = loadContent();
-  let images = data?.drawings;
-  if (!images || !Array.isArray(images) || !images.length) {
-    images = [];
-    for (let i = 0; i < 36; i++) {
-      images.push(`images/drawings/drawing-${i}.jpg`);
-    }
-  }
-
-  grid.innerHTML = images.map((src, i) => `
-    <div class="drawing-item" data-index="${i}">
-      <img src="${src}" alt="ภาพวาด ${i + 1}" loading="lazy">
-      <div class="drawing-overlay"><span>✏️ ภาพวาด #${i + 1}</span></div>
-    </div>
-  `).join('');
-
-  // Lightbox
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.getElementById('lightboxImg');
-  const lightboxClose = document.getElementById('lightboxClose');
-  const lightboxPrev = document.getElementById('lightboxPrev');
-  const lightboxNext = document.getElementById('lightboxNext');
-  const lightboxCounter = document.getElementById('lightboxCounter');
-  let currentIndex = 0;
-
-  function openLightbox(index) {
-    currentIndex = index;
-    lightboxImg.src = images[index];
-    lightboxImg.alt = `ภาพวาด ${index + 1}`;
-    lightboxCounter.textContent = `${index + 1} / ${images.length}`;
-    lightbox.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeLightbox() {
-    lightbox.classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  function prevImage() {
-    currentIndex = (currentIndex - 1 + images.length) % images.length;
-    openLightbox(currentIndex);
-  }
-
-  function nextImage() {
-    currentIndex = (currentIndex + 1) % images.length;
-    openLightbox(currentIndex);
-  }
-
-  grid.addEventListener('click', (e) => {
-    const item = e.target.closest('.drawing-item');
-    if (item) openLightbox(parseInt(item.dataset.index));
-  });
-
-  lightboxClose.addEventListener('click', closeLightbox);
-  lightboxPrev.addEventListener('click', prevImage);
-  lightboxNext.addEventListener('click', nextImage);
-
-  lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) closeLightbox();
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (!lightbox.classList.contains('open')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft') prevImage();
-    if (e.key === 'ArrowRight') nextImage();
-  });
-})();
+// The drawings gallery is initialized after the content store below.
+// Reading it here would access ADMIN_STORAGE_KEY before its initialization.
 
 // ============================================================
 // BACK TO TOP
@@ -1263,8 +1190,7 @@ const IMAGE_KEYS = [
 ];
 
 const CONFIG_KEYS = [
-  'pdf-path', 'groq-key', 'gemini-key',
-  'cloudinary-cloud', 'cloudinary-preset'
+  'pdf-path', 'groq-key', 'gemini-key'
 ];
 
 const ACHIEVEMENT_SHARED_KEYS = [
@@ -1372,6 +1298,28 @@ const EDITABLE_KEYS = allEditableKeys();
 
 const ADMIN_STORAGE_KEY = 'portfolio-admin';
 const API_BASE = window.location.origin + '/api';
+const DRAWINGS_CLOUD_NAME = 'mo8znakk';
+const DRAWINGS_CLOUD_TAG = 'portfolio_drawings';
+let cloudDrawings = [];
+
+async function loadCloudDrawings() {
+  if (!document.getElementById('drawingsGrid')) return;
+  try {
+    const response = await fetch(`https://res.cloudinary.com/${DRAWINGS_CLOUD_NAME}/image/list/${DRAWINGS_CLOUD_TAG}.json`);
+    if (!response.ok) return;
+    const listing = await response.json();
+    cloudDrawings = (listing.resources || [])
+      .filter(item => item.public_id && item.format && item.version)
+      .sort((a, b) => Date.parse(b.created_at || 0) - Date.parse(a.created_at || 0))
+      .map(item => {
+        const id = item.public_id.split('/').map(encodeURIComponent).join('/');
+        return `https://res.cloudinary.com/${DRAWINGS_CLOUD_NAME}/image/upload/v${item.version}/${id}.${encodeURIComponent(item.format)}`;
+      });
+    renderDrawings(loadContent());
+  } catch (error) {
+    console.warn('Cloudinary drawing list is unavailable:', error);
+  }
+}
 
 function defaultContent() {
   const base = {
@@ -1509,9 +1457,6 @@ function defaultContent() {
     'ach-esport-images': 'images/activity-esport-1.png,images/activity-esport-2.png,images/activity-esport-3.png',
     'ach-gencom-images': 'images/activity-gencom-1.png,images/activity-gencom-2.png',
     'ach-ghost-images': 'images/activity-ghost-1.png,images/activity-ghost-2.png',
-
-    'cloudinary-cloud': 'mo8znakk',
-    'cloudinary-preset': 'portfolio',
 
     'pdf-path': 'images/portfolio กรกมล.pdf'
   };
@@ -1668,20 +1613,17 @@ function renderDrawings(data) {
   const grid = document.getElementById('drawingsGrid');
   if (!grid) return;
 
-  let drawings = data?.drawings;
-  if (!drawings || !Array.isArray(drawings) || !drawings.length) {
-    drawings = [];
-    for (let i = 0; i < 36; i++) drawings.push(`images/drawings/drawing-${i}.jpg`);
-  }
+  let saved = Array.isArray(data?.drawings) ? data.drawings : [];
+  if (!saved.length) saved = Array.from({ length: 36 }, (_, i) => `images/drawings/drawing-${i}.jpg`);
+  const drawings = [...new Set([...cloudDrawings, ...saved])];
 
   grid.innerHTML = drawings.map((src, i) => `
     <div class="drawing-item" data-index="${i}">
-      <img src="${src}" alt="ภาพวาด ${i + 1}" loading="lazy">
+      <img src="${String(src).replaceAll('&', '&amp;').replaceAll('"', '&quot;')}" alt="ภาพวาด ${i + 1}" loading="lazy">
       <div class="drawing-overlay"><span>✏️ ภาพวาด #${i + 1}</span></div>
     </div>
   `).join('');
 
-  // Re-init lightbox for new images
   const lightbox = document.getElementById('lightbox');
   if (lightbox) {
     const lightboxImg = document.getElementById('lightboxImg');
@@ -1715,31 +1657,22 @@ function renderDrawings(data) {
       openLightbox(currentIndex);
     }
 
-    grid.addEventListener('click', (e) => {
+    grid.onclick = (e) => {
       const item = e.target.closest('.drawing-item');
-      if (item) openLightbox(parseInt(item.dataset.index));
-    });
-
-    // Remove old listeners by cloning
-    const newClose = lightboxClose.cloneNode(true);
-    lightboxClose.parentNode.replaceChild(newClose, lightboxClose);
-    const newPrev = lightboxPrev.cloneNode(true);
-    lightboxPrev.parentNode.replaceChild(newPrev, lightboxPrev);
-    const newNext = lightboxNext.cloneNode(true);
-    lightboxNext.parentNode.replaceChild(newNext, lightboxNext);
-
-    newClose.addEventListener('click', closeLightbox);
-    newPrev.addEventListener('click', prevImage);
-    newNext.addEventListener('click', nextImage);
-    lightbox.addEventListener('click', (e) => {
+      if (item) openLightbox(Number(item.dataset.index));
+    };
+    lightboxClose.onclick = closeLightbox;
+    lightboxPrev.onclick = prevImage;
+    lightboxNext.onclick = nextImage;
+    lightbox.onclick = (e) => {
       if (e.target === lightbox) closeLightbox();
-    });
-    document.addEventListener('keydown', (e) => {
+    };
+    document.onkeydown = (e) => {
       if (!lightbox.classList.contains('open')) return;
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowLeft') prevImage();
       if (e.key === 'ArrowRight') nextImage();
-    });
+    };
   }
 }
 
@@ -1858,25 +1791,17 @@ function doLogin() {
   const pwd = document.getElementById('adminPassword')?.value;
   if (!pwd) return;
 
-  const localPwd = localStorage.getItem('portfolio-admin-password');
-
   fetchAPI('/verify', {
     method: 'POST',
     body: JSON.stringify({ password: pwd })
   }).then(res => {
     if (res?.success) {
       loginSuccess(pwd);
-    } else if (localPwd && pwd === localPwd) {
-      loginSuccess(pwd);
     } else {
       document.getElementById('adminError')?.classList.add('show');
     }
   }).catch(() => {
-    if (localPwd && pwd === localPwd) {
-      loginSuccess(pwd);
-    } else {
-      document.getElementById('adminError')?.classList.add('show');
-    }
+    document.getElementById('adminError')?.classList.add('show');
   });
 }
 
@@ -1937,7 +1862,6 @@ function showDashboard() {
   // Load drawings list
   setVal('admin-drawings-list', loadDrawingList().join('\n'));
 
-  loadUploads();
 }
 
 function tabAdmin(lang) {
@@ -2008,12 +1932,6 @@ function saveAdmin() {
   // Apply projects
   renderProjects(data);
 
-  const newPwd = getVal('admin-new-password');
-  if (newPwd && newPwd.length >= 6) {
-    localStorage.setItem('portfolio-admin-password', newPwd);
-    sessionStorage.setItem('portfolio-admin-pwd', newPwd);
-  }
-
   const geminiKey = getVal('admin-gemini-key');
   if (geminiKey) {
     localStorage.setItem('portfolio-gemini-key', geminiKey);
@@ -2028,8 +1946,7 @@ function saveAdmin() {
     method: 'POST',
     body: JSON.stringify({
       password: sessionStorage.getItem('portfolio-admin-pwd') || '',
-      content: data,
-      newPassword: (newPwd && newPwd.length >= 6) ? newPwd : undefined
+      content: data
     })
   });
 
@@ -2065,86 +1982,63 @@ function compressImage(file, maxW, maxH, quality) {
   });
 }
 
-function uploadToCloudinary(blob, fileName) {
-  const data = loadContent();
-  const cloudName = data['cloudinary-cloud'] || getVal('admin-cloudinary-cloud');
-  const uploadPreset = data['cloudinary-preset'] || getVal('admin-cloudinary-preset');
-  if (!cloudName || !uploadPreset) return null;
-
-  const fd = new FormData();
-  fd.append('file', blob, fileName);
-  fd.append('upload_preset', uploadPreset);
-
-  return fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-    method: 'POST', body: fd
-  }).then(r => r.json()).then(res => {
-    return res.secure_url || null;
-  }).catch(() => null);
-}
-
-function uploadImage() {
+async function uploadImage() {
   const input = document.getElementById('adminUploadInput');
   const file = input?.files?.[0];
   if (!file) { document.getElementById('uploadStatus').textContent = '⚠️ กรุณาเลือกรูปก่อน'; return; }
 
   const statusEl = document.getElementById('uploadStatus');
   statusEl.textContent = '⏳ กำลังบีบอัดรูป...';
-
-  compressImage(file, 1920, 1920, 0.75).then(compressed => {
-    const fileName = file.name.replace(/\.[^.]+$/, '.jpg');
-    const data = loadContent();
-    const cloudName = data['cloudinary-cloud'] || getVal('admin-cloudinary-cloud');
-    const uploadPreset = data['cloudinary-preset'] || getVal('admin-cloudinary-preset');
-    const useCloudinary = cloudName && uploadPreset;
-
-    if (useCloudinary) {
-      statusEl.textContent = '⏳ กำลังอัปโหลดไป Cloudinary...';
-      uploadToCloudinary(compressed, fileName).then(url => {
-        if (url) {
-          showUploadResult(url, compressed);
-          input.value = '';
-        } else {
-          statusEl.textContent = '❌ อัปโหลด Cloudinary ล้มเหลว ตรวจสอบ Cloud Name และ Upload Preset';
-        }
-      });
-    } else {
-      statusEl.textContent = '⏳ กำลังอัปโหลด...';
-      const pwd = sessionStorage.getItem('portfolio-admin-pwd') || '';
-      const fd = new FormData();
-      fd.append('image', compressed, fileName);
-      fd.append('password', pwd);
-
-      fetch('/api/upload', { method: 'POST', body: fd })
-        .then(r => r.json())
-        .then(res => {
-          if (res.success) {
-            showUploadResult(res.path, compressed);
-            input.value = '';
-            loadUploads();
-          } else {
-            statusEl.textContent = '❌ ' + (res.error || 'อัปโหลดล้มเหลว');
-          }
-        })
-        .catch(() => { statusEl.textContent = '❌ การเชื่อมต่อผิดพลาด'; });
+  try {
+    const compressed = await compressImage(file, 1920, 1920, 0.75);
+    if (!compressed) throw new Error('อ่านไฟล์รูปไม่สำเร็จ');
+    const fd = new FormData();
+    fd.append('image', compressed, file.name.replace(/\.[^.]+$/, '.jpg'));
+    statusEl.textContent = '⏳ กำลังอัปโหลดภาพวาดไป Cloudinary...';
+    const response = await fetch('/api/drawings/upload', {
+      method: 'POST',
+      headers: { 'X-Admin-Password': sessionStorage.getItem('portfolio-admin-pwd') || '' },
+      body: fd
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success || !result.url) {
+      throw new Error(result.error || 'อัปโหลดไม่สำเร็จ');
     }
-  });
+    showUploadResult(result.url);
+    input.value = '';
+    try {
+      const listing = await fetch(`https://res.cloudinary.com/${DRAWINGS_CLOUD_NAME}/image/list/${DRAWINGS_CLOUD_TAG}.json`);
+      statusEl.textContent = listing.ok
+        ? '✅ ภาพวาดเก็บถาวรแล้ว จะแสดงในแกลเลอรีภายในประมาณ 1 นาที'
+        : '✅ รูปเก็บถาวรแล้ว แต่ต้องเปิด Resource list ใน Cloudinary เพื่อให้แกลเลอรีแสดงรูป';
+    } catch {
+      statusEl.textContent = '✅ รูปเก็บถาวรแล้ว ตรวจการแสดงผลในหน้าภาพวาดอีกครั้ง';
+    }
+  } catch (error) {
+    statusEl.textContent = '❌ ' + error.message;
+  }
 }
 
-function showUploadResult(path, blob) {
+function showUploadResult(path) {
   const statusEl = document.getElementById('uploadStatus');
   const preview = document.getElementById('uploadPreview');
-  const isUrl = path.startsWith('http');
-  const imgSrc = isUrl ? path : '/' + path + '?t=' + Date.now();
-  const displayPath = isUrl ? path : path;
-
   statusEl.textContent = '✅ อัปโหลดสำเร็จ';
   preview.style.display = 'flex';
-  preview.innerHTML = '<img src="' + imgSrc + '" alt=""><div><div class="path" style="word-break:break-all;">' + displayPath + '</div><button class="btn-outline" style="font-size:0.75rem;padding:0.3rem 0.6rem;margin-top:0.3rem;" onclick="navigator.clipboard.writeText(\'' + displayPath + '\').then(()=>this.textContent=\'✅ คัดลอกแล้ว\')">📋 คัดลอก</button><button class="btn-outline" style="font-size:0.75rem;padding:0.3rem 0.6rem;margin-top:0.3rem;margin-left:0.3rem;" onclick="addToDrawingList(\'' + displayPath.replace(/'/g, "\\'") + '\')">➕ เพิ่มในรายการรูปวาด</button></div>';
-
-  // Auto-fill Cloudinary URL into drawing list
-  if (isUrl) {
-    addToDrawingList(displayPath);
-  }
+  preview.replaceChildren();
+  const image = document.createElement('img');
+  image.src = path;
+  image.alt = 'ภาพวาดที่อัปโหลด';
+  const details = document.createElement('div');
+  const url = document.createElement('div');
+  url.className = 'path';
+  url.style.wordBreak = 'break-all';
+  url.textContent = path;
+  const copy = document.createElement('button');
+  copy.className = 'btn-outline';
+  copy.textContent = '📋 คัดลอกลิงก์';
+  copy.onclick = () => navigator.clipboard.writeText(path).then(() => { copy.textContent = '✅ คัดลอกแล้ว'; });
+  details.append(url, copy);
+  preview.append(image, details);
 }
 
 function addToDrawingList(path) {
@@ -2203,6 +2097,7 @@ function logoutAdmin() {
 
 applyI18n();
 applyContent();
+loadCloudDrawings();
 
 // Language toggle
 const langToggle = document.getElementById('langToggle');

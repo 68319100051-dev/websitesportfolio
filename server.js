@@ -7,7 +7,7 @@ const multer = require('multer');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'portfolio', 'data.json');
-const DEFAULT_PASSWORD = 'admin123';
+const DEFAULT_PASSWORD = crypto.randomBytes(32).toString('hex');
 let adminPassword = DEFAULT_PASSWORD;
 
 const UPLOAD_DIR = path.join(__dirname, 'portfolio', 'images', 'uploads');
@@ -50,6 +50,7 @@ function initDataFile() {
     const raw = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
     adminPassword = raw.password || hash(DEFAULT_PASSWORD);
   } catch { /* use default */ }
+  if (process.env.ADMIN_PASSWORD) adminPassword = hash(process.env.ADMIN_PASSWORD);
 }
 
 initDataFile();
@@ -77,7 +78,7 @@ function writeData(content, newPassword) {
 }
 
 function writeFull(full) {
-  full.password = full.password || adminPassword;
+  full.password = process.env.ADMIN_PASSWORD ? adminPassword : (full.password || adminPassword);
   fs.writeFileSync(DATA_FILE, JSON.stringify(full, null, 2), 'utf-8');
 }
 
@@ -93,6 +94,9 @@ app.post('/api/data', (req, res) => {
   }
   if (!content) {
     return res.status(400).json({ success: false, error: 'ไม่มีข้อมูล' });
+  }
+  if (newPassword && process.env.ADMIN_PASSWORD) {
+    return res.status(400).json({ success: false, error: 'เปลี่ยนรหัสผ่านใน Render Environment แทน' });
   }
   writeData(content, newPassword || null);
   res.json({ success: true });
@@ -293,7 +297,59 @@ app.post('/api/ai/chat', async (req, res) => {
   return res.status(502).json({ success: false, error: 'All models failed' });
 });
 
-// Image upload
+// Drawings live in Cloudinary, rather than the web service's temporary filesystem.
+const drawingUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => cb(null, file.mimetype === 'image/jpeg')
+});
+
+app.post('/api/drawings/upload', (req, res) => {
+  if (!process.env.ADMIN_PASSWORD || !process.env.CLOUDINARY_CLOUD_NAME ||
+      !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+    return res.status(503).json({ success: false, error: 'ยังไม่ได้ตั้งค่า ADMIN_PASSWORD และ Cloudinary ใน Render Environment' });
+  }
+  const password = req.get('X-Admin-Password') || '';
+  if (!password || hash(password) !== adminPassword) {
+    return res.status(401).json({ success: false, error: 'รหัสผ่านไม่ถูกต้อง' });
+  }
+  drawingUpload.single('image')(req, res, async (err) => {
+    if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ success: false, error: 'ไฟล์ใหญ่เกิน 10MB' });
+    }
+    if (err || !req.file || req.file.buffer[0] !== 0xff || req.file.buffer[1] !== 0xd8) {
+      return res.status(400).json({ success: false, error: 'กรุณาเลือกไฟล์ภาพ JPG ที่ถูกต้อง' });
+    }
+    const timestamp = Math.floor(Date.now() / 1000);
+    const folder = 'portfolio/drawings';
+    const tags = 'portfolio_drawings';
+    const signedParams = `folder=${folder}&tags=${tags}&timestamp=${timestamp}`;
+    const signature = crypto.createHash('sha1')
+      .update(signedParams + process.env.CLOUDINARY_API_SECRET).digest('hex');
+    const body = new FormData();
+    body.append('file', new Blob([req.file.buffer], { type: 'image/jpeg' }), 'drawing.jpg');
+    body.append('api_key', process.env.CLOUDINARY_API_KEY);
+    body.append('timestamp', String(timestamp));
+    body.append('folder', folder);
+    body.append('tags', tags);
+    body.append('signature', signature);
+    try {
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${encodeURIComponent(process.env.CLOUDINARY_CLOUD_NAME)}/image/upload`,
+        { method: 'POST', body, signal: AbortSignal.timeout(30000) }
+      );
+      const result = await response.json();
+      if (!response.ok || !result.secure_url) {
+        return res.status(502).json({ success: false, error: result.error?.message || 'Cloudinary อัปโหลดไม่สำเร็จ' });
+      }
+      return res.json({ success: true, url: result.secure_url });
+    } catch {
+      return res.status(502).json({ success: false, error: 'เชื่อมต่อ Cloudinary ไม่สำเร็จ' });
+    }
+  });
+});
+
+// Legacy local upload (other admin images). Do not use for durable drawings.
 app.post('/api/upload', (req, res) => {
   upload.single('image')(req, res, (err) => {
     if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
@@ -350,6 +406,10 @@ app.get('*', (req, res) => {
   res.sendFile(filePath);
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
