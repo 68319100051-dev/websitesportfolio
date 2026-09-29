@@ -272,7 +272,9 @@ const projectData = {
     ],
     live: 'https://argo-phi-five.vercel.app/auth/login',
     liveLabel: 'เปิดหน้าเข้าสู่ระบบ',
-    note: '🔐 การเข้าถึงระบบต้องใช้บัญชีที่ผู้ดูแลระบบสร้างให้ สามารถเปิดดูหน้าเข้าสู่ระบบได้จากลิงก์ด้านล่าง'
+    preview: 'argo-preview.html',
+    production: true,
+    note: '🏢 ระบบนี้นำไปใช้งานจริงในบริษัทแห่งหนึ่ง โดยสงวนชื่อองค์กรและรายละเอียดภายในเพื่อรักษาความลับทางธุรกิจ ภาพในหน้าตัวอย่างใช้ข้อมูลสาธิต และการเข้าสู่ระบบต้องใช้บัญชีที่ผู้ดูแลระบบสร้างให้'
   },
   jetmusic: {
     title: 'Jet Music',
@@ -451,6 +453,8 @@ function openModal(id) {
   modalCategory.textContent = data.category;
   modalStatus.innerHTML = data.status;
   modalDescription.textContent = data.description;
+  const developmentNote = document.getElementById('projectDevelopmentNote');
+  if (developmentNote) developmentNote.style.display = data.production ? 'none' : 'flex';
 
   // Render loading notice
   if (data.render) {
@@ -488,6 +492,9 @@ function openModal(id) {
   modalFeatures.innerHTML = data.features.map(f => `<li>${f}</li>`).join('');
 
   let linksHTML = '';
+  if (data.preview) {
+    linksHTML += `<a href="${data.preview}" class="modal-link-preview">ดูตัวอย่างระบบภายใน</a>`;
+  }
   if (data.live) {
     linksHTML += `<a href="#" onclick="event.preventDefault(); confirmProjectLink('${data.live}')" class="modal-link-live">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
