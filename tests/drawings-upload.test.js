@@ -60,6 +60,7 @@ test('guestbook confirms Cloudinary storage and reads entries without writing da
   const server = app.listen(0);
   await new Promise(resolve => server.once('listening', resolve));
   const originalFetch = global.fetch;
+  const originalNow = Date.now;
   const dataFile = path.join(__dirname, '..', 'portfolio', 'data.json');
   const before = fs.readFileSync(dataFile);
   let stored = null;
@@ -90,11 +91,13 @@ test('guestbook confirms Cloudinary storage and reads entries without writing da
     });
     assert.equal(posted.status, 200);
     assert.equal((await posted.json()).entry.message, 'A lasting message');
+    Date.now = () => originalNow() + 61000;
     const listed = await originalFetch(url);
     assert.equal(listed.status, 200);
     assert.deepEqual((await listed.json()).entries.map(entry => entry.message), ['A lasting message']);
     assert.deepEqual(fs.readFileSync(dataFile), before);
   } finally {
+    Date.now = originalNow;
     global.fetch = originalFetch;
     server.close();
   }
