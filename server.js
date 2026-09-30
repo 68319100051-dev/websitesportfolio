@@ -36,6 +36,30 @@ function hash(pwd) {
   return crypto.createHash('sha256').update(pwd).digest('hex');
 }
 
+function hasCloudinaryConfig() {
+  return !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
+}
+
+async function uploadCloudinary(resourceType, file, filename, params) {
+  const timestamp = Math.floor(Date.now() / 1000);
+  const signed = { ...params, timestamp };
+  const serialized = Object.keys(signed).sort().map(key => `${key}=${signed[key]}`).join('&');
+  const signature = crypto.createHash('sha1')
+    .update(serialized + process.env.CLOUDINARY_API_SECRET).digest('hex');
+  const body = new FormData();
+  body.append('file', file, filename);
+  body.append('api_key', process.env.CLOUDINARY_API_KEY);
+  for (const [key, value] of Object.entries(signed)) body.append(key, String(value));
+  body.append('signature', signature);
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${encodeURIComponent(process.env.CLOUDINARY_CLOUD_NAME)}/${resourceType}/upload`,
+    { method: 'POST', body, signal: AbortSignal.timeout(30000) }
+  );
+  const result = await response.json();
+  if (!response.ok || !result.secure_url) throw new Error(result.error?.message || 'Cloudinary upload failed');
+  return result;
+}
+
 function initDataFile() {
   if (!fs.existsSync(DATA_FILE)) {
     const initial = {
@@ -213,27 +237,69 @@ app.post('/api/drawings', (req, res) => {
 });
 
 // Guestbook
-app.get('/api/guestbook', (req, res) => {
-  const full = readFullData();
-  const entries = full.guestbook || full.content?.guestbook || [];
-  res.json({ success: true, entries });
+let guestbookCache = { until: 0, entries: [] };
+
+async function readCloudinaryGuestbook() {
+  if (Date.now() < guestbookCache.until) return guestbookCache.entries;
+  const cloud = encodeURIComponent(process.env.CLOUDINARY_CLOUD_NAME);
+  const auth = Buffer.from(`${process.env.CLOUDINARY_API_KEY}:${process.env.CLOUDINARY_API_SECRET}`).toString('base64');
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloud}/resources/raw/tags/portfolio_guestbook?max_results=500`,
+    { headers: { Authorization: `Basic ${auth}` }, signal: AbortSignal.timeout(20000) }
+  );
+  if (!response.ok) throw new Error('Cloudinary guestbook list failed');
+  const listing = await response.json();
+  const resources = (listing.resources || []).filter(asset =>
+    asset.public_id?.startsWith('portfolio/guestbook/entry-') && asset.version
+  );
+  const entries = await Promise.all(resources.map(async asset => {
+    const id = asset.public_id.split('/').map(encodeURIComponent).join('/');
+    const file = await fetch(`https://res.cloudinary.com/${cloud}/raw/upload/v${asset.version}/${id}`,
+      { signal: AbortSignal.timeout(15000) });
+    if (!file.ok) throw new Error('Cloudinary guestbook entry unavailable');
+    const entry = await file.json();
+    if (typeof entry.name !== 'string' || typeof entry.message !== 'string' || typeof entry.date !== 'string') {
+      throw new Error('Invalid guestbook entry');
+    }
+    return entry;
+  }));
+  entries.sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+  guestbookCache = { until: Date.now() + 60000, entries };
+  return entries;
+}
+
+app.get('/api/guestbook', async (req, res) => {
+  if (!hasCloudinaryConfig()) {
+    return res.status(503).json({ success: false, error: 'สมุดเยี่ยมปิดชั่วคราวระหว่างตั้งค่าที่เก็บข้อมูลถาวร' });
+  }
+  try {
+    return res.json({ success: true, entries: await readCloudinaryGuestbook() });
+  } catch {
+    return res.status(502).json({ success: false, error: 'ยังโหลดสมุดเยี่ยมไม่ได้ กรุณาลองใหม่ภายหลัง' });
+  }
 });
 
-app.post('/api/guestbook', (req, res) => {
-  const { name, message } = req.body;
-  if (!name || !message) {
-    return res.status(400).json({ success: false, error: 'กรุณากรอกชื่อและข้อความ' });
+app.post('/api/guestbook', async (req, res) => {
+  if (!hasCloudinaryConfig()) {
+    return res.status(503).json({ success: false, error: 'สมุดเยี่ยมปิดชั่วคราวระหว่างตั้งค่าที่เก็บข้อมูลถาวร' });
   }
-  const full = readFullData();
-  if (!full.guestbook) full.guestbook = [];
-  full.guestbook.unshift({
-    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-    name: name.trim(),
-    message: message.trim(),
-    date: new Date().toISOString()
-  });
-  writeFull(full);
-  res.json({ success: true });
+  const name = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
+  const message = typeof req.body?.message === 'string' ? req.body.message.trim() : '';
+  if (!name || !message || name.length > 80 || message.length > 1000) {
+    return res.status(400).json({ success: false, error: 'กรุณากรอกชื่อไม่เกิน 80 ตัว และข้อความไม่เกิน 1,000 ตัว' });
+  }
+  const entry = { id: crypto.randomUUID(), name, message, date: new Date().toISOString() };
+  const publicId = `portfolio/guestbook/entry-${entry.id}.txt`;
+  try {
+    await uploadCloudinary('raw', new Blob([JSON.stringify(entry)], { type: 'text/plain' }),
+      'entry.txt', { public_id: publicId, tags: 'portfolio_guestbook' });
+    guestbookCache = guestbookCache.until > Date.now()
+      ? { until: Date.now() + 60000, entries: [entry, ...guestbookCache.entries] }
+      : { until: 0, entries: [] };
+    return res.json({ success: true, entry });
+  } catch {
+    return res.status(502).json({ success: false, error: 'บันทึกข้อความไม่สำเร็จ กรุณาลองใหม่' });
+  }
 });
 
 // AI Chat Proxy — ซ่อน API Key ไม่ให้โผล่ใน client-side
@@ -305,8 +371,7 @@ const drawingUpload = multer({
 });
 
 app.post('/api/drawings/upload', (req, res) => {
-  if (!process.env.ADMIN_PASSWORD || !process.env.CLOUDINARY_CLOUD_NAME ||
-      !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+  if (!process.env.ADMIN_PASSWORD || !hasCloudinaryConfig()) {
     return res.status(503).json({ success: false, error: 'ยังไม่ได้ตั้งค่า ADMIN_PASSWORD และ Cloudinary ใน Render Environment' });
   }
   const password = req.get('X-Admin-Password') || '';
@@ -320,28 +385,11 @@ app.post('/api/drawings/upload', (req, res) => {
     if (err || !req.file || req.file.buffer[0] !== 0xff || req.file.buffer[1] !== 0xd8) {
       return res.status(400).json({ success: false, error: 'กรุณาเลือกไฟล์ภาพ JPG ที่ถูกต้อง' });
     }
-    const timestamp = Math.floor(Date.now() / 1000);
-    const folder = 'portfolio/drawings';
-    const tags = 'portfolio_drawings';
-    const signedParams = `folder=${folder}&tags=${tags}&timestamp=${timestamp}`;
-    const signature = crypto.createHash('sha1')
-      .update(signedParams + process.env.CLOUDINARY_API_SECRET).digest('hex');
-    const body = new FormData();
-    body.append('file', new Blob([req.file.buffer], { type: 'image/jpeg' }), 'drawing.jpg');
-    body.append('api_key', process.env.CLOUDINARY_API_KEY);
-    body.append('timestamp', String(timestamp));
-    body.append('folder', folder);
-    body.append('tags', tags);
-    body.append('signature', signature);
     try {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${encodeURIComponent(process.env.CLOUDINARY_CLOUD_NAME)}/image/upload`,
-        { method: 'POST', body, signal: AbortSignal.timeout(30000) }
+      const result = await uploadCloudinary(
+        'image', new Blob([req.file.buffer], { type: 'image/jpeg' }), 'drawing.jpg',
+        { folder: 'portfolio/drawings', tags: 'portfolio_drawings' }
       );
-      const result = await response.json();
-      if (!response.ok || !result.secure_url) {
-        return res.status(502).json({ success: false, error: result.error?.message || 'Cloudinary อัปโหลดไม่สำเร็จ' });
-      }
       return res.json({ success: true, url: result.secure_url });
     } catch {
       return res.status(502).json({ success: false, error: 'เชื่อมต่อ Cloudinary ไม่สำเร็จ' });
