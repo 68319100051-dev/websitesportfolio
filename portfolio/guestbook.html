@@ -90,12 +90,12 @@
     <div class="container" style="max-width:640px;">
       <form class="gb-form reveal" id="guestbookForm">
         <div class="gb-form-row">
-          <input type="text" id="gbName" placeholder="ชื่อของคุณ" required style="flex:1;">
+          <input type="text" id="gbName" placeholder="ชื่อของคุณ" maxlength="80" required style="flex:1;">
         </div>
-        <textarea id="gbMessage" placeholder="ข้อความ..." required></textarea>
+        <textarea id="gbMessage" placeholder="ข้อความ..." maxlength="1000" required></textarea>
         <button type="submit" class="btn-primary gb-submit">📝 ฝากข้อความ</button>
         <div class="gb-error" id="gbError">กรุณากรอกชื่อและข้อความ</div>
-        <div class="gb-success" id="gbSuccess">✅ ฝากข้อความเรียบร้อย!</div>
+        <div class="gb-success" id="gbSuccess">✅ ข้อความเก็บถาวรแล้ว</div>
       </form>
       <div id="gbList"></div>
     </div>
@@ -123,7 +123,11 @@
       try {
         const res = await fetch('/api/guestbook');
         const data = await res.json();
-        if (!data.success || !data.entries.length) {
+        if (!res.ok || !data.success) {
+          gbList.innerHTML = `<div class="gb-empty">${escHtml(data.error || 'สมุดเยี่ยมยังไม่พร้อมใช้งาน กรุณาลองใหม่ภายหลัง')}</div>`;
+          return;
+        }
+        if (!data.entries.length) {
           gbList.innerHTML = '<div class="gb-empty">📭 ยังไม่มีข้อความ — เป็นคนแรกที่ฝากข้อความเลย!</div>';
           return;
         }
@@ -159,15 +163,25 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, message })
           });
-          if (res.ok) {
+          const data = await res.json();
+          if (res.ok && data.success && data.entry) {
             gbSuccess.style.display = 'block';
             gbForm.reset();
-            loadGB();
-            setTimeout(() => gbSuccess.style.display = 'none', 3000);
+            if (gbList.querySelector('.gb-empty')) gbList.innerHTML = '';
+            gbList.insertAdjacentHTML('afterbegin', `
+              <div class="gb-entry">
+                <div class="gb-entry-header">
+                  <span class="gb-entry-name">${escHtml(data.entry.name)}</span>
+                  <span class="gb-entry-date">${new Date(data.entry.date).toLocaleDateString('th-TH')}</span>
+                </div>
+                <div class="gb-entry-msg">${escHtml(data.entry.message)}</div>
+              </div>
+            `);
+            setTimeout(() => gbSuccess.style.display = 'none', 6000);
           } else {
-            gbError.textContent = 'เกิดข้อผิดพลาด'; gbError.style.display = 'block';
+            gbError.textContent = data.error || 'บันทึกไม่สำเร็จ กรุณาลองใหม่'; gbError.style.display = 'block';
           }
-        } catch { gbError.textContent = 'เกิดข้อผิดพลาด'; gbError.style.display = 'block'; }
+        } catch { gbError.textContent = 'เชื่อมต่อไม่ได้ ข้อความยังไม่ถูกบันทึก'; gbError.style.display = 'block'; }
       });
     }
 
