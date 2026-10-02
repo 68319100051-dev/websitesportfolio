@@ -2627,12 +2627,12 @@ html.theme-changing * {
 .slipform-shell { max-width: 1080px; margin: 0 auto; padding: 0 1.25rem; }
 .slipform-back { display: inline-flex; align-items: center; gap: .5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 2.5rem; }
 .slipform-back:hover { color: var(--accent); }
-.slipform-hero { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem; align-items: center; margin-bottom: 3rem; }
+.slipform-hero { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 3rem; align-items: center; margin-bottom: 3rem; }
 .slipform-hero > * { min-width: 0; }
 .slipform-kicker { color: var(--accent); font: 600 .75rem var(--font-mono); letter-spacing: .14em; text-transform: uppercase; }
 .slipform-hero h1 { font-size: clamp(2.6rem, 6vw, 5.4rem); letter-spacing: -.06em; line-height: 1.04; margin: .8rem 0 1rem; }
 .slipform-hero p { color: var(--text-secondary); line-height: 1.85; font-size: 1.05rem; }
-.slipform-hero img { display: block; width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--border-light); box-shadow: 0 24px 64px rgba(0,0,0,.25); }
+.slipform-hero img { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 630; object-fit: cover; border-radius: var(--radius-lg); border: 1px solid var(--border-light); box-shadow: 0 24px 64px rgba(0,0,0,.25), 0 0 48px rgba(86,87,220,.12); }
 .slipform-pills { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1.5rem; }
 .slipform-pills span { border: 1px solid var(--border-color); border-radius: 999px; padding: .35rem .8rem; font-size: .8rem; color: var(--text-secondary); }
 .slipform-notice { padding: 1.2rem 1.4rem; border-radius: var(--radius-sm); background: var(--accent-glow); border: 1px solid var(--border-light); line-height: 1.8; margin: 2.5rem 0; }
