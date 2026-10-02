@@ -1969,6 +1969,26 @@ html.theme-changing * {
   transition: transform .35s ease;
 }
 .home-work-card:hover .home-work-image img { transform: scale(1.03); }
+/* Keep the complete SlipForm cover visible inside narrower project cards. */
+.home-work-card--slipform .home-work-image,
+.slipform-project-card .project-thumb { background: #0b1425; }
+.home-work-card--slipform .home-work-image::before,
+.slipform-project-card .project-thumb::before {
+  content: '';
+  position: absolute;
+  inset: -16px;
+  background: url('images/slipform-cover.webp') center / cover no-repeat;
+  filter: blur(18px) brightness(.55);
+}
+.home-work-card--slipform .home-work-image img,
+.slipform-project-card .project-thumb img {
+  position: relative;
+  z-index: 1;
+  object-fit: contain;
+}
+.home-work-card--slipform:hover .home-work-image img { transform: none; }
+.home-work-card--slipform .project-badge,
+.slipform-project-card .project-badge { z-index: 2; }
 .home-work-body { padding: 1.5rem; }
 .home-work-type { font-size: .65rem; letter-spacing: .1em; }
 .home-work-card h3 {
