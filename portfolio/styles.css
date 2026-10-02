@@ -2610,6 +2610,25 @@ html.theme-changing * {
   border-radius: 12px;
   background: var(--bg-card);
 }
+.about-project-skills { margin-top: clamp(3rem, 6vw, 5rem); }
+.about-project-skills-heading { max-width: 720px; margin-bottom: 1.5rem; }
+.about-project-skills-heading .section-label { color: var(--accent); font: 600 .76rem var(--font-mono); letter-spacing: .14em; }
+.about-project-skills-heading h2 { margin: .55rem 0 .65rem; font-size: clamp(1.65rem, 3.5vw, 2.45rem); letter-spacing: -.035em; }
+.about-project-skills-heading p { color: var(--text-secondary); line-height: 1.75; }
+.about-project-skills-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.about-project-skill {
+  display: flex; flex-direction: column; min-width: 0; min-height: 230px; padding: 1.45rem;
+  border: 1px solid var(--border-color); border-radius: 16px; background: var(--bg-card);
+  transition: border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.about-project-skill:hover, .about-project-skill:focus-within { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 14px 32px rgba(0, 0, 0, .1); }
+.about-project-skill-icon { display: grid; place-items: center; width: 36px; height: 36px; margin-bottom: 1rem; border-radius: 10px; color: var(--accent); background: var(--accent-glow); font-size: 1.35rem; }
+.about-project-skill h3 { margin: 0 0 .55rem; font-size: 1.02rem; line-height: 1.45; }
+.about-project-skill p { margin: 0 0 1rem; color: var(--text-secondary); font-size: .9rem; line-height: 1.7; }
+.about-project-skill a { width: fit-content; margin-top: auto; color: var(--accent); font-size: .86rem; font-weight: 600; text-decoration: none; }
+.about-project-skill a:hover, .about-project-skill a:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 900px) { .about-project-skills-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .about-project-skills-grid { grid-template-columns: 1fr; } .about-project-skill { min-height: 0; padding: 1.25rem; } }
 
 /* Projects and awards: give browsing controls and image cards a clear frame. */
 #projects .project-filters {
