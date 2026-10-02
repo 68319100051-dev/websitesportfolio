@@ -1011,6 +1011,15 @@ body:not(:has(#hero)) #particles { opacity: 1; }
 .modal-links a.modal-link-code:hover {
   border-color: var(--accent); color: var(--accent); transform: translateY(-2px);
 }
+.slipform-modal-video video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: #0b1022;
+}
+.slipform-modal-video p { margin-top: .6rem; font-size: .8rem; }
 .project-card {
   cursor: pointer;
   transform-style: preserve-3d;
@@ -2611,6 +2620,39 @@ html.theme-changing * {
 }
 #projects .projects-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); }
 #projects .project-card { display: flex; flex-direction: column; }
+
+/* SlipForm case study */
+.slipform-page { background: var(--bg-primary); }
+.slipform-main { position: relative; z-index: 1; padding: 4rem 0 6rem; }
+.slipform-shell { max-width: 1080px; margin: 0 auto; padding: 0 1.25rem; }
+.slipform-back { display: inline-flex; align-items: center; gap: .5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 2.5rem; }
+.slipform-back:hover { color: var(--accent); }
+.slipform-hero { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem; align-items: center; margin-bottom: 3rem; }
+.slipform-hero > * { min-width: 0; }
+.slipform-kicker { color: var(--accent); font: 600 .75rem var(--font-mono); letter-spacing: .14em; text-transform: uppercase; }
+.slipform-hero h1 { font-size: clamp(2.6rem, 6vw, 5.4rem); letter-spacing: -.06em; line-height: 1.04; margin: .8rem 0 1rem; }
+.slipform-hero p { color: var(--text-secondary); line-height: 1.85; font-size: 1.05rem; }
+.slipform-hero img { display: block; width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--border-light); box-shadow: 0 24px 64px rgba(0,0,0,.25); }
+.slipform-pills { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1.5rem; }
+.slipform-pills span { border: 1px solid var(--border-color); border-radius: 999px; padding: .35rem .8rem; font-size: .8rem; color: var(--text-secondary); }
+.slipform-notice { padding: 1.2rem 1.4rem; border-radius: var(--radius-sm); background: var(--accent-glow); border: 1px solid var(--border-light); line-height: 1.8; margin: 2.5rem 0; }
+.slipform-notice strong { color: var(--accent-light); }
+.slipform-section { margin-top: 4rem; }
+.slipform-section h2 { font-size: clamp(1.55rem, 3vw, 2.35rem); letter-spacing: -.035em; margin: .55rem 0 1rem; }
+.slipform-section > p { color: var(--text-secondary); line-height: 1.85; max-width: 760px; }
+.slipform-video { width: 100%; aspect-ratio: 16 / 9; display: block; border-radius: var(--radius-lg); border: 1px solid var(--border-light); background: #0b1022; margin-top: 1.5rem; }
+.slipform-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.4rem; }
+.slipform-tile { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.4rem; }
+.slipform-tile strong { display: block; font-size: 1.03rem; margin-bottom: .5rem; }
+.slipform-tile p { color: var(--text-secondary); line-height: 1.7; font-size: .9rem; }
+.slipform-role { border-left: 3px solid var(--accent); padding: .25rem 0 .25rem 1.2rem; color: var(--text-secondary); line-height: 1.85; }
+@media (max-width: 720px) {
+  .slipform-main { padding-top: 2rem; }
+  .slipform-hero, .slipform-grid { grid-template-columns: 1fr; }
+  .slipform-hero { gap: 1.5rem; }
+  .slipform-section { margin-top: 3rem; }
+  .slipform-tile { padding: 1.1rem; }
+}
 #projects .project-body { display: flex; flex-direction: column; flex: 1; }
 #projects .project-tags { margin-top: auto; }
 #projects .project-links { flex-wrap: wrap; gap: .65rem 1rem; }

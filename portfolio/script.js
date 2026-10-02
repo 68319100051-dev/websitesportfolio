@@ -197,6 +197,24 @@ if (contactForm) {
 // PROJECT MODAL
 // ============================================================
 const projectData = {
+  slipform: {
+    title: 'SlipForm — ระบบตรวจความดิ่งปล่องลิฟต์',
+    category: 'Construction / 3D / Web App',
+    status: '<span class="project-status live"><span class="dot"></span> ใช้งานจริง · ระบบภายใน</span>',
+    production: true,
+    description: 'เว็บแอปที่ผมออกแบบและพัฒนาด้วยตนเองระหว่างฝึกงาน สำหรับบันทึกและประเมินความดิ่งของผนังปล่องลิฟต์ในไซต์ก่อสร้าง ช่วยให้ทีมเห็นผลหลังกรอกข้อมูลและติดตามความคลาดเคลื่อนตลอดความสูงของอาคาร',
+    tech: ['JavaScript', 'Three.js', 'Node.js', 'Express', 'PostgreSQL'],
+    features: [
+      'บันทึกค่าวัดหน้างานและประเมินระดับความเสี่ยงทันที',
+      'แสดงผลทั้งปล่องเป็นโมเดล 3D พร้อมดูแนวโน้มแต่ละชั้น',
+      'แจ้งเตือนเมื่อพบค่าเกินเกณฑ์และติดตามการแก้ไข',
+      'ดูข้อมูลย้อนหลัง ส่งออกรายงาน และตรวจสอบประวัติการแก้ไข',
+      'ใช้งานบนมือถือได้สะดวกในพื้นที่ก่อสร้าง'
+    ],
+    video: 'videos/slipform-demo.mp4',
+    detail: 'slipform.html',
+    note: 'ระบบนี้ใช้งานจริงภายในองค์กร จึงไม่เปิดให้เข้าถึงตัวโปรแกรมหรือข้อมูลโครงการผ่านเว็บไซต์สาธารณะ วิดีโอเป็นสื่อแนะนำที่ผู้พัฒนาจัดเตรียมไว้'
+  },
   cyberhack: {
     title: 'CyberHack: Programmer vs Rogue AI',
     category: 'Game / AI',
@@ -442,6 +460,8 @@ const modalTech = document.getElementById('modalTech');
 const modalTechHeadingText = document.getElementById('modalTechHeadingText');
 const modalFeatures = document.getElementById('modalFeatures');
 const modalLinks = document.getElementById('modalLinks');
+const modalVideoSection = document.getElementById('modalVideoSection');
+const modalProjectVideo = document.getElementById('modalProjectVideo');
 
 function openModal(id) {
   const data = projectData[id];
@@ -451,6 +471,16 @@ function openModal(id) {
   modalCategory.textContent = data.category;
   modalStatus.innerHTML = data.status;
   modalDescription.textContent = data.description;
+  if (modalVideoSection && modalProjectVideo) {
+    modalProjectVideo.pause();
+    modalVideoSection.hidden = !data.video;
+    if (data.video) {
+      if (modalProjectVideo.getAttribute('src') !== data.video) modalProjectVideo.src = data.video;
+    } else {
+      modalProjectVideo.removeAttribute('src');
+      modalProjectVideo.load();
+    }
+  }
   if (modalTechHeadingText) modalTechHeadingText.textContent = id === 'jetmusic' ? 'ภาษาที่ใช้พัฒนา' : 'เทคโนโลยีที่ใช้';
   const developmentNote = document.getElementById('projectDevelopmentNote');
   if (developmentNote) developmentNote.style.display = data.production ? 'none' : 'flex';
@@ -491,6 +521,9 @@ function openModal(id) {
   modalFeatures.innerHTML = data.features.map(f => `<li>${f}</li>`).join('');
 
   let linksHTML = '';
+  if (data.detail) {
+    linksHTML += `<a href="${data.detail}" class="modal-link-live">อ่านรายละเอียดโครงการ ↗</a>`;
+  }
   if (data.preview) {
     linksHTML += `<a href="${data.preview}" class="modal-link-preview">ดูตัวอย่างระบบภายใน</a>`;
   }
@@ -513,6 +546,7 @@ function openModal(id) {
 }
 
 function closeModal() {
+  if (modalProjectVideo) modalProjectVideo.pause();
   modal.classList.remove('open');
   document.body.style.overflow = '';
 }
@@ -528,9 +562,17 @@ function confirmProjectLink(url) {
 }
 
 document.querySelectorAll('.project-card[data-project]').forEach(card => {
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('aria-label', `ดูรายละเอียด ${card.querySelector('h3')?.textContent || card.dataset.project}`);
   card.addEventListener('click', (e) => {
     if (e.target.closest('a')) return;
     openModal(card.dataset.project);
+  });
+  card.addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target === card) {
+      e.preventDefault();
+      openModal(card.dataset.project);
+    }
   });
 });
 
@@ -1180,7 +1222,7 @@ const i18n = {
     'home-work-formfiller': 'เครื่องมือใช้ AI ช่วยกรอกแบบฟอร์ม เพื่อให้งานซ้ำ ๆ ทำได้เร็วและเป็นระบบขึ้น',
     'home-work-featured': '★ โปรเจ็กต์แนะนำ',
     'home-work-jetmusic': 'ลองฟังเพลง จัดเพลย์ลิสต์ และดาวน์โหลดแอป Android ได้จากเว็บไซต์ Jet Music',
-    'home-work-forest': 'เกมออนไลน์แบบหลายผู้เล่นที่เชื่อมการทำงานแบบเรียลไทม์กับระบบเล่าเรื่องด้วย AI',
+    'home-work-slipform': 'ระบบตรวจความดิ่งปล่องลิฟต์ที่ใช้งานจริงในไซต์ก่อสร้าง พร้อมภาพ 3D และวิดีโอแนะนำ',
     'home-contact-kicker': "LET'S WORK TOGETHER",
     'home-contact-title': 'มาสร้างผลงานที่ดีร่วมกัน',
     'home-contact-desc': 'หากมีโปรเจกต์หรือโอกาสที่เหมาะสม ยินดีพูดคุยและแลกเปลี่ยนแนวคิดครับ',
@@ -1247,7 +1289,7 @@ const i18n = {
     'home-work-formfiller': 'An AI-assisted form tool that makes repetitive tasks faster and more structured.',
     'home-work-featured': '★ Featured project',
     'home-work-jetmusic': 'Listen to music, make playlists, and download the Android app from the Jet Music website.',
-    'home-work-forest': 'A multiplayer online game combining real-time interactions with AI-assisted storytelling.',
+    'home-work-slipform': 'A real-world lift shaft alignment system with 3D visualization and a video overview.',
     'home-contact-kicker': "LET'S WORK TOGETHER",
     'home-contact-title': 'Let’s build something useful together',
     'home-contact-desc': 'I’m open to discussing projects, opportunities, and ideas that are a good fit.',
@@ -1401,8 +1443,8 @@ function defaultContent() {
     'en-about-p-4': 'Every project is a learning journey. I believe technology should make life easier, and I strive to build things that matter.',
     'th-about-motto': '"เทคโนโลยีคือเครื่องมือ — จินตนาการคือขีดจำกัด"',
     'en-about-motto': '"Technology is a tool — imagination is the limit"',
-    'th-desc-projects': 'รวมโปรเจกต์ที่ผมสร้าง ตั้งแต่เว็บไซต์ AI ไปจนถึงเกมออนไลน์',
-    'en-desc-projects': 'Projects I\'ve built, from AI websites to online games',
+    'th-desc-projects': 'รวมโปรเจกต์ที่ผมออกแบบและพัฒนา ตั้งแต่ระบบที่ใช้งานจริงไปจนถึงเว็บแอปและ AI',
+    'en-desc-projects': 'Projects I designed and built, from production systems to web apps and AI',
     'th-desc-drawings': 'รวมภาพวาดลายเส้นดินสอ — ทุกเส้นมีเรื่องราว',
     'en-desc-drawings': 'Pencil drawings — every line tells a story',
     'th-desc-experience': 'ไทม์ไลน์การทำงานและโครงการที่ผ่านมา',
