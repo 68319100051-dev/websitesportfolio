@@ -1682,13 +1682,25 @@ function loadDrawingList() {
   return images;
 }
 
+const legacyAboutDefaults = {
+  'th-about-p-1': 'ว่าไงครับ! ผม <strong>เจ็ท</strong> (Jet Konkamon) — นักพัฒนา นักวาด และคนที่ชอบอะไรเกี่ยวกับเทคโนโลยีและการสร้างสรรค์ สนุกกับการลองอะไรใหม่ ๆ และเปลี่ยนไอเดียให้เป็นของจริง',
+  'en-about-p-1': 'Hey! I\'m <strong>Jet</strong> — a developer, artist, and creative who loves technology and turning ideas into reality.',
+  'th-about-p-2': 'ผมเป็น <strong>AI Developer & Full-Stack Developer</strong> ที่มีประสบการณ์สร้างเว็บไซต์ เกม และระบบ AI มากมาย ชอบทดลองใช้ AI ใหม่ ๆ มาประยุกต์ใช้ในโปรเจกต์จริง ตั้งแต่ TensorFlow.js, Stable Diffusion, ไปจนถึง LLM อย่าง Gemini และ Claude',
+  'en-about-p-2': 'I\'m an <strong>AI Developer & Full-Stack Developer</strong> with experience building websites, games, and AI systems — from TensorFlow.js and Stable Diffusion to LLMs like Gemini and Claude.'
+};
+
 function applyContent() {
   const data = loadContent();
   const lang = localStorage.getItem('portfolio-lang') || 'th';
+  let updatedDefaults;
   document.querySelectorAll('[data-editable]').forEach(el => {
     const key = el.dataset.editable;
     const langKey = lang + '-' + key;
-    if (data[langKey]) {
+    const saved = data[langKey] || data[key];
+    if (saved && saved === legacyAboutDefaults[langKey]) {
+      updatedDefaults ||= defaultContent();
+      el.innerHTML = updatedDefaults[langKey];
+    } else if (data[langKey]) {
       el.innerHTML = data[langKey];
     } else if (data[key]) {
       el.innerHTML = data[key];
@@ -2579,5 +2591,3 @@ If the website does not provide an answer, say that you do not know.`;
     }
   });
 })();
-
-
