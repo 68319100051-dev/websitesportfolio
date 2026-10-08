@@ -652,3 +652,8 @@ body.portfolio-v2 .page-transition.active { pointer-events: auto; }
 [data-theme="light"] body.portfolio-v2 .home-contact-strip {
   background: linear-gradient(110deg,#e0f4f3,#e8edf9);
 }
+
+/* Standalone case studies and error page keep content above the background field. */
+body.portfolio-v2 .argo-preview-nav,
+body.portfolio-v2 .argo-preview-main,
+body.portfolio-v2 .error-page { position: relative; z-index: 1; }
