@@ -1,71 +1,4 @@
 // ============================================================
-// PARTICLES ANIMATION
-// ============================================================
-const canvas = document.getElementById('particles');
-if (canvas) {
-  const ctx = canvas.getContext('2d');
-  let particles = [];
-  const isHero = !!document.querySelector('#hero');
-  const PARTICLE_COUNT = isHero ? 100 : 60;
-  const CONNECT_DISTANCE = isHero ? 180 : 150;
-  let mouseX = 0, mouseY = 0;
-
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-
-  class Particle {
-    constructor() {
-      this.x = Math.random() * canvas.width;
-      this.y = Math.random() * canvas.height;
-      this.vx = (Math.random() - 0.5) * 0.5;
-      this.vy = (Math.random() - 0.5) * 0.5;
-      this.size = Math.random() * 2 + (isHero ? 1 : 0.5);
-      this.opacity = Math.random() * 0.5 + (isHero ? 0.3 : 0.1);
-    }
-    update() {
-      this.x += this.vx;
-      this.y += this.vy;
-      if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-      if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-    }
-    draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(192, 132, 252, ${this.opacity})`;
-      ctx.fill();
-    }
-  }
-
-  for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
-
-  function animateParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => { p.update(); p.draw(); });
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < CONNECT_DISTANCE) {
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(192, 132, 252, ${0.1 * (1 - dist / CONNECT_DISTANCE)})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
-        }
-      }
-    }
-    requestAnimationFrame(animateParticles);
-  }
-  animateParticles();
-}
-
-// ============================================================
 // THEME TOGGLE
 // ============================================================
 const html = document.documentElement;
@@ -833,35 +766,6 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ============================================================
-// 3D TILT EFFECT ON CARDS
-// ============================================================
-const tiltCards = document.querySelectorAll('.project-card, .about-card, .achievement-card, .skill-badge');
-tiltCards.forEach(card => {
-  let tilting = false;
-  card.addEventListener('mousemove', (e) => {
-    if (!tilting) {
-      tilting = true;
-      card.style.transition = 'transform 0.08s ease-out';
-    }
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -6;
-    const rotateY = ((x - centerX) / centerX) * 6;
-    card.style.transform = card.classList.contains('project-card')
-      ? `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`
-      : `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-  });
-  card.addEventListener('mouseleave', () => {
-    tilting = false;
-    card.style.transition = '';
-    card.style.transform = '';
-  });
-});
-
-// ============================================================
 // DRAWINGS GALLERY
 // ============================================================
 (function() {
@@ -1113,32 +1017,6 @@ tiltCards.forEach(card => {
       filterProjects(activeFilter, search.value);
     });
   }
-})();
-
-// ============================================================
-// PAGE TRANSITION — Fade effect between pages
-// ============================================================
-(function() {
-  const overlay = document.createElement('div');
-  overlay.className = 'page-transition';
-  document.body.appendChild(overlay);
-
-  // Fade in on load
-  window.addEventListener('pageshow', () => {
-    overlay.classList.remove('active');
-  });
-  requestAnimationFrame(() => overlay.classList.remove('active'));
-
-  // Intercept internal links
-  document.addEventListener('click', (e) => {
-    const link = e.target.closest('a[href]');
-    if (!link) return;
-    const href = link.getAttribute('href');
-    if (!href || href.startsWith('http') || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || link.hasAttribute('download') || link.target === '_blank') return;
-    e.preventDefault();
-    overlay.classList.add('active');
-    setTimeout(() => { window.location.href = href; }, 350);
-  });
 })();
 
 // ============================================================

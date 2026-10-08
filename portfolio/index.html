@@ -14,8 +14,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=slipform-cover-20261002">
+  <link rel="stylesheet" href="blockchain.css?v=network-20261008">
 </head>
-<body>
+<body class="portfolio-v2">
   <a class="skip-link" href="#hero">ข้ามไปเนื้อหา</a>
 
   <canvas id="particles"></canvas>
@@ -72,6 +73,7 @@
       <span class="hero-gacha-hint" aria-hidden="true">↻ <span>กดเพื่อสลับการ์ด</span></span>
     </button>
     <div class="hero-content">
+      <div class="hero-console reveal" aria-label="Developer portfolio"><span class="console-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>~/jet/portfolio</span><code>whoami --build=impact</code></div>
       <p class="hero-eyebrow reveal" data-i18n="home-eyebrow">PORTFOLIO / AI & WEB DEVELOPMENT</p>
       <div class="hero-badge reveal">
         <span class="pulse"></span> <span data-editable="hero-badge">พร้อมรับงานใหม่</span>
@@ -168,10 +170,10 @@
   </footer>
   <button class="back-to-top" id="backToTop" aria-label="กลับด้านบน">↑</button>
 
-  <div id="renderSplash" style="position:fixed;inset:0;z-index:99999;background:#0a0a15;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transition:opacity 0.6s;">
-    <div style="width:48px;height:48px;border:3px solid rgba(192,132,252,0.2);border-top-color:#c084fc;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+  <div id="renderSplash" style="position:fixed;inset:0;z-index:99999;background:#070d18;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transition:opacity 0.6s;">
+    <div style="width:48px;height:48px;border:3px solid rgba(86,240,206,0.2);border-top-color:#56f0ce;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
     <div style="text-align:center;">
-      <div style="font-size:1rem;font-weight:600;background:linear-gradient(135deg,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Jet Konkamon</div>
+      <div style="font-size:1rem;font-weight:600;background:linear-gradient(135deg,#56f0ce,#88a8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Jet Konkamon</div>
       <div style="font-size:0.8rem;color:#8888a0;margin-top:0.3rem;">กำลังปลุกเซิร์ฟเวอร์...</div>
     </div>
     <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
@@ -195,5 +197,6 @@
       check();
     })();
   </script>
+  <script src="blockchain-motion.js?v=network-20261008"></script>
 </body>
 </html>

@@ -23,8 +23,9 @@
     .error-desc { color: var(--text-secondary); font-size: 0.95rem; max-width: 400px; margin-bottom: 2rem; }
     .error-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
   </style>
+  <link rel="stylesheet" href="blockchain.css?v=network-20261008">
 </head>
-<body>
+<body class="portfolio-v2">
   <canvas id="particles"></canvas>
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
@@ -40,8 +41,6 @@
     </div>
   </div>
 
-  <script>
-    const c=document.getElementById('particles'); if(c){ const x=c.getContext('2d'); let p=[]; function r(){c.width=innerWidth;c.height=innerHeight} r(); addEventListener('resize',r); for(let i=0;i<60;i++) p.push({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-0.5)*0.5,vy:(Math.random()-0.5)*0.5,s:Math.random()*2+0.5}); (function a(){ x.clearRect(0,0,c.width,c.height); p.forEach(q=>{ q.x+=q.vx; q.y+=q.vy; if(q.x<0||q.x>c.width) q.vx*=-1; if(q.y<0||q.y>c.height) q.vy*=-1; x.beginPath(); x.arc(q.x,q.y,q.s,0,Math.PI*2); x.fillStyle='rgba(192,132,252,0.15)'; x.fill() }); requestAnimationFrame(a) })() }
-  </script>
+  <script src="blockchain-motion.js?v=network-20261008"></script>
 </body>
 </html>

@@ -182,8 +182,9 @@
       .nav-bar { gap: 0.5rem; padding: 0.4rem 0.6rem; font-size: 0.85rem; }
     }
   </style>
+  <link rel="stylesheet" href="blockchain.css?v=network-20261008">
 </head>
-<body>
+<body class="portfolio-v2">
   <canvas id="particles"></canvas>
   <div class="theme-toggle-bar" id="themeToggle">🌙</div>
 
@@ -293,32 +294,6 @@
   </div>
 
   <script>
-    // Particles
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    resize(); window.addEventListener('resize', resize);
-    for (let i = 0; i < 50; i++) {
-      particles.push({
-        x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
-        s: Math.random() * 2 + 0.5, o: Math.random() * 0.4 + 0.1
-      });
-    }
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(192,132,252,' + p.o + ')'; ctx.fill();
-      });
-      requestAnimationFrame(animate);
-    }
-    animate();
-
     // Slideshow
     const track = document.getElementById('slideTrack');
     const slides = track.querySelectorAll('.slide');
@@ -372,5 +347,6 @@
       if (Math.abs(diff) > 60) diff > 0 ? goTo(current + 1) : goTo(current - 1);
     });
   </script>
+  <script src="blockchain-motion.js?v=network-20261008"></script>
 </body>
 </html>
