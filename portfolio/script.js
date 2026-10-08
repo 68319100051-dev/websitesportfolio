@@ -2453,19 +2453,4 @@ If the website does not provide an answer, say that you do not know.`;
   }).catch(() => {});
 })();
 
-// ============================================================
-// ANTI-DEVTOOLS
-// ============================================================
-(function() {
-  if (window.location.pathname.includes('admin.html')) return;
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  document.addEventListener('keydown', e => {
-    if (e.key === 'F12' ||
-        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-        (e.ctrlKey && e.key === 'U') ||
-        (e.ctrlKey && e.key === 'S')) {
-      e.preventDefault();
-      return false;
-    }
-  });
-})();
+

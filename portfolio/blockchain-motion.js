@@ -5,6 +5,16 @@
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
   const root = document.documentElement;
+  try {
+    const savedTheme = localStorage.getItem('portfolio-theme');
+    if (savedTheme === 'dark' || savedTheme === 'light') root.dataset.theme = savedTheme;
+  } catch {}
+  new MutationObserver(() => {
+    try {
+      if (root.dataset.theme === 'dark' || root.dataset.theme === 'light')
+        localStorage.setItem('portfolio-theme', root.dataset.theme);
+    } catch {}
+  }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 
   // A projected 3D node field gives the page a connected, code-driven backdrop.
   if (!reduced.matches) {
@@ -88,6 +98,14 @@
           ctx.moveTo(from.x, from.y);
           ctx.lineTo(to.x, to.y);
           ctx.stroke();
+          if (index % 3 === 0) {
+            const travel = (time * .00028 + index * .137) % 1;
+            ctx.fillStyle = light ? 'rgba(6,104,116,.48)' : 'rgba(136,255,233,.65)';
+            ctx.beginPath();
+            ctx.arc(from.x + (to.x - from.x) * travel,
+                    from.y + (to.y - from.y) * travel, 1.35, 0, Math.PI * 2);
+            ctx.fill();
+          }
         });
         projected.forEach((point, index) => {
           const glow = .55 + Math.sin(time * .0015 + nodes[index].phase) * .25;
@@ -157,6 +175,89 @@
         card.style.removeProperty('--tilt-y');
       }, { passive: true });
     });
+  }
+
+  // The hero HUD bends with pointer movement; the cube keeps its own rotation.
+  if (finePointer.matches && !reduced.matches) {
+    document.querySelectorAll('.page-hero').forEach(hero => {
+      const hud = hero.querySelector('.network-hud');
+      if (!hud) return;
+      let frame = 0;
+      let x = 0, y = 0;
+      hero.addEventListener('pointermove', event => {
+        x = event.clientX;
+        y = event.clientY;
+        if (frame) return;
+        frame = requestAnimationFrame(() => {
+          frame = 0;
+          const rect = hero.getBoundingClientRect();
+          const dx = (x - rect.left) / Math.max(rect.width, 1) - .5;
+          const dy = (y - rect.top) / Math.max(rect.height, 1) - .5;
+          hud.style.setProperty('--hud-x', (-6 - dy * 10).toFixed(1) + 'deg');
+          hud.style.setProperty('--hud-y', (8 + dx * 12).toFixed(1) + 'deg');
+        });
+      }, { passive: true });
+      hero.addEventListener('pointerleave', () => {
+        if (frame) cancelAnimationFrame(frame);
+        frame = 0;
+        hud.style.removeProperty('--hud-x');
+        hud.style.removeProperty('--hud-y');
+      }, { passive: true });
+    });
+  }
+
+  // Reveal modules as they enter view, including gallery items loaded later.
+  if (!reduced.matches && 'IntersectionObserver' in window) {
+    const selector = '.home-work-card,.project-card,.about-card,.about-project-skill,.achievement-card,.timeline-item,.contact-link-item,.gb-entry,.drawing-item,.slipform-tile,.argo-preview-figure';
+    const seen = new WeakSet();
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('network-in');
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -6% 0px', threshold: .08 });
+    function observeNew(rootNode = document) {
+      rootNode.querySelectorAll(selector).forEach((element, index) => {
+        if (seen.has(element)) return;
+        seen.add(element);
+        element.style.setProperty('--enter-delay', (index % 5) * 65 + 'ms');
+        element.classList.add('network-enter');
+        observer.observe(element);
+      });
+    }
+    observeNew();
+    document.querySelectorAll('.drawings-grid,#gbList').forEach(container => {
+      new MutationObserver(() => observeNew(container))
+        .observe(container, { childList: true, subtree: true });
+    });
+  }
+
+  // A short interaction pulse makes buttons feel like network nodes.
+  if (finePointer.matches && !reduced.matches) {
+    document.addEventListener('pointerdown', event => {
+      if (!(event.target instanceof Element) ||
+          !event.target.closest('button,a,.project-filter-tab')) return;
+      const spark = document.createElement('span');
+      spark.className = 'interaction-spark';
+      spark.setAttribute('aria-hidden', 'true');
+      spark.style.left = event.clientX + 'px';
+      spark.style.top = event.clientY + 'px';
+      document.body.appendChild(spark);
+      window.setTimeout(() => spark.remove(), 700);
+    }, { passive: true });
+  }
+
+  if (!document.querySelector('.scroll-progress')) {
+    const bar = document.createElement('div');
+    bar.className = 'scroll-progress';
+    document.body.prepend(bar);
+    const update = () => {
+      const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+      bar.style.width = Math.min(100, scrollY / max * 100) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    update();
   }
 
   // Intercept only ordinary links between public pages on the same origin.
