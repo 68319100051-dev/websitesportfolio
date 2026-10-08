@@ -1187,3 +1187,5 @@ body.portfolio-v2 .about-motto {
   body.portfolio-v2 section:has(#guestbookForm) > .container { grid-template-columns: 1fr; }
   body.portfolio-v2 #guestbookForm { position: static; }
 }
+
+body.portfolio-v2 .reveal.network-enter:not(.network-in) { opacity: .05; filter: blur(10px); }
