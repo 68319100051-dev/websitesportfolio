@@ -260,34 +260,37 @@
     update();
   }
 
-  // Intercept only ordinary links between public pages on the same origin.
-  const overlay = document.createElement('div');
-  overlay.className = 'page-transition';
-  overlay.setAttribute('aria-hidden', 'true');
-  document.body.appendChild(overlay);
-  let navigating = false;
-  window.addEventListener('pageshow', () => {
-    navigating = false;
-    overlay.classList.remove('active');
-  });
+  // Keep navigation native so a slow response never leaves a full-screen cover.
+  const notice = document.createElement('div');
+  notice.className = 'page-transition';
+  notice.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(notice);
+  let noticeTimeout = 0;
+  const clearNotice = () => {
+    window.clearTimeout(noticeTimeout);
+    notice.classList.remove('active');
+  };
+  window.addEventListener('pageshow', clearNotice);
+  window.addEventListener('pagehide', clearNotice);
   document.addEventListener('click', event => {
-    if (reduced.matches || event.defaultPrevented || event.button !== 0 ||
+    if (event.defaultPrevented || event.button !== 0 ||
         event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ||
         !(event.target instanceof Element)) return;
     const link = event.target.closest('a[href]');
-    if (!link || link.hasAttribute('download') || link.target && link.target !== '_self' ||
+    if (!link || link.hasAttribute('download') ||
+        (link.target && link.target !== '_self') ||
         link.dataset.noTransition !== undefined) return;
     let target;
     try { target = new URL(link.href, window.location.href); } catch { return; }
     if (target.origin !== window.location.origin ||
-        target.pathname === window.location.pathname &&
-        target.search === window.location.search &&
-        target.hash) return;
-    if (!/\.html?$|\/$/.test(target.pathname)) return;
-    if (navigating) { event.preventDefault(); return; }
-    navigating = true;
-    event.preventDefault();
-    overlay.classList.add('active');
-    window.setTimeout(() => { window.location.assign(target.href); }, 420);
+        (target.pathname === window.location.pathname &&
+         target.search === window.location.search) ||
+        !/\.html?$|\/$/.test(target.pathname)) return;
+    const name = (link.getAttribute('aria-label') || link.textContent || '')
+      .replace(/\s+/g, ' ').trim().slice(0, 38);
+    notice.textContent = name ? 'กำลังเปิด ' + name : 'กำลังเปิดหน้าใหม่';
+    notice.classList.add('active');
+    window.clearTimeout(noticeTimeout);
+    noticeTimeout = window.setTimeout(clearNotice, 2500);
   });
 })();

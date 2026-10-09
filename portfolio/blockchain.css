@@ -559,25 +559,88 @@ body.portfolio-v2 .footer {
 }
 body.portfolio-v2 .footer a { color: var(--accent-light); }
 body.portfolio-v2 .page-transition {
-  display: grid;
-  place-items: center;
+  position: fixed;
+  top: calc(var(--navbar-height) + 1rem);
+  right: max(1rem,env(safe-area-inset-right));
+  left: auto;
+  bottom: auto;
+  z-index: 5500;
+  width: min(330px,calc(100vw - 2rem));
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  padding: .85rem 1.1rem .95rem;
+  overflow: hidden;
+  border: 1px solid rgba(112,239,219,.48);
+  border-radius: 12px;
+  background: linear-gradient(135deg,rgba(13,35,49,.97),rgba(17,29,53,.97));
+  color: #e9fffa;
+  box-shadow: 0 18px 45px rgba(0,0,0,.32),0 0 25px rgba(86,240,206,.1);
+  font: 600 .82rem var(--font-sans);
+  line-height: 1.45;
   opacity: 0;
-  background:
-    repeating-linear-gradient(90deg,rgba(86,240,206,.09) 0 1px,transparent 1px 66px),
-    linear-gradient(135deg,#06121e,#102838 52%,#11182e);
-  clip-path: inset(0 0 100% 0);
-  transition: clip-path .48s cubic-bezier(.74,0,.23,1),opacity .48s;
+  visibility: hidden;
+  transform: translateY(-12px);
+  clip-path: none;
+  pointer-events: none;
+  transition: opacity .22s ease,transform .22s ease,visibility .22s;
 }
 body.portfolio-v2 .page-transition::before {
-  content: 'INITIALIZING NEXT NODE';
-  color: #a0ffe9;
-  font: 600 .78rem var(--font-mono);
-  letter-spacing: .22em;
-  text-shadow: 0 0 16px #56f0ce;
+  content: '↗';
+  flex: 0 0 30px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(121,239,217,.45);
+  border-radius: 8px;
+  background: rgba(76,230,206,.11);
+  color: #8dffe7;
+  font: 700 1rem var(--font-sans);
+  letter-spacing: 0;
+  text-shadow: none;
+}
+body.portfolio-v2 .page-transition::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg,#56f0ce,#88a8ff);
+  transform: scaleX(0);
+  transform-origin: left;
 }
 body.portfolio-v2 .page-transition.active {
   opacity: 1;
-  clip-path: inset(0 0 0 0);
+  visibility: visible;
+  transform: translateY(0);
+  clip-path: none;
+  pointer-events: none;
+}
+body.portfolio-v2 .page-transition.active::after {
+  animation: pageNoticeProgress 2.5s linear both;
+}
+@keyframes pageNoticeProgress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@media (max-width: 600px) {
+  body.portfolio-v2 .page-transition {
+    top: auto;
+    right: 1rem;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    left: 1rem;
+    width: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.portfolio-v2 .page-transition,
+  body.portfolio-v2 .page-transition.active::after {
+    transition: none;
+    animation: none;
+  }
 }
 body.portfolio-v2 .reveal {
   opacity: 0;
