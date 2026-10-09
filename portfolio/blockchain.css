@@ -1990,8 +1990,8 @@ body.portfolio-v2 .network-3d-scene {
 body.portfolio-v2.network-3d-active #particles { display: none; }
 body.portfolio-v2 .page-hero { position: relative; isolation: isolate; }
 body.portfolio-v2 .page-hero > .network-3d-scene {
-  inset: 0 0 0 auto;
-  width: 62%;
+  inset: 0;
+  width: 100%;
   opacity: .44;
 }
 body.portfolio-v2 .page-hero > .container { position: relative; z-index: 1; }
