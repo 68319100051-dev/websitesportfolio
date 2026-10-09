@@ -260,20 +260,20 @@
     update();
   }
 
-  // Keep navigation native so a slow response never leaves a full-screen cover.
-  const notice = document.createElement('div');
-  notice.className = 'page-transition';
-  notice.setAttribute('aria-hidden', 'true');
-  document.body.appendChild(notice);
-  let noticeTimeout = 0;
-  const clearNotice = () => {
-    window.clearTimeout(noticeTimeout);
-    notice.classList.remove('active');
+  // A short outgoing scene; the destination plays its own entrance animation.
+  let navigating = false;
+  let navigateTimer = 0;
+  let recoveryTimer = 0;
+  const resetNavigation = () => {
+    window.clearTimeout(navigateTimer);
+    window.clearTimeout(recoveryTimer);
+    navigating = false;
+    document.body.classList.remove('page-is-leaving');
   };
-  window.addEventListener('pageshow', clearNotice);
-  window.addEventListener('pagehide', clearNotice);
+  window.addEventListener('pageshow', resetNavigation);
+  window.addEventListener('pagehide', resetNavigation);
   document.addEventListener('click', event => {
-    if (event.defaultPrevented || event.button !== 0 ||
+    if (reduced.matches || event.defaultPrevented || event.button !== 0 ||
         event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ||
         !(event.target instanceof Element)) return;
     const link = event.target.closest('a[href]');
@@ -286,11 +286,12 @@
         (target.pathname === window.location.pathname &&
          target.search === window.location.search) ||
         !/\.html?$|\/$/.test(target.pathname)) return;
-    const name = (link.getAttribute('aria-label') || link.textContent || '')
-      .replace(/\s+/g, ' ').trim().slice(0, 38);
-    notice.textContent = name ? 'กำลังเปิด ' + name : 'กำลังเปิดหน้าใหม่';
-    notice.classList.add('active');
-    window.clearTimeout(noticeTimeout);
-    noticeTimeout = window.setTimeout(clearNotice, 2500);
+    event.preventDefault();
+    if (navigating) return;
+    navigating = true;
+    document.body.classList.add('page-is-leaving');
+    navigateTimer = window.setTimeout(() => window.location.assign(target.href), 220);
+    // If navigation fails or the network stalls, keep the current page usable.
+    recoveryTimer = window.setTimeout(resetNavigation, 1800);
   });
 })();
