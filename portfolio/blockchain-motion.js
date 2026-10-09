@@ -16,8 +16,12 @@
     } catch {}
   }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 
-  // A projected 3D node field gives the page a connected, code-driven backdrop.
-  if (!reduced.matches) {
+  // Inner pages use their own hero artwork; a second network field obscures it.
+  const innerPage = Boolean(document.querySelector('.page-hero'));
+  if (innerPage) document.getElementById('particles')?.remove();
+
+  // Keep the lightweight background only behind the home page.
+  if (!reduced.matches && !innerPage) {
     let canvas = document.getElementById('particles');
     if (!canvas) {
       canvas = document.createElement('canvas');

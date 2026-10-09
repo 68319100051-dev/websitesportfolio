@@ -1,16 +1,14 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
-
 const body = document.body;
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-if (body.classList.contains('portfolio-v2') && !reduced.matches) {
+const stage = document.querySelector('.network-3d-stage');
+if (stage && body.classList.contains('portfolio-v2') && !reduced.matches) {
   let renderer;
   let canvas;
   try {
+    const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js');
     canvas = document.createElement('canvas');
     const context = canvas.getContext('webgl2', { alpha: true, antialias: window.innerWidth > 700 });
     if (!context) throw new Error('WebGL2 unavailable');
-    const stage = document.querySelector('.network-3d-stage') || document.querySelector('.page-hero');
-    if (!stage) throw new Error('No scene stage');
     canvas.className = 'network-3d-scene';
     canvas.setAttribute('aria-hidden', 'true');
     canvas.tabIndex = -1;

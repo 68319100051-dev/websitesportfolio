@@ -1989,11 +1989,6 @@ body.portfolio-v2 .network-3d-scene {
 }
 body.portfolio-v2.network-3d-active #particles { display: none; }
 body.portfolio-v2 .page-hero { position: relative; isolation: isolate; }
-body.portfolio-v2 .page-hero > .network-3d-scene {
-  inset: 0;
-  width: 100%;
-  opacity: .44;
-}
 body.portfolio-v2 .page-hero > .container { position: relative; z-index: 1; }
 body.portfolio-v2 :is(.home-work-card,.project-card,.about-project-skill,.about-card,.skill-badge,.achievement-card,.timeline-item,.contact-link-item,.gb-entry,.slipform-tile,.argo-preview-figure,.drawing-item) {
   transform: translateY(var(--lift, 0px));
@@ -2012,7 +2007,6 @@ body.portfolio-v2 .project-filter-tab:hover { transform: translateY(-3px); }
     background: linear-gradient(180deg, rgba(7, 20, 30, .94), rgba(7, 20, 30, .25) 63%, transparent);
   }
   body.portfolio-v2 .network-3d-stage::after { right: 1rem; bottom: 1rem; font-size: .55rem; }
-  body.portfolio-v2 .page-hero > .network-3d-scene { width: 100%; opacity: .18; }
 }
 @media (max-width: 600px) {
   body.portfolio-v2 .network-3d-stage {
@@ -2027,3 +2021,6 @@ body.portfolio-v2 .project-filter-tab:hover { transform: translateY(-3px); }
 @media (prefers-reduced-motion: reduce) {
   body.portfolio-v2 .network-3d-scene { display: none; }
 }
+
+/* Give each inner-page hero one focal point: its own showcase. */
+body.portfolio-v2:has(.page-hero) #particles { display: none; }
