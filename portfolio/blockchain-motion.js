@@ -63,7 +63,7 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
       function render(time) {
-        if (document.hidden) { raf = 0; return; }
+        if (document.hidden || document.body.classList.contains('network-3d-active')) { raf = 0; return; }
         raf = requestAnimationFrame(render);
         if (time - last < 32) return;
         last = time;
@@ -134,7 +134,19 @@
       }
       raf = requestAnimationFrame(render);
       document.addEventListener('visibilitychange', () => {
-        if (!document.hidden && !reduced.matches && !raf) raf = requestAnimationFrame(render);
+        if (!document.hidden && !reduced.matches &&
+            !document.body.classList.contains('network-3d-active') && !raf)
+          raf = requestAnimationFrame(render);
+      });
+      document.addEventListener('network3dchange', () => {
+        const active = document.body.classList.contains('network-3d-active');
+        canvas.hidden = active;
+        if (active && raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+        } else if (!active && !document.hidden && !reduced.matches && !raf) {
+          raf = requestAnimationFrame(render);
+        }
       });
       reduced.addEventListener('change', event => {
         if (event.matches) {
@@ -148,62 +160,6 @@
         }
       });
     }
-  }
-
-  // Card tilt uses CSS variables so transforms stay owned by the new theme.
-  if (finePointer.matches && !reduced.matches) {
-    const tiltSelector = '.home-work-card,.project-card,.about-project-skill,.about-card,.skill-badge,.achievement-card,.timeline-item,.contact-link-item,.gb-entry,.slipform-tile,.argo-preview-figure,.drawing-item';
-    document.querySelectorAll(tiltSelector).forEach(card => {
-      let scheduled = false;
-      let clientX = 0, clientY = 0;
-      card.addEventListener('pointermove', event => {
-        clientX = event.clientX;
-        clientY = event.clientY;
-        if (scheduled) return;
-        scheduled = true;
-        requestAnimationFrame(() => {
-          scheduled = false;
-          const rect = card.getBoundingClientRect();
-          const x = (clientX - rect.left) / Math.max(rect.width, 1) - .5;
-          const y = (clientY - rect.top) / Math.max(rect.height, 1) - .5;
-          card.style.setProperty('--tilt-x', (-y * 5).toFixed(2) + 'deg');
-          card.style.setProperty('--tilt-y', (x * 5).toFixed(2) + 'deg');
-        });
-      }, { passive: true });
-      card.addEventListener('pointerleave', () => {
-        card.style.removeProperty('--tilt-x');
-        card.style.removeProperty('--tilt-y');
-      }, { passive: true });
-    });
-  }
-
-  // The hero HUD bends with pointer movement; the cube keeps its own rotation.
-  if (finePointer.matches && !reduced.matches) {
-    document.querySelectorAll('.page-hero').forEach(hero => {
-      const hud = hero.querySelector('.network-hud');
-      if (!hud) return;
-      let frame = 0;
-      let x = 0, y = 0;
-      hero.addEventListener('pointermove', event => {
-        x = event.clientX;
-        y = event.clientY;
-        if (frame) return;
-        frame = requestAnimationFrame(() => {
-          frame = 0;
-          const rect = hero.getBoundingClientRect();
-          const dx = (x - rect.left) / Math.max(rect.width, 1) - .5;
-          const dy = (y - rect.top) / Math.max(rect.height, 1) - .5;
-          hud.style.setProperty('--hud-x', (-6 - dy * 10).toFixed(1) + 'deg');
-          hud.style.setProperty('--hud-y', (8 + dx * 12).toFixed(1) + 'deg');
-        });
-      }, { passive: true });
-      hero.addEventListener('pointerleave', () => {
-        if (frame) cancelAnimationFrame(frame);
-        frame = 0;
-        hud.style.removeProperty('--hud-x');
-        hud.style.removeProperty('--hud-y');
-      }, { passive: true });
-    });
   }
 
   // Reveal modules as they enter view, including gallery items loaded later.
@@ -231,21 +187,6 @@
       new MutationObserver(() => observeNew(container))
         .observe(container, { childList: true, subtree: true });
     });
-  }
-
-  // A short interaction pulse makes buttons feel like network nodes.
-  if (finePointer.matches && !reduced.matches) {
-    document.addEventListener('pointerdown', event => {
-      if (!(event.target instanceof Element) ||
-          !event.target.closest('button,a,.project-filter-tab')) return;
-      const spark = document.createElement('span');
-      spark.className = 'interaction-spark';
-      spark.setAttribute('aria-hidden', 'true');
-      spark.style.left = event.clientX + 'px';
-      spark.style.top = event.clientY + 'px';
-      document.body.appendChild(spark);
-      window.setTimeout(() => spark.remove(), 700);
-    }, { passive: true });
   }
 
   if (!document.querySelector('.scroll-progress')) {
