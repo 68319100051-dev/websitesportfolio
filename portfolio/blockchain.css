@@ -1892,3 +1892,138 @@ body.portfolio-v2 :is(.showcase-project-back,.showcase-sketch-back,.awards-hero-
     animation: none;
   }
 }
+
+
+/* WebGL scene: one real spatial focal point, with calm two-dimensional UI. */
+body.portfolio-v2 .network-3d-stage {
+  width: min(1320px, calc(100% - 2.5rem));
+  min-height: 490px;
+  margin: 0 auto 5rem;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(100, 236, 220, .28);
+  border-radius: 28px;
+  background: radial-gradient(ellipse at 72% 48%, rgba(54, 113, 144, .26), transparent 52%),
+    linear-gradient(130deg, #07141e, #0a1c2a 60%, #111b30);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .22), inset 0 0 70px rgba(39, 154, 153, .04);
+}
+body.portfolio-v2 .network-3d-stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(7, 20, 30, .92) 0%, rgba(7, 20, 30, .62) 37%, transparent 70%),
+    repeating-linear-gradient(0deg, transparent 0 38px, rgba(98, 208, 212, .045) 39px 40px),
+    repeating-linear-gradient(90deg, transparent 0 38px, rgba(98, 208, 212, .045) 39px 40px);
+}
+body.portfolio-v2 .network-3d-stage::after {
+  content: 'INTERACTIVE / REALTIME 3D';
+  position: absolute;
+  right: 1.8rem;
+  bottom: 1.4rem;
+  z-index: 2;
+  font: 600 .65rem var(--font-mono);
+  letter-spacing: .18em;
+  color: rgba(157, 244, 231, .72);
+}
+body.portfolio-v2 .network-3d-stage .network-3d-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: min(49%, 570px);
+  min-height: 490px;
+  padding: clamp(2rem, 5vw, 4.5rem);
+  pointer-events: none;
+}
+body.portfolio-v2 .network-3d-stage .network-3d-copy a { pointer-events: auto; }
+body.portfolio-v2 .network-3d-copy .network-3d-kicker {
+  margin-bottom: 1.4rem;
+  color: #8bf7dc;
+  font: 700 .7rem var(--font-mono);
+  letter-spacing: .17em;
+}
+body.portfolio-v2 .network-3d-copy h2 {
+  max-width: 12ch;
+  margin: 0 0 1rem;
+  color: #f4fbff;
+  font-size: clamp(2.4rem, 4.2vw, 4.4rem);
+  line-height: 1.08;
+  letter-spacing: -.045em;
+}
+body.portfolio-v2 .network-3d-copy p {
+  max-width: 42ch;
+  margin: 0 0 1.8rem;
+  color: #acc7d1;
+  line-height: 1.75;
+}
+body.portfolio-v2 .network-3d-copy a {
+  display: inline-flex;
+  align-items: center;
+  gap: .8rem;
+  padding: .9rem 1.2rem;
+  color: #082c31;
+  background: #8ff2d8;
+  border: 1px solid #b8ffe9;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+}
+body.portfolio-v2 .network-3d-copy a:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(89, 234, 203, .22);
+}
+body.portfolio-v2 .network-3d-scene {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+body.portfolio-v2.network-3d-active #particles { display: none; }
+body.portfolio-v2 .page-hero { position: relative; isolation: isolate; }
+body.portfolio-v2 .page-hero > .network-3d-scene {
+  inset: 0 0 0 auto;
+  width: 62%;
+  opacity: .44;
+}
+body.portfolio-v2 .page-hero > .container { position: relative; z-index: 1; }
+body.portfolio-v2 :is(.home-work-card,.project-card,.about-project-skill,.about-card,.skill-badge,.achievement-card,.timeline-item,.contact-link-item,.gb-entry,.slipform-tile,.argo-preview-figure,.drawing-item) {
+  transform: translateY(var(--lift, 0px));
+  transform-style: flat;
+}
+body.portfolio-v2 .project-filter-tab:hover { transform: translateY(-3px); }
+@media (max-width: 800px) {
+  body.portfolio-v2 .network-3d-stage { min-height: 570px; margin-bottom: 3.5rem; }
+  body.portfolio-v2 .network-3d-stage .network-3d-copy {
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 0;
+    padding: 2rem;
+  }
+  body.portfolio-v2 .network-3d-stage::before {
+    background: linear-gradient(180deg, rgba(7, 20, 30, .94), rgba(7, 20, 30, .25) 63%, transparent);
+  }
+  body.portfolio-v2 .network-3d-stage::after { right: 1rem; bottom: 1rem; font-size: .55rem; }
+  body.portfolio-v2 .page-hero > .network-3d-scene { width: 100%; opacity: .18; }
+}
+@media (max-width: 600px) {
+  body.portfolio-v2 .network-3d-stage {
+    width: calc(100% - 1.5rem);
+    min-height: 550px;
+    border-radius: 20px;
+  }
+  body.portfolio-v2 .network-3d-stage .network-3d-copy { padding: 1.6rem; }
+  body.portfolio-v2 .network-3d-copy h2 { max-width: 14ch; font-size: clamp(2rem, 9vw, 3rem); }
+  body.portfolio-v2 .network-3d-copy p { font-size: .88rem; line-height: 1.6; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.portfolio-v2 .network-3d-scene { display: none; }
+}
