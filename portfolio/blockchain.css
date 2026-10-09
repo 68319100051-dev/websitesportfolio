@@ -70,7 +70,6 @@ body.portfolio-v2 .blob { display: none; }
 body.portfolio-v2 #particles { z-index: 0; opacity: .7; }
 body.portfolio-v2 .page-wrapper,
 body.portfolio-v2 .footer,
-body.portfolio-v2 .navbar,
 body.portfolio-v2 .slipform-main { position: relative; z-index: 1; }
 body.portfolio-v2 ::selection { background: rgba(86,240,206,.30); color: var(--text-primary); }
 body.portfolio-v2 a { text-underline-offset: .25em; }
@@ -82,6 +81,10 @@ body.portfolio-v2 .skip-link { z-index: 3000; }
 
 /* Navigation / command bar */
 body.portfolio-v2 .navbar {
+  position: fixed;
+  inset: 0 0 auto;
+  height: var(--navbar-height);
+  z-index: 5000;
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-nav);
   box-shadow: 0 12px 40px rgba(0,0,0,.12);
@@ -1267,4 +1270,119 @@ body.portfolio-v2.admin-v2 .upload-item {
 }
 @media (prefers-reduced-motion: reduce) {
   body.portfolio-v2.admin-v2 .admin-login-box { animation: none; transform: none; }
+}
+
+
+/* Mobile navigation and stable first paint. */
+body.portfolio-v2 .navbar::after { pointer-events: none; }
+body.portfolio-v2 .navbar .container { height: 100%; min-width: 0; }
+body.portfolio-v2 .menu-toggle { touch-action: manipulation; }
+@media (max-width: 1380px) {
+  body.portfolio-v2 .menu-toggle {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    flex: 0 0 44px;
+  }
+  body.portfolio-v2 .nav-links,
+  body.portfolio-v2 .nav-links.open {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(100dvh - var(--navbar-height));
+    max-height: none;
+    margin: 0;
+    padding: 1rem max(1rem,env(safe-area-inset-left)) calc(2rem + env(safe-area-inset-bottom)) max(1rem,env(safe-area-inset-right));
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: .2rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: 0;
+    border-top: 1px solid var(--border-light);
+    border-radius: 0;
+    background: var(--bg-nav-scrolled);
+    box-shadow: 0 30px 60px rgba(0,0,0,.30);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    transform: translateY(-12px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .22s ease,transform .22s ease,visibility .22s;
+  }
+  body.portfolio-v2 .nav-links.open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  body.portfolio-v2 .nav-links li { width: 100%; }
+  body.portfolio-v2 .nav-links a,
+  body.portfolio-v2 .nav-links.open a {
+    width: 100%;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    padding: .75rem 1rem;
+    color: var(--text-primary);
+    font-size: .95rem;
+    border-radius: 9px;
+    text-align: left;
+  }
+  body.portfolio-v2 .nav-links a::after { display: none; }
+  body.portfolio-v2 .nav-links a:is(:hover,.active) {
+    background: var(--accent-glow);
+    color: var(--accent-light);
+  }
+  body.portfolio-v2.menu-open { overflow: hidden; }
+}
+@media (max-width: 800px) {
+  body.portfolio-v2 .network-hud {
+    transform: none;
+    animation: mobileHudIn .55s ease-out both;
+  }
+  body.portfolio-v2 #hero .hero-profile { transform: none; }
+}
+@keyframes mobileHudIn {
+  from { opacity: 0; translate: 0 12px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@media (max-width: 600px) {
+  body.portfolio-v2 .nav-logo::after { display: none; }
+  body.portfolio-v2 .navbar .container { padding-inline: .85rem; }
+  body.portfolio-v2 .navbar .container > div { gap: .25rem; }
+  body.portfolio-v2 #hero {
+    padding-top: calc(var(--navbar-height) + 1.5rem);
+    gap: 1.4rem;
+  }
+  body.portfolio-v2 #hero .hero-profile {
+    width: min(100%,420px);
+    height: auto;
+    min-height: 300px;
+    max-height: 470px;
+    aspect-ratio: 1 / 1.08;
+  }
+  body.portfolio-v2 .page-hero {
+    padding-top: calc(var(--navbar-height) + 1.6rem);
+    padding-bottom: 2.5rem;
+  }
+}
+@media (max-width: 380px) {
+  body.portfolio-v2 .nav-logo { font-size: 1rem; }
+  body.portfolio-v2 :is(.lang-toggle,.theme-toggle,.menu-toggle) {
+    width: 40px; min-width: 40px; height: 40px; min-height: 40px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.portfolio-v2 .network-hud { animation: none !important; translate: none !important; }
+  body.portfolio-v2 .nav-links { transition: none !important; }
 }

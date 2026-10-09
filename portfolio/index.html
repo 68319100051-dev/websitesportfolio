@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=slipform-cover-20261002">
-  <link rel="stylesheet" href="blockchain.css?v=network-20261008b">
+  <link rel="stylesheet" href="blockchain.css?v=mobile-20261009">
 </head>
 <body class="portfolio-v2">
   <a class="skip-link" href="#hero">ข้ามไปเนื้อหา</a>
@@ -170,33 +170,8 @@
   </footer>
   <button class="back-to-top" id="backToTop" aria-label="กลับด้านบน">↑</button>
 
-  <div id="renderSplash" style="position:fixed;inset:0;z-index:99999;background:#070d18;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transition:opacity 0.6s;">
-    <div style="width:48px;height:48px;border:3px solid rgba(86,240,206,0.2);border-top-color:#56f0ce;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
-    <div style="text-align:center;">
-      <div style="font-size:1rem;font-weight:600;background:linear-gradient(135deg,#56f0ce,#88a8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Jet Konkamon</div>
-      <div style="font-size:0.8rem;color:#8888a0;margin-top:0.3rem;">กำลังปลุกเซิร์ฟเวอร์...</div>
-    </div>
-    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-  </div>
-
-  <script src="script.js?v=network-20261008b"></script>
+  <script src="script.js?v=mobile-20261009"></script>
   <script src="hero-motion.js"></script>
-  <script>
-    (function() {
-      const splash = document.getElementById('renderSplash');
-      let started = Date.now();
-      function check() {
-        fetch('/api/ping', { method: 'HEAD' }).then(r => {
-          if (r.ok) {
-            const elapsed = Date.now() - started;
-            const delay = Math.max(0, 600 - elapsed);
-            setTimeout(() => { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 600); }, delay);
-          } else { setTimeout(check, 500); }
-        }).catch(() => setTimeout(check, 500));
-      }
-      check();
-    })();
-  </script>
-  <script src="blockchain-motion.js?v=network-20261008b"></script>
+  <script src="blockchain-motion.js?v=mobile-20261009"></script>
 </body>
 </html>

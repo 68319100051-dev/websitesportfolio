@@ -26,26 +26,33 @@ const navLinks = document.getElementById('navLinks');
 if (menuToggle && navLinks) {
   const navItems = navLinks.querySelectorAll('a');
   menuToggle.setAttribute('aria-controls', 'navLinks');
-  const closeMenu = () => {
-    navLinks.classList.remove('open');
-    menuToggle.setAttribute('aria-expanded', 'false');
-    document.body.classList.remove('menu-open');
+  const setMenuOpen = (open) => {
+    const mobile = window.innerWidth <= 1380;
+    const isOpen = Boolean(open && mobile);
+    navLinks.classList.toggle('open', isOpen);
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
+    menuToggle.setAttribute('aria-label', isOpen ? 'ปิดเมนู' : 'เปิดเมนู');
+    document.body.classList.toggle('menu-open', isOpen);
   };
   menuToggle.addEventListener('click', () => {
-    const isOpen = navLinks.classList.toggle('open');
-    menuToggle.setAttribute('aria-expanded', String(isOpen));
-    document.body.classList.toggle('menu-open', isOpen && window.innerWidth <= 900);
+    setMenuOpen(!navLinks.classList.contains('open'));
   });
-  navItems.forEach(link => link.addEventListener('click', closeMenu));
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && navLinks.classList.contains('open')) {
-      closeMenu();
+  navItems.forEach(link => link.addEventListener('click', () => setMenuOpen(false)));
+  document.addEventListener('click', event => {
+    if (navLinks.classList.contains('open') &&
+        !navLinks.contains(event.target) &&
+        !menuToggle.contains(event.target)) {
+      setMenuOpen(false);
+    }
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && navLinks.classList.contains('open')) {
+      setMenuOpen(false);
       menuToggle.focus();
     }
   });
   window.addEventListener('resize', () => {
-    if (window.innerWidth > 1380) closeMenu();
-    else document.body.classList.toggle('menu-open', navLinks.classList.contains('open') && window.innerWidth <= 900);
+    if (window.innerWidth > 1380) setMenuOpen(false);
   });
 }
 
