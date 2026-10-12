@@ -2024,3 +2024,91 @@ body.portfolio-v2 .project-filter-tab:hover { transform: translateY(-3px); }
 
 /* Give each inner-page hero one focal point: its own showcase. */
 body.portfolio-v2:has(.page-hero) #particles { display: none; }
+
+
+/* Mobile viewport containment — keep the full layout inside embedded browsers. */
+@media (max-width: 800px) {
+  html { overflow-x: hidden; }
+  body.portfolio-v2 {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  body.portfolio-v2 .page-wrapper,
+  body.portfolio-v2 .navbar,
+  body.portfolio-v2 .navbar .container,
+  body.portfolio-v2 .page-hero,
+  body.portfolio-v2 .page-hero .container {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  body.portfolio-v2 .page-hero .container {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  body.portfolio-v2 .page-hero .container > * {
+    min-width: 0;
+  }
+}
+@media (max-width: 700px) {
+  body.portfolio-v2 #hero {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr);
+    overflow-x: clip;
+    padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+  }
+  body.portfolio-v2 #hero .hero-content,
+  body.portfolio-v2 #hero .hero-profile {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  body.portfolio-v2 #hero .hero-profile {
+    width: min(100%, 420px);
+    justify-self: center;
+  }
+  body.portfolio-v2 #hero .hero-name,
+  body.portfolio-v2 #hero .hero-title,
+  body.portfolio-v2 #hero .hero-summary,
+  body.portfolio-v2 #hero .hero-eyebrow {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  body.portfolio-v2 .hero-console {
+    width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  body.portfolio-v2 .hero-console code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  body.portfolio-v2 #hero .hero-buttons {
+    width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+  body.portfolio-v2 #hero .hero-buttons a {
+    min-width: 0;
+    white-space: normal;
+  }
+}
+@media (max-width: 480px) {
+  body.portfolio-v2 #hero .hero-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  body.portfolio-v2 #hero .hero-buttons a {
+    width: 100%;
+    flex: none;
+  }
+  body.portfolio-v2 #hero .hero-profile {
+    aspect-ratio: 1 / 1.08;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+}
