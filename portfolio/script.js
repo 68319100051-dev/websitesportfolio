@@ -1508,7 +1508,11 @@ function fetchAPI(endpoint, options) {
 }
 
 function syncFromServer() {
-  fetchAPI('/data').then(res => {
+  const adminPassword = window.location.pathname.includes('admin.html')
+    ? sessionStorage.getItem('portfolio-admin-pwd') : null;
+  const endpoint = adminPassword ? '/admin/data' : '/data';
+  const options = adminPassword ? { headers: { 'X-Admin-Password': adminPassword } } : undefined;
+  fetchAPI(endpoint, options).then(res => {
     if (res?.success && res.data && Object.keys(res.data).length) {
       localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(res.data));
       fetchAPI('/timeline').then(tlRes => {
@@ -1760,7 +1764,7 @@ function loadMessages() {
   const pwd = sessionStorage.getItem('portfolio-admin-pwd') || '';
   list.innerHTML = '<p style="color:var(--text-muted);">⏳ กำลังโหลด...</p>';
 
-  fetchAPI('/messages?password=' + encodeURIComponent(pwd)).then(res => {
+  fetchAPI('/messages', { headers: { 'X-Admin-Password': pwd } }).then(res => {
     if (!res?.success || !res.messages) {
       list.innerHTML = '<p style="color:#ef4444;">❌ ไม่สามารถโหลดข้อความได้</p>';
       return;
@@ -1808,7 +1812,9 @@ function loadAnalytics() {
   const el = document.getElementById('adminAnalytics');
   if (!el) return;
   el.innerHTML = '<p style="color:var(--text-muted);">⏳ กำลังโหลด...</p>';
-  fetchAPI('/analytics').then(res => {
+  fetchAPI('/analytics', {
+    headers: { 'X-Admin-Password': sessionStorage.getItem('portfolio-admin-pwd') || '' }
+  }).then(res => {
     if (!res?.success || !res.analytics) {
       el.innerHTML = '<p style="color:#ef4444;">❌ ไม่สามารถโหลดสถิติได้</p>';
       return;
@@ -1853,37 +1859,31 @@ function doLogin() {
   const pwd = document.getElementById('adminPassword')?.value;
   if (!pwd) return;
 
-  const localPwd = localStorage.getItem('portfolio-admin-password');
-
   fetchAPI('/verify', {
     method: 'POST',
     body: JSON.stringify({ password: pwd })
   }).then(res => {
-    if (res?.success) {
-      loginSuccess(pwd);
-    } else if (localPwd && pwd === localPwd) {
-      loginSuccess(pwd);
-    } else {
-      document.getElementById('adminError')?.classList.add('show');
-    }
-  }).catch(() => {
-    if (localPwd && pwd === localPwd) {
-      loginSuccess(pwd);
-    } else {
-      document.getElementById('adminError')?.classList.add('show');
-    }
-  });
+    if (res?.success) loginSuccess(pwd);
+    else document.getElementById('adminError')?.classList.add('show');
+  }).catch(() => document.getElementById('adminError')?.classList.add('show'));
 }
 
 function loginSuccess(pwd) {
   sessionStorage.setItem('portfolio-admin-auth', 'true');
   sessionStorage.setItem('portfolio-admin-pwd', pwd);
-  fetchAPI('/data').then(d => {
+  fetchAPI('/admin/data', { headers: { 'X-Admin-Password': pwd } }).then(d => {
     if (d?.success && d.data) {
       localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(d.data));
+      localStorage.removeItem('portfolio-admin-password');
+      localStorage.removeItem('portfolio-gemini-key');
+      localStorage.removeItem('portfolio-groq-key');
+      showDashboard();
+    } else {
+      sessionStorage.removeItem('portfolio-admin-auth');
+      sessionStorage.removeItem('portfolio-admin-pwd');
+      document.getElementById('adminError')?.classList.add('show');
     }
-    showDashboard();
-  }).catch(() => showDashboard());
+  });
 }
 
 function mergeAchievementData(data) {
@@ -1918,8 +1918,6 @@ function showDashboard() {
   Object.keys(EDITABLE_KEYS).forEach(key => setVal('admin-' + key, data[key] || ''));
   IMAGE_KEYS.forEach(key => setVal('admin-img-' + key, data[key] || ''));
   ACHIEVEMENT_SHARED_KEYS.forEach(key => setVal('admin-' + key, data[key] || ''));
-  setVal('admin-gemini-key', localStorage.getItem('portfolio-gemini-key') || '');
-  setVal('admin-groq-key', localStorage.getItem('portfolio-groq-key') || '');
   CONFIG_KEYS.forEach(key => setVal('admin-' + key, data[key] || ''));
 
   // Load projects JSON
@@ -1945,9 +1943,20 @@ function tabAdmin(lang) {
 }
 
 function checkAdminAuth() {
-  if (sessionStorage.getItem('portfolio-admin-auth') === 'true') {
-    showDashboard();
-  }
+  const pwd = sessionStorage.getItem('portfolio-admin-pwd');
+  if (sessionStorage.getItem('portfolio-admin-auth') !== 'true' || !pwd) return;
+  fetchAPI('/verify', { method: 'POST', body: JSON.stringify({ password: pwd }) }).then(res => {
+    if (!res?.success) {
+      sessionStorage.removeItem('portfolio-admin-auth');
+      sessionStorage.removeItem('portfolio-admin-pwd');
+      return;
+    }
+    fetchAPI('/admin/data', { headers: { 'X-Admin-Password': pwd } }).then(data => {
+      if (!data?.success || !data.data) return;
+      localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(data.data));
+      showDashboard();
+    });
+  });
 }
 
 function saveAdmin() {
@@ -1992,47 +2001,38 @@ function saveAdmin() {
   const drawLines = getVal('admin-drawings-list').split('\n').map(s => s.trim()).filter(s => s);
   if (drawLines.length) data.drawings = drawLines;
 
-  saveContent(data);
-  mergeAchievementData(data);
-  applyContent();
-
-  // Apply timeline
-  renderTimeline(data);
-  // Apply drawings
-  renderDrawings(data);
-  // Apply projects
-  renderProjects(data);
-
+  const currentPwd = sessionStorage.getItem('portfolio-admin-pwd') || '';
   const newPwd = getVal('admin-new-password');
-  if (newPwd && newPwd.length >= 6) {
-    localStorage.setItem('portfolio-admin-password', newPwd);
-    sessionStorage.setItem('portfolio-admin-pwd', newPwd);
-  }
-
-  const geminiKey = getVal('admin-gemini-key');
-  if (geminiKey) {
-    localStorage.setItem('portfolio-gemini-key', geminiKey);
-  }
-
-  const groqKey = getVal('admin-groq-key');
-  if (groqKey) {
-    localStorage.setItem('portfolio-groq-key', groqKey);
+  if (newPwd && newPwd.length < 12) {
+    alert('รหัสผ่านใหม่ต้องมีอย่างน้อย 12 ตัวอักษร');
+    return;
   }
 
   fetchAPI('/data', {
     method: 'POST',
     body: JSON.stringify({
-      password: sessionStorage.getItem('portfolio-admin-pwd') || '',
+      password: currentPwd,
       content: data,
-      newPassword: (newPwd && newPwd.length >= 6) ? newPwd : undefined
+      newPassword: newPwd || undefined
     })
+  }).then(res => {
+    if (!res?.success) {
+      alert('บันทึกไม่สำเร็จ กรุณาตรวจสอบรหัสผ่านผู้ดูแลหรือการตั้งค่าเซิร์ฟเวอร์');
+      return;
+    }
+    localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(data));
+    if (newPwd) sessionStorage.setItem('portfolio-admin-pwd', newPwd);
+    mergeAchievementData(data);
+    applyContent();
+    renderTimeline(data);
+    renderDrawings(data);
+    renderProjects(data);
+    const success = document.getElementById('adminSuccess');
+    if (success) {
+      success.classList.add('show');
+      setTimeout(() => success.classList.remove('show'), 3000);
+    }
   });
-
-  const success = document.getElementById('adminSuccess');
-  if (success) {
-    success.classList.add('show');
-    setTimeout(() => success.classList.remove('show'), 3000);
-  }
 }
 
 // Image upload functions
@@ -2107,9 +2107,7 @@ function uploadImage() {
       const pwd = sessionStorage.getItem('portfolio-admin-pwd') || '';
       const fd = new FormData();
       fd.append('image', compressed, fileName);
-      fd.append('password', pwd);
-
-      fetch('/api/upload', { method: 'POST', body: fd })
+      fetch('/api/upload', { method: 'POST', headers: { 'X-Admin-Password': pwd }, body: fd })
         .then(r => r.json())
         .then(res => {
           if (res.success) {
@@ -2190,6 +2188,7 @@ function deleteUpload(filename, pwd) {
 
 function logoutAdmin() {
   sessionStorage.removeItem('portfolio-admin-auth');
+  sessionStorage.removeItem('portfolio-admin-pwd');
   const loginSection = document.getElementById('adminLoginSection');
   const dashboard = document.getElementById('adminDashboard');
   if (loginSection) loginSection.style.display = 'flex';
