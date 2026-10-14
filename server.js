@@ -5,10 +5,12 @@ const crypto = require('crypto');
 const multer = require('multer');
 
 const app = express();
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
-const DATA_FILE = path.join(__dirname, 'portfolio', 'data.json');
-const DEFAULT_PASSWORD = 'admin123';
-let adminPassword = DEFAULT_PASSWORD;
+const DATA_FILE = process.env.PORTFOLIO_DATA_FILE || path.join(__dirname, 'portfolio', 'data.json');
+const INITIAL_PASSWORD = process.env.ADMIN_INITIAL_PASSWORD || process.env.ADMIN_PASSWORD;
+let adminPassword;
 
 const UPLOAD_DIR = path.join(__dirname, 'portfolio', 'images', 'uploads');
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
@@ -30,7 +32,91 @@ const upload = multer({
 });
 
 app.use(express.json({ limit: '5mb' }));
-app.use(express.static(path.join(__dirname, 'portfolio')));
+
+const CONTENT_SECRET_KEYS = /(?:^|[-_])(key|secret|token|password|preset)(?:$|[-_])/i;
+const AUTH_WINDOW_MS = 15 * 60 * 1000;
+const AUTH_LOCK_MS = 15 * 60 * 1000;
+const AUTH_MAX_FAILURES = 5;
+const authFailures = new Map();
+
+function requireAdmin(req, res, password) {
+  const ip = req.ip || req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  let state = authFailures.get(ip);
+  if (state?.blockedUntil > now) {
+    res.set('Retry-After', String(Math.ceil((state.blockedUntil - now) / 1000)));
+    res.status(429).json({ success: false, error: 'Too many attempts. Please try again later.' });
+    return false;
+  }
+  if (state && now - state.firstFailure >= AUTH_WINDOW_MS) {
+    authFailures.delete(ip);
+    state = null;
+  }
+  const supplied = typeof password === 'string' && password.length <= 1024
+    ? Buffer.from(hash(password), 'hex') : null;
+  const expected = Buffer.from(adminPassword, 'hex');
+  if (supplied && supplied.length === expected.length &&
+      crypto.timingSafeEqual(supplied, expected)) {
+    authFailures.delete(ip);
+    return true;
+  }
+  if (!state) state = { firstFailure: now, failures: 0, blockedUntil: 0 };
+  state.failures += 1;
+  if (state.failures >= AUTH_MAX_FAILURES) state.blockedUntil = now + AUTH_LOCK_MS;
+  authFailures.set(ip, state);
+  if (authFailures.size > 5000) {
+    for (const [key, value] of authFailures) {
+      if (key !== ip && now - value.firstFailure >= AUTH_WINDOW_MS && value.blockedUntil <= now) {
+        authFailures.delete(key);
+      }
+    }
+  }
+  if (state.blockedUntil) {
+    res.set('Retry-After', String(Math.ceil(AUTH_LOCK_MS / 1000)));
+    res.status(429).json({ success: false, error: 'Too many attempts. Please try again later.' });
+  } else {
+    res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+  return false;
+}
+
+const CONTENT_SECURITY_POLICY = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'none'",
+  "form-action 'self'",
+  "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "img-src 'self' data: blob: https:",
+  "media-src 'self' blob: https:",
+  "connect-src 'self' https://api.cloudinary.com",
+  "upgrade-insecure-requests"
+].join('; ');
+
+app.use((req, res, next) => {
+  res.set({
+    'Strict-Transport-Security': 'max-age=31536000',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Content-Security-Policy': CONTENT_SECURITY_POLICY,
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
+  });
+  if (req.path.startsWith('/api/')) res.set('Cache-Control', 'no-store');
+  let decodedPath = req.path;
+  try {
+    for (let i = 0; i < 3; i++) {
+      const nextPath = decodeURIComponent(decodedPath);
+      if (nextPath === decodedPath) break;
+      decodedPath = nextPath;
+    }
+  } catch { return res.sendStatus(400); }
+  if (/\.json(?:$|[/?])/i.test(decodedPath.replace(/\\/g, '/'))) return res.sendStatus(404);
+  next();
+});
+app.use(express.static(path.join(__dirname, 'portfolio'), { dotfiles: 'deny' }));
 
 function hash(pwd) {
   return crypto.createHash('sha256').update(pwd).digest('hex');
@@ -38,8 +124,9 @@ function hash(pwd) {
 
 function initDataFile() {
   if (!fs.existsSync(DATA_FILE)) {
+    if (!INITIAL_PASSWORD) throw new Error('ADMIN_INITIAL_PASSWORD is required when data.json is missing');
     const initial = {
-      password: hash(DEFAULT_PASSWORD),
+      password: hash(INITIAL_PASSWORD),
       content: {},
       messages: [],
       analytics: { views: 0, pages: {} }
@@ -48,8 +135,13 @@ function initDataFile() {
   }
   try {
     const raw = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
-    adminPassword = raw.password || hash(DEFAULT_PASSWORD);
-  } catch { /* use default */ }
+    if (typeof raw.password !== 'string' || !/^[a-f0-9]{64}$/i.test(raw.password)) {
+      throw new Error('data.json has no valid administrator password hash');
+    }
+    adminPassword = process.env.ADMIN_PASSWORD ? hash(process.env.ADMIN_PASSWORD) : raw.password;
+  } catch (err) {
+    throw new Error('Cannot load administrator credentials: ' + err.message);
+  }
 }
 
 initDataFile();
@@ -82,30 +174,37 @@ function writeFull(full) {
 }
 
 app.get('/api/data', (req, res) => {
-  const content = readData();
+  const content = Object.fromEntries(
+    Object.entries(readData()).filter(([key]) => !CONTENT_SECRET_KEYS.test(key))
+  );
   res.json({ success: true, data: content });
+});
+
+app.get('/api/admin/data', (req, res) => {
+  if (!requireAdmin(req, res, req.get('X-Admin-Password'))) return;
+  res.json({ success: true, data: readData() });
 });
 
 app.post('/api/data', (req, res) => {
   const { password, content, newPassword } = req.body;
-  if (!password || hash(password) !== adminPassword) {
-    return res.status(401).json({ success: false, error: 'รหัสผ่านไม่ถูกต้อง' });
-  }
-  if (!content) {
+  if (!requireAdmin(req, res, password)) return;
+  if (!content || typeof content !== 'object' || Array.isArray(content)) {
     return res.status(400).json({ success: false, error: 'ไม่มีข้อมูล' });
+  }
+  if (newPassword && (process.env.ADMIN_PASSWORD || typeof newPassword !== 'string' || newPassword.length < 12)) {
+    return res.status(400).json({ success: false, error: 'Password change requires at least 12 characters and is disabled when ADMIN_PASSWORD is configured' });
   }
   writeData(content, newPassword || null);
   res.json({ success: true });
 });
 
 app.post('/api/verify', (req, res) => {
-  const { password } = req.body;
-  if (!password) return res.status(400).json({ success: false });
-  res.json({ success: hash(password) === adminPassword });
+  if (requireAdmin(req, res, req.body?.password)) res.json({ success: true });
 });
 
 // Analytics
 app.get('/api/analytics', (req, res) => {
+  if (!requireAdmin(req, res, req.get('X-Admin-Password'))) return;
   const full = readFullData();
   res.json({ success: true, analytics: full.analytics || { views: 0, pages: {} } });
 });
@@ -122,10 +221,8 @@ app.post('/api/analytics', (req, res) => {
 
 // Contact messages
 app.get('/api/messages', (req, res) => {
-  const { password } = req.query;
-  if (!password || hash(password) !== adminPassword) {
-    return res.status(401).json({ success: false, error: 'Unauthorized' });
-  }
+  const password = req.get('X-Admin-Password');
+  if (!requireAdmin(req, res, password)) return;
   const full = readFullData();
   res.json({ success: true, messages: full.messages || [] });
 });
@@ -149,9 +246,7 @@ app.post('/api/contact', (req, res) => {
 
 app.post('/api/messages/read', (req, res) => {
   const { password, id } = req.body;
-  if (!password || hash(password) !== adminPassword) {
-    return res.status(401).json({ success: false, error: 'Unauthorized' });
-  }
+  if (!requireAdmin(req, res, password)) return;
   const full = readFullData();
   const msg = (full.messages || []).find(m => m.id === id);
   if (msg) msg.read = true;
@@ -167,9 +262,7 @@ app.get('/api/projects', (req, res) => {
 
 app.post('/api/projects', (req, res) => {
   const { password, projects } = req.body;
-  if (!password || hash(password) !== adminPassword) {
-    return res.status(401).json({ success: false, error: 'Unauthorized' });
-  }
+  if (!requireAdmin(req, res, password)) return;
   const full = readFullData();
   full.projects = projects || [];
   writeFull(full);
@@ -183,9 +276,7 @@ app.get('/api/timeline', (req, res) => {
 
 app.post('/api/timeline', (req, res) => {
   const { password, timeline } = req.body;
-  if (!password || hash(password) !== adminPassword) {
-    return res.status(401).json({ success: false, error: 'Unauthorized' });
-  }
+  if (!requireAdmin(req, res, password)) return;
   const full = readFullData();
   full.timeline = timeline || { work: [], education: [] };
   writeFull(full);
@@ -199,9 +290,7 @@ app.get('/api/drawings', (req, res) => {
 
 app.post('/api/drawings', (req, res) => {
   const { password, drawings } = req.body;
-  if (!password || hash(password) !== adminPassword) {
-    return res.status(401).json({ success: false, error: 'Unauthorized' });
-  }
+  if (!requireAdmin(req, res, password)) return;
   const full = readFullData();
   full.drawings = drawings || [];
   writeFull(full);
@@ -245,7 +334,7 @@ app.post('/api/ai/chat', async (req, res) => {
   const content = full.content || {};
 
   if (provider === 'gemini') {
-    const key = content['gemini-key'] || '';
+    const key = process.env.GEMINI_API_KEY || content['gemini-key'] || '';
     if (!key) return res.status(400).json({ success: false, error: 'No Gemini key configured' });
     const models = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-lite'];
     for (const model of models) {
@@ -268,7 +357,7 @@ app.post('/api/ai/chat', async (req, res) => {
   }
 
   // Default: Groq
-  const key = content['groq-key'] || '';
+  const key = process.env.GROQ_API_KEY || content['groq-key'] || '';
   if (!key) return res.status(400).json({ success: false, error: 'No Groq API key configured' });
   const models = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768', 'gemma2-9b-it'];
   for (const model of models) {
@@ -295,15 +384,12 @@ app.post('/api/ai/chat', async (req, res) => {
 
 // Image upload
 app.post('/api/upload', (req, res) => {
+  if (!requireAdmin(req, res, req.get('X-Admin-Password'))) return;
   upload.single('image')(req, res, (err) => {
     if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({ success: false, error: 'ไฟล์ใหญ่เกิน 10MB' });
     }
-    if (err) return res.status(400).json({ success: false, error: 'Upload failed: ' + err.message });
-    const pwd = req.body?.password || req.query?.password || '';
-    if (!pwd || hash(pwd) !== adminPassword) {
-      return res.status(401).json({ success: false, error: 'Unauthorized' });
-    }
+    if (err) return res.status(400).json({ success: false, error: 'Upload failed' });
     if (!req.file) return res.status(400).json({ success: false, error: 'ไม่มีไฟล์รูป' });
     const urlPath = 'images/uploads/' + req.file.filename;
     res.json({ success: true, path: urlPath, filename: req.file.filename });
@@ -324,9 +410,7 @@ app.get('/api/uploads', (req, res) => {
 // Delete uploaded image
 app.post('/api/upload/delete', (req, res) => {
   const pwd = req.body?.password || req.query?.password || '';
-  if (!pwd || hash(pwd) !== adminPassword) {
-    return res.status(401).json({ success: false, error: 'Unauthorized' });
-  }
+  if (!requireAdmin(req, res, pwd)) return;
   const filename = req.body?.filename;
   if (!filename) return res.status(400).json({ success: false, error: 'No filename' });
   const filePath = path.join(UPLOAD_DIR, path.basename(filename));
@@ -337,19 +421,17 @@ app.post('/api/upload/delete', (req, res) => {
 });
 
 app.get('*', (req, res) => {
-  const filePath = path.join(__dirname, 'portfolio', req.path === '/' ? 'index.html' : req.path);
-  const ext = path.extname(req.path);
-  // ถ้าเป็น path API หรือไม่มีนามสกุลไฟล์ — ส่ง index.html (SPA fallback)
-  if (req.path.startsWith('/api/') || !ext) {
+  if (req.path.startsWith('/api/')) return res.status(404).json({ success: false, error: 'Not found' });
+  if (!path.extname(req.path)) {
     return res.sendFile(path.join(__dirname, 'portfolio', 'index.html'));
   }
-  // ถ้าไฟล์ไม่มีอยู่จริง — 404
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).sendFile(path.join(__dirname, 'portfolio', '404.html'));
-  }
-  res.sendFile(filePath);
+  res.status(404).sendFile(path.join(__dirname, 'portfolio', '404.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

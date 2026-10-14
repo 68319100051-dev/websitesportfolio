@@ -4,6 +4,34 @@ services:
     name: konkamon-portfolio-static
     buildCommand: node build-static.js
     staticPublishPath: dist
+    headers:
+      - path: /*
+        name: Strict-Transport-Security
+        value: max-age=31536000
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=()
+      - path: /*
+        name: Content-Security-Policy
+        value: >-
+          default-src 'self'; base-uri 'self'; object-src 'none';
+          frame-ancestors 'none'; form-action 'self';
+          script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+          style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+          font-src 'self' data: https://fonts.gstatic.com;
+          img-src 'self' data: blob: https:;
+          media-src 'self' blob: https:;
+          connect-src 'self' https://konkamon-portfolio.onrender.com https://api.cloudinary.com;
+          upgrade-insecure-requests
     routes:
       - type: rewrite
         source: /api/*
