@@ -402,7 +402,7 @@ const projectData = {
       'มีตัวสำรองหลายชั้น บริการไหนล่มก็ยังได้คลิป',
       'หน้าเว็บดูสถานะและสั่งงานจากมือถือ',
     ],
-    live: 'https://konkamon4717-alt.github.io/YTAUTO/',
+    live: null,
     code: 'https://github.com/konkamon4717-alt/YTAUTO'
   }
 };
