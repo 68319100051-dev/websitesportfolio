@@ -392,7 +392,7 @@ const projectData = {
     title: 'YouTube Shorts Auto',
     category: 'Automation / AI',
     status: '<span class="project-status live"><span class="dot"></span> ออนไลน์</span>',
-    description: 'ระบบผลิตและเผยแพร่คลิปสั้นบน YouTube อัตโนมัติ ทำงานเองทุกวันบน GitHub Actions โดยไม่ต้องเปิดคอม ใช้บริการฟรีทั้งหมด ดูแล 2 ช่อง (นิทานสั้น และเรื่องน่ารู้รอบโลก)',
+    description: 'ระบบผลิตและเผยแพร่คลิปสั้นบน YouTube อัตโนมัติ ทำงานเองทุกวันบน GitHub Actions โดยไม่ต้องเปิดคอม ใช้บริการฟรีทั้งหมด ดูแล 2 ช่อง คือ นิทานหนึ่งนาที (@nithan1min) และรอบรู้ 1 นาที (เรื่องน่ารู้รอบโลก)',
     tech: ['Python', 'GitHub Actions', 'YouTube Data API', 'Gemini', 'FFmpeg', 'Hugging Face'],
     features: [
       'AI คิดเรื่อง เขียนบท และกันเรื่องซ้ำเอง',
@@ -403,6 +403,8 @@ const projectData = {
       'หน้าเว็บดูสถานะและสั่งงานจากมือถือ',
     ],
     live: null,
+    detail: 'ytauto.html',
+    production: true,
     code: 'https://github.com/konkamon4717-alt/YTAUTO'
   }
 };
@@ -427,7 +429,40 @@ function openModal(id) {
   modalTitle.textContent = data.title;
   modalCategory.textContent = data.category;
   modalStatus.innerHTML = data.status;
+  // โปรเจกต์ที่มีหน้ารายละเอียดเต็ม ให้เห็นปุ่มทันทีใต้ชื่อ ไม่ต้องเลื่อนลงไปหาท้ายหน้าต่าง
+  let detailCta = document.getElementById('modalDetailCta');
+  if (data.detail) {
+    if (!detailCta) {
+      detailCta = document.createElement('a');
+      detailCta.id = 'modalDetailCta';
+      detailCta.className = 'modal-detail-cta';
+      modalStatus.insertAdjacentElement('afterend', detailCta);
+    }
+    detailCta.href = data.detail;
+    detailCta.innerHTML = 'ดูรายละเอียดโครงการ <span aria-hidden="true">→</span>';
+    detailCta.hidden = false;
+  } else if (detailCta) {
+    detailCta.hidden = true;
+  }
   modalDescription.textContent = data.description;
+  // ภาพปกบนหัวหน้าต่าง ดึงจากการ์ดที่ถูกกด ไม่ต้องเก็บ path ซ้ำในข้อมูลโปรเจกต์
+  const modalBox = modal.querySelector('.modal');
+  let cover = modalBox.querySelector('.modal-cover');
+  const thumb = document.querySelector(`[data-project="${id}"] .project-thumb img`);
+  if (thumb) {
+    if (!cover) {
+      cover = document.createElement('div');
+      cover.className = 'modal-cover';
+      cover.innerHTML = '<img alt="">';
+      modalBox.insertBefore(cover, modalBox.querySelector('.modal-header'));
+    }
+    cover.querySelector('img').src = thumb.currentSrc || thumb.src;
+    cover.querySelector('img').alt = thumb.alt || '';
+    cover.hidden = false;
+  } else if (cover) {
+    cover.hidden = true;
+  }
+  modalBox.scrollTop = 0;
   if (modalVideoSection && modalProjectVideo) {
     modalProjectVideo.pause();
     modalVideoSection.hidden = !data.video;

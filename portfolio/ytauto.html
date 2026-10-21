@@ -71,6 +71,61 @@
     .yt-clip span { position: absolute; left: 0; right: 0; bottom: 0; padding: 2.2rem .8rem .8rem;
       font-size: .78rem; line-height: 1.45; background: linear-gradient(transparent, rgba(0,0,0,.85)); color: #fff; }
 
+    /* ---------- ช่องที่ระบบดูแล ---------- */
+    .yt-channels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.4rem; }
+    .yt-channel { display: flex; flex-direction: column; gap: 1rem; padding: 1.4rem;
+      border: 1px solid var(--border-color); border-radius: var(--radius-lg); background: var(--bg-card);
+      transition: border-color .25s, transform .25s; }
+    .yt-channel:hover { border-color: rgba(192,132,252,.5); transform: translateY(-3px); }
+    .yt-channel-head { display: flex; align-items: center; gap: .9rem; }
+    .yt-channel-head img { width: 56px; height: 56px; border-radius: 50%; flex: none;
+      border: 2px solid rgba(192,132,252,.45); background: #0b1020; }
+    .yt-channel-head strong { display: block; font-size: 1.15rem; }
+    .yt-channel-head small { color: var(--text-secondary); font: 500 .78rem var(--font-mono); }
+    .yt-channel p { color: var(--text-secondary); line-height: 1.75; font-size: .92rem; margin: 0; }
+    .yt-channel dl { display: grid; grid-template-columns: auto 1fr; gap: .45rem 1rem; margin: 0; font-size: .86rem; }
+    .yt-channel dt { color: var(--text-secondary); }
+    .yt-channel dd { margin: 0; }
+    .yt-channel-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem;
+      padding-top: 1rem; border-top: 1px solid var(--border-color); }
+    .yt-channel-stats b { display: block; font-size: 1.35rem; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+    .yt-channel-stats span { color: var(--text-secondary); font-size: .75rem; }
+    .yt-channel a.yt-go { margin-top: auto; align-self: flex-start; color: var(--accent); font-weight: 600;
+      font-size: .9rem; text-decoration: none; }
+
+    /* ---------- แอปดูสถานะ: โทรศัพท์จำลอง + รายการฟังก์ชัน ---------- */
+    .yt-app { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 2.4rem;
+      align-items: center; margin-top: 1.6rem; }
+    .yt-phone { position: relative; width: 100%; max-width: 300px; margin: 0 auto; padding: 11px;
+      border-radius: 44px; background: linear-gradient(145deg, #2a3142, #0d1119);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 30px 70px rgba(0,0,0,.55),
+        0 0 80px rgba(56,189,248,.12); }
+    .yt-phone::before { content: ""; position: absolute; top: 20px; left: 50%; width: 82px; height: 22px;
+      transform: translateX(-50%); border-radius: 20px; background: #05070b; z-index: 2; }
+    .yt-phone-screen { position: relative; aspect-ratio: 390 / 844; border-radius: 34px; overflow: hidden;
+      background: #0b0e13; }
+    .yt-phone-screen img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      object-position: top; transition: opacity .45s ease; }
+    .yt-phone-screen img.is-out { opacity: 0; }
+    .yt-app-list { display: grid; gap: .55rem; }
+    .yt-app-item { all: unset; box-sizing: border-box; cursor: pointer; display: grid;
+      grid-template-columns: 2.2rem 1fr; gap: .1rem .8rem; padding: .85rem 1rem;
+      border-radius: var(--radius-sm); border: 1px solid transparent; position: relative; overflow: hidden;
+      transition: background .25s, border-color .25s; }
+    .yt-app-item:hover { background: rgba(255,255,255,.03); }
+    .yt-app-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .yt-app-item[aria-selected="true"] { background: var(--bg-card); border-color: rgba(192,132,252,.4); }
+    .yt-app-item i { grid-row: span 2; font-style: normal; font-size: 1.25rem; width: 2.2rem; height: 2.2rem;
+      display: grid; place-items: center; border-radius: 10px; background: rgba(192,132,252,.1); }
+    .yt-app-item strong { font-size: .98rem; }
+    .yt-app-item small { color: var(--text-secondary); font-size: .84rem; line-height: 1.6; }
+    /* แถบเวลาบอกว่าอีกนานแค่ไหนจะสลับไปฟังก์ชันถัดไป */
+    .yt-app-item[aria-selected="true"]::after { content: ""; position: absolute; left: 0; bottom: 0; height: 2px;
+      width: 100%; background: linear-gradient(90deg, #38bdf8, #c084fc); transform-origin: left;
+      animation: yt-progress 4.5s linear forwards; }
+    .yt-app.is-paused .yt-app-item[aria-selected="true"]::after { animation: none; transform: scaleX(1); }
+    @keyframes yt-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
     .yt-lesson { margin-top: 1.4rem; padding: 1.3rem 1.5rem; border-radius: var(--radius-sm);
       border: 1px solid rgba(192,132,252,.35); background: rgba(192,132,252,.07);
       font-size: 1.05rem; line-height: 1.7; }
@@ -85,9 +140,13 @@
       .yt-pipe { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 1.6rem; }
       .yt-pipe::before, .yt-pipe::after { display: none; }
       .yt-clips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .yt-channels { grid-template-columns: 1fr; }
+      .yt-app { grid-template-columns: 1fr; gap: 1.6rem; }
+      .yt-phone { max-width: 250px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .yt-live::after, .yt-pulse, .yt-pipe::after, .yt-node i { animation: none; }
+      .yt-live::after, .yt-pulse, .yt-pipe::after, .yt-node i,
+      .yt-app-item[aria-selected="true"]::after { animation: none; }
     }
   </style>
 </head>
@@ -118,6 +177,50 @@
           <div class="yt-stat"><b data-count="34" id="ytDays">34</b><span>วันนับจากคลิปแรก</span></div>
         </div>
         <div class="yt-live-foot" id="ytStamp">ข้อมูล ณ 21 ต.ค. 2569</div>
+      </section>
+
+      <section class="slipform-section" aria-labelledby="yt-channels-title">
+        <span class="slipform-kicker">00 / CHANNELS</span>
+        <h2 id="yt-channels-title">ช่องที่ระบบดูแล</h2>
+        <p>ระบบเดียวกันดูแลสองช่องคนละแนว แต่ละช่องมีโจทย์การเขียน เสียงพากย์ และวิธีทำภาพของตัวเอง</p>
+        <div class="yt-channels">
+          <article class="yt-channel">
+            <div class="yt-channel-head">
+              <img src="https://yt3.ggpht.com/JE0FJ4ld0r8DVeA8-9ehlXDSEubY2MsMJEHqVYVaQCk56Y0YKgSfL4qYQGbBCoZ6xKYXeT6xeB8=s176-c-k-c0x00ffffff-no-rj" alt="" loading="lazy">
+              <div><strong>นิทานหนึ่งนาที</strong><small>@nithan1min</small></div>
+            </div>
+            <p>นิทานสั้นตอนเดียวจบ เปิดด้วยคนที่ทำเรื่องแปลก ๆ ซ้ำทุกวัน แล้วเฉลยเหตุผลที่ซ่อนอยู่ในตอนท้าย</p>
+            <dl>
+              <dt>ภาพ</dt><dd>AI วาดแนวการ์ตูน ขยับทุกฉาก</dd>
+              <dt>ลงคลิป</dt><dd>ทุกวัน 19:00 น.</dd>
+              <dt>เริ่ม</dt><dd>17 ก.ย. 2569</dd>
+            </dl>
+            <div class="yt-channel-stats">
+              <div><b id="nithanClips">17</b><span>คลิป</span></div>
+              <div><b id="nithanViews">18,135</b><span>วิว</span></div>
+              <div><b id="nithanSubs">44</b><span>ผู้ติดตาม</span></div>
+            </div>
+            <a class="yt-go" href="https://www.youtube.com/@nithan1min" target="_blank" rel="noopener noreferrer">ไปที่ช่อง ↗</a>
+          </article>
+          <article class="yt-channel">
+            <div class="yt-channel-head">
+              <img src="https://yt3.ggpht.com/WGhfRXa2KD7yGyBT5CTFnmUCHFTay2aW-nUTH3PMpCNnyk10_ZCQvL7IkpApLn5dG2Euheooug=s176-c-k-c0x00ffffff-no-rj" alt="" loading="lazy">
+              <div><strong>รอบรู้ 1 นาที</strong><small>เรื่องน่ารู้รอบโลก</small></div>
+            </div>
+            <p>เรื่องจริงน่ารู้รอบโลก ทั้งภูมิศาสตร์ วิทยาศาสตร์ และประวัติศาสตร์ ตั้งกฎไว้ว่าชื่อคลิปต้องไม่เกินจริง</p>
+            <dl>
+              <dt>ภาพ</dt><dd>ภาพถ่ายจริงจากคลังภาพเสรี ใส่เครดิตทุกใบ</dd>
+              <dt>ลงคลิป</dt><dd>ทุกวัน 19:00 น.</dd>
+              <dt>เริ่ม</dt><dd>9 ต.ค. 2569</dd>
+            </dl>
+            <div class="yt-channel-stats">
+              <div><b id="worldClips">11</b><span>คลิป</span></div>
+              <div><b id="worldViews">15,893</b><span>วิว</span></div>
+              <div><b id="worldSubs">48</b><span>ผู้ติดตาม</span></div>
+            </div>
+            <a class="yt-go" href="https://www.youtube.com/channel/UCOrCC0r3v5cTYmUmxO6JdXA" target="_blank" rel="noopener noreferrer">ไปที่ช่อง ↗</a>
+          </article>
+        </div>
       </section>
 
       <section class="slipform-section" aria-labelledby="yt-pipe-title">
@@ -152,8 +255,28 @@
         </div>
       </section>
 
+      <section class="slipform-section" aria-labelledby="yt-app-title">
+        <span class="slipform-kicker">03 / CONTROL APP</span>
+        <h2 id="yt-app-title">หน้าเว็บดูสถานะและสั่งงานจากมือถือ</h2>
+        <p>ระบบไม่มีเซิร์ฟเวอร์ของตัวเอง หน้านี้จึงเป็นไฟล์นิ่งที่อ่านผลจากแต่ละรอบ เปิดดูได้ตลอดแม้คอมที่บ้านปิดอยู่
+          กดฟังก์ชันด้านข้างเพื่อดูแต่ละหน้า</p>
+        <div class="yt-app" id="ytApp">
+          <div class="yt-phone" aria-hidden="true">
+            <div class="yt-phone-screen"><img id="ytAppShot" src="images/ytauto-dash-overview.webp" alt="" loading="lazy"></div>
+          </div>
+          <div class="yt-app-list" role="tablist" aria-label="ฟังก์ชันของหน้าควบคุม">
+          <button class="yt-app-item" role="tab" data-shot="overview" aria-selected="true"><i>📊</i><strong>ภาพรวม</strong><small>วันนี้ลงคลิปหรือยัง รอบถัดไปเมื่อไหร่ และตัวเลขช่องเทียบกับเมื่อวาน</small></button>
+          <button class="yt-app-item" role="tab" data-shot="growth" aria-selected="false"><i>📈</i><strong>การเติบโต</strong><small>กราฟวิวรายวันและผู้ติดตามสะสม ระบบจดตัวเลขเองวันละครั้ง</small></button>
+          <button class="yt-app-item" role="tab" data-shot="clips" aria-selected="false"><i>🎬</i><strong>ผลงานคลิป</strong><small>ปกคลิปทุกตัว กดเล่นได้ในหน้าเว็บ และดูว่าคลิปไหนยังมีคนดูอยู่</small></button>
+          <button class="yt-app-item" role="tab" data-shot="lessons" aria-selected="false"><i>🧠</i><strong>อะไรได้ผล</strong><small>ชื่อคลิปแบบไหนคนกดเยอะ ใช้ป้อนกลับให้ AI ตั้งชื่อคลิปถัดไป</small></button>
+          <button class="yt-app-item" role="tab" data-shot="system" aria-selected="false"><i>🩺</i><strong>สุขภาพระบบ</strong><small>ตรวจทุกบริการที่ใช้ทุกเช้า บอกได้ก่อนว่าอะไรกำลังจะพัง</small></button>
+          <button class="yt-app-item" role="tab" data-shot="control" aria-selected="false"><i>🕹️</i><strong>สั่งงาน</strong><small>ลงคลิปทันที งดวันนี้ หยุด หรือเปิดต่อ สั่งจากมือถือได้แม้คอมปิด</small></button>
+          </div>
+        </div>
+      </section>
+
       <section class="slipform-section" aria-labelledby="yt-hard-title">
-        <span class="slipform-kicker">03 / CHALLENGES</span>
+        <span class="slipform-kicker">04 / CHALLENGES</span>
         <h2 id="yt-hard-title">โจทย์ที่ยากกว่าที่คิด</h2>
         <div class="slipform-grid">
           <div class="slipform-tile"><strong>ภาพขยับทุกฉาก แต่ต้องฟรี</strong>
@@ -172,7 +295,7 @@
       </section>
 
       <section class="slipform-section" aria-labelledby="yt-incident-title">
-        <span class="slipform-kicker">04 / WHEN IT BROKE</span>
+        <span class="slipform-kicker">05 / WHEN IT BROKE</span>
         <h2 id="yt-incident-title">วันที่ระบบพังจริง</h2>
         <p>ระบบหยุดลงคลิปไปสามวัน และอีกช่องลงเรื่องเดียวกันซ้ำหกคลิป
           สืบไปเจอว่าเป็นลูกโซ่ — สองงานบันทึกไฟล์ชนกัน ประวัติเลยไม่ถูกเก็บ
@@ -181,7 +304,7 @@
       </section>
 
       <section class="slipform-section" aria-labelledby="yt-stack-title">
-        <span class="slipform-kicker">05 / STACK</span>
+        <span class="slipform-kicker">06 / STACK</span>
         <h2 id="yt-stack-title">เครื่องมือที่ใช้</h2>
         <div class="slipform-pills" aria-label="เทคโนโลยีที่ใช้">
           <span>Python</span><span>GitHub Actions</span><span>YouTube Data API</span><span>Gemini</span>
@@ -220,7 +343,8 @@
       };
 
       try {
-        const rows = await Promise.all(['nithan', 'world'].map(ch =>
+        const keys = ['nithan', 'world'];
+        const rows = await Promise.all(keys.map(ch =>
           fetch(`${BASE}/${ch}/channel.json`, { cache: 'no-store' }).then(r => {
             if (!r.ok) throw new Error(r.status);
             return r.json();
@@ -228,6 +352,13 @@
         values.ytClips = rows.reduce((s, d) => s + d.videos.filter(v => v.privacy === 'public').length, 0);
         values.ytViews = rows.reduce((s, d) => s + d.channel.views, 0);
         values.ytSubs = rows.reduce((s, d) => s + d.channel.subscribers, 0);
+        // ตัวเลขแยกรายช่อง ใส่ตรง ๆ ไม่ต้องนับขึ้น เพราะอยู่ในการ์ดเล็ก
+        rows.forEach((d, i) => {
+          const set = (id, v) => { const el = document.getElementById(keys[i] + id); if (el) el.textContent = fmt(v); };
+          set('Clips', d.videos.filter(v => v.privacy === 'public').length);
+          set('Views', d.channel.views);
+          set('Subs', d.channel.subscribers);
+        });
         const latest = rows.map(d => new Date(d.fetched_at)).sort((a, b) => b - a)[0];
         document.getElementById('ytStamp').textContent =
           'อัปเดตอัตโนมัติจากระบบจริง · ล่าสุด ' +
@@ -249,6 +380,62 @@
           obs.disconnect();
           for (const [id, v] of Object.entries(values)) countUp(document.getElementById(id), v);
         }, { threshold: .4 }).observe(box);
+      }
+    })();
+  </script>
+  <script>
+    // สลับหน้าจอในโทรศัพท์จำลองตามฟังก์ชันที่เลือก และวนเองถ้าไม่มีใครแตะ
+    (() => {
+      const app = document.getElementById('ytApp');
+      const shot = document.getElementById('ytAppShot');
+      const items = Array.from(app.querySelectorAll('.yt-app-item'));
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const DWELL = 4500;
+      const srcOf = b => 'images/ytauto-dash-' + b.dataset.shot + '.webp';
+      let index = 0, timer = null, userPicked = false;
+
+      // โหลดภาพทุกหน้าไว้ก่อน ไม่งั้นตอนสลับครั้งแรกจะเห็นจอว่างแวบหนึ่ง
+      items.forEach(b => { const i = new Image(); i.src = srcOf(b); });
+
+      function show(n) {
+        index = (n + items.length) % items.length;
+        items.forEach((b, i) => b.setAttribute('aria-selected', String(i === index)));
+        const src = srcOf(items[index]);
+        if (reduce) { shot.src = src; return; }
+        shot.classList.add('is-out');
+        setTimeout(() => {
+          shot.onload = () => shot.classList.remove('is-out');
+          shot.src = src;
+          if (shot.complete) shot.classList.remove('is-out');
+        }, 220);
+      }
+
+      function schedule() {
+        clearInterval(timer);
+        if (reduce || userPicked) return;
+        timer = setInterval(() => show(index + 1), DWELL);
+      }
+
+      items.forEach((b, i) => b.addEventListener('click', () => {
+        userPicked = true;          // คนเลือกเองแล้ว หยุดวนให้เขาดูได้นาน ๆ
+        clearInterval(timer);
+        app.classList.add('is-paused');
+        show(i);
+      }));
+      app.addEventListener('mouseenter', () => { app.classList.add('is-paused'); clearInterval(timer); });
+      app.addEventListener('mouseleave', () => {
+        if (userPicked) return;
+        app.classList.remove('is-paused');
+        show(index);                // เริ่มแถบเวลาใหม่ให้ตรงกับรอบที่เหลือ
+        schedule();
+      });
+
+      // เริ่มวนเมื่อเลื่อนมาเห็นเท่านั้น
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(e => { if (e[0].isIntersecting) schedule(); else clearInterval(timer); },
+          { threshold: .35 }).observe(app);
+      } else {
+        schedule();
       }
     })();
   </script>
