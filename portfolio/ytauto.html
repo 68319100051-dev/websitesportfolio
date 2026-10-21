@@ -237,13 +237,20 @@
         /* ดึงไม่ได้ก็ใช้ตัวเลขที่เขียนไว้ */
       }
 
-      // เริ่มนับเมื่อเลื่อนมาเห็น ไม่ใช่นับจบไปก่อนที่ใครจะได้ดู
+      // ใส่ตัวเลขจริงลงไปก่อนเสมอ แอนิเมชันนับขึ้นเป็นแค่ของแถม
+      // เคยผูกการเปลี่ยนตัวเลขไว้กับแอนิเมชัน พอแอนิเมชันไม่ถูกเรียก
+      // หน้าเว็บก็ค้างตัวเลขเก่าทั้งที่ดึงของใหม่มาได้แล้ว
+      for (const [id, v] of Object.entries(values)) document.getElementById(id).textContent = fmt(v);
+
+      // นับขึ้นตอนเลื่อนมาเห็น ถ้าเบราว์เซอร์ไม่มีตัวจับการเลื่อนก็ข้ามไป ตัวเลขถูกอยู่แล้ว
       const box = document.querySelector('.yt-live');
-      new IntersectionObserver((entries, obs) => {
-        if (!entries[0].isIntersecting) return;
-        obs.disconnect();
-        for (const [id, v] of Object.entries(values)) countUp(document.getElementById(id), v);
-      }, { threshold: .4 }).observe(box);
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver((entries, obs) => {
+          if (!entries[0].isIntersecting) return;
+          obs.disconnect();
+          for (const [id, v] of Object.entries(values)) countUp(document.getElementById(id), v);
+        }, { threshold: .4 }).observe(box);
+      }
     })();
   </script>
   <script src="blockchain-motion.js?v=mobile-20261009"></script>
