@@ -205,16 +205,58 @@
     update();
   }
 
-  // A short outgoing scene; the destination plays its own entrance animation.
+  // ---------- การเปลี่ยนหน้า: ม่านพอร์ทัล ----------
+  // ม่านไล่สีกวาดเฉียงเข้ามาพร้อมชื่อหน้าปลายทาง แล้วกวาดออกที่หน้าใหม่
+  // บอกชื่อหน้าปลายทางผ่าน sessionStorage เพราะหน้าใหม่ไม่รู้ว่าผู้ใช้กดมาจากลิงก์ไหน
+  const VEIL_KEY = 'pt-veil-label';
+  const LEAVE_MS = 540;
   let navigating = false;
   let navigateTimer = 0;
   let recoveryTimer = 0;
+
+  function makeVeil(label, mode) {
+    const veil = document.createElement('div');
+    veil.className = 'pt-veil ' + mode;
+    veil.setAttribute('aria-hidden', 'true');
+    const text = document.createElement('div');
+    text.className = 'pt-label';
+    const kicker = document.createElement('small');
+    kicker.textContent = 'JET KONKAMON';
+    text.append(kicker, document.createTextNode(label || ''));
+    veil.append(text);
+    document.body.append(veil);
+    return veil;
+  }
+
+  function labelFor(link, target) {
+    const own = (link.dataset.ptLabel || link.textContent || '').replace(/[↗→↻]/g, '').replace(/\s+/g, ' ').trim();
+    if (own && own.length <= 28) return own;
+    const page = target.pathname.split('/').pop().replace(/\.html?$/, '') || 'index';
+    return { index: 'หน้าแรก', about: 'เกี่ยวกับ', projects: 'โปรเจกต์', drawings: 'ภาพวาด',
+      experience: 'ประสบการณ์', achievements: 'รางวัลและผลงาน', guestbook: 'สมุดเยี่ยม',
+      contact: 'ติดต่อ' }[page] || 'Jet Konkamon';
+  }
+
+  // ขาเข้า: ถ้ามาจากการกดลิงก์ในเว็บ ให้ม่านกวาดออกเผยหน้าใหม่
+  try {
+    const arriving = sessionStorage.getItem(VEIL_KEY);
+    if (arriving !== null && !reduced.matches) {
+      sessionStorage.removeItem(VEIL_KEY);
+      const veil = makeVeil(arriving, 'is-out');
+      root.classList.remove('pt-arriving');   // ม่านจริงขึ้นแล้ว เก็บฉากปิดชั่วคราวทิ้ง
+      veil.addEventListener('animationend', e => { if (e.target === veil) veil.remove(); });
+      window.setTimeout(() => veil.remove(), 1400);   // กันม่านค้างถ้าแอนิเมชันไม่จบ
+    }
+  } catch {}
+
   const resetNavigation = () => {
     window.clearTimeout(navigateTimer);
     window.clearTimeout(recoveryTimer);
     navigating = false;
     document.body.classList.remove('page-is-leaving');
+    document.querySelectorAll('.pt-veil.is-in').forEach(v => v.remove());
   };
+  // กดย้อนกลับแล้วเบราว์เซอร์คืนหน้าจากแคช ต้องเก็บม่านทิ้ง ไม่งั้นจอมืดค้าง
   window.addEventListener('pageshow', resetNavigation);
   window.addEventListener('pagehide', resetNavigation);
   document.addEventListener('click', event => {
@@ -234,9 +276,64 @@
     event.preventDefault();
     if (navigating) return;
     navigating = true;
+    const label = labelFor(link, target);
+    try { sessionStorage.setItem(VEIL_KEY, label); } catch {}
     document.body.classList.add('page-is-leaving');
-    navigateTimer = window.setTimeout(() => window.location.assign(target.href), 220);
-    // If navigation fails or the network stalls, keep the current page usable.
-    recoveryTimer = window.setTimeout(resetNavigation, 1800);
+    makeVeil(label, 'is-in');
+    navigateTimer = window.setTimeout(() => window.location.assign(target.href), LEAVE_MS);
+    // ถ้าเปลี่ยนหน้าไม่สำเร็จหรือเน็ตค้าง คืนหน้าเดิมให้ใช้ต่อได้
+    recoveryTimer = window.setTimeout(() => {
+      resetNavigation();
+      try { sessionStorage.removeItem(VEIL_KEY); } catch {}
+    }, 2600);
   });
+
+  // ---------- โผล่ตอนเลื่อน: ไล่ทีละชิ้นในกลุ่มเดียวกัน ----------
+  // ใส่ลำดับให้พี่น้องที่โผล่พร้อมกัน CSS จะหน่วงตามลำดับ ไม่ต้องใส่คลาส delay เองทุกชิ้น
+  const staggerReveals = () => {
+    const groups = new Map();
+    document.querySelectorAll('.reveal').forEach(el => {
+      if (el.style.getPropertyValue('--i') || /reveal-delay-/.test(el.className)) return;
+      const parent = el.parentElement;
+      if (!groups.has(parent)) groups.set(parent, []);
+      groups.get(parent).push(el);
+    });
+    groups.forEach(list => {
+      if (list.length < 2) return;
+      list.forEach((el, i) => el.style.setProperty('--i', String(Math.min(i, 8))));
+    });
+  };
+  staggerReveals();
+
+  // ---------- การ์ด: แสงตามเมาส์ ----------
+  if (finePointer.matches && !reduced.matches) {
+    const CARDS = '.project-card, .home-work-card, .achievement-card, .slipform-tile, ' +
+      '.timeline-item, .yt-channel, .about-info-card, .contact-link-item';
+    const decorate = root => root.querySelectorAll(CARDS).forEach(card => {
+      if (card.classList.contains('has-spot')) return;
+      if (getComputedStyle(card).position === 'static') card.style.position = 'relative';
+      const spot = document.createElement('span');
+      spot.className = 'card-spot';
+      spot.setAttribute('aria-hidden', 'true');
+      card.append(spot);
+      card.classList.add('has-spot');
+    });
+    decorate(document);
+    // บางหน้าสร้างการ์ดทีหลังจากข้อมูลที่โหลดมา ต้องตามใส่ให้ด้วย
+    new MutationObserver(() => decorate(document)).observe(document.body, { childList: true, subtree: true });
+
+    let frame = 0, last = null;
+    document.addEventListener('pointermove', e => {
+      last = e;
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const card = last.target instanceof Element && last.target.closest('.has-spot');
+        if (!card) return;
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', (last.clientX - r.left) + 'px');
+        card.style.setProperty('--my', (last.clientY - r.top) + 'px');
+      });
+    }, { passive: true });
+  }
 })();

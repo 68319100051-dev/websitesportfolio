@@ -2161,3 +2161,200 @@ body.portfolio-v2 .modal-links a { border-radius: 999px; }
   body.portfolio-v2 .modal-links a { justify-content: center; }
 }
 
+/* =====================================================================
+   DESIGN PASS 2026-10 — ใช้ร่วมกันทุกหน้า
+   ทุกอย่างในส่วนนี้เป็นของแถมทางสายตา ถ้าเบราว์เซอร์ไม่รองรับหรือผู้ใช้
+   ตั้งค่าลดการเคลื่อนไหว หน้าเว็บต้องยังอ่านและใช้งานได้ครบเหมือนเดิม
+   ===================================================================== */
+
+/* ---------- 1. การเปลี่ยนหน้า: ม่านพอร์ทัล ----------
+   ของเดิมเป็นแค่จางลงนิดเดียว 0.22 วินาที จนแทบไม่รู้สึกว่าเปลี่ยนหน้า
+   ตอนนี้มีม่านไล่สีกวาดเฉียงเข้ามา บอกชื่อหน้าปลายทาง แล้วกวาดออกที่หน้าใหม่ */
+.pt-veil {
+  position: fixed; inset: 0; z-index: 9000; pointer-events: none;
+  display: grid; place-items: center;
+  background:
+    radial-gradient(60% 60% at 30% 30%, rgba(86,240,206,.22), transparent 70%),
+    radial-gradient(55% 55% at 75% 70%, rgba(136,168,255,.24), transparent 70%),
+    #060a12;
+  clip-path: polygon(0 100%, 0 100%, 0 100%, 0 100%);
+}
+.pt-veil::before {                     /* เส้นแสงคมนำหน้าม่าน */
+  content: ""; position: absolute; inset: -20%;
+  background: linear-gradient(115deg, transparent 46%, rgba(141,255,231,.9) 49.6%, #fff 50%,
+    rgba(136,168,255,.9) 50.4%, transparent 54%);
+  filter: blur(1px); opacity: 0;
+}
+.pt-veil::after {                      /* ตารางเส้นบาง ๆ ให้รู้สึกเป็นระบบ */
+  content: ""; position: absolute; inset: 0; opacity: .35;
+  background-image: linear-gradient(rgba(141,255,231,.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(141,255,231,.07) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(circle at center, #000 30%, transparent 75%);
+}
+.pt-label {
+  position: relative; z-index: 1; text-align: center; opacity: 0;
+  font: 800 clamp(2rem, 6vw, 4.2rem)/1.05 var(--font-sans); letter-spacing: -.04em;
+  background: linear-gradient(120deg, #e8fffb, #8dffe7 40%, #88a8ff);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.pt-label small {
+  display: block; margin-bottom: .7rem; font: 600 .72rem var(--font-mono);
+  letter-spacing: .32em; color: rgba(141,255,231,.7); -webkit-text-fill-color: rgba(141,255,231,.7);
+}
+.pt-veil.is-in { animation: ptIn .5s cubic-bezier(.77,0,.18,1) forwards; }
+.pt-veil.is-in::before { animation: ptGlint .5s ease-out forwards; }
+.pt-veil.is-in .pt-label { animation: ptLabel .5s .12s cubic-bezier(.16,1,.3,1) forwards; }
+.pt-veil.is-out { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); animation: ptOut .7s .08s cubic-bezier(.77,0,.18,1) forwards; }
+.pt-veil.is-out::before { animation: ptGlint .6s .1s ease-out forwards; }
+.pt-veil.is-out .pt-label { opacity: 1; animation: ptLabelOut .35s ease-in forwards; }
+@keyframes ptIn {
+  from { clip-path: polygon(0 100%, 0 100%, 0 100%, 0 100%); }
+  60%  { clip-path: polygon(0 0, 70% 0, 100% 100%, 0 100%); }
+  to   { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+}
+@keyframes ptOut {
+  from { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+  to   { clip-path: polygon(100% 0, 100% 0, 100% 0, 100% 0); }
+}
+@keyframes ptGlint { 0% { opacity: 0; transform: translateX(-60%); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateX(60%); } }
+@keyframes ptLabel { from { opacity: 0; transform: translateY(18px); filter: blur(8px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes ptLabelOut { to { opacity: 0; transform: translateY(-14px) scale(.98); filter: blur(6px); } }
+/* ม่านแบบใหม่ทำหน้าที่แทน เลยปิดแสงกวาดเส้นเดียวของเดิม ไม่ให้เล่นซ้อนกัน */
+body.portfolio-v2.page-is-leaving::after { animation: none; }
+body.portfolio-v2.page-is-leaving .page-wrapper { animation: pageSceneOut .45s cubic-bezier(.4,0,.8,1) forwards; }
+
+/* ---------- 2. โผล่ตอนเลื่อน: ไล่ทีละชิ้น ----------
+   ของเดิมโผล่พร้อมกันทั้งแถว ตอนนี้ชิ้นในตารางเดียวกันไล่ตามกัน (ใส่ --i ด้วย JS) */
+body.portfolio-v2 .reveal {
+  filter: blur(6px);
+  transition: opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1),
+    filter .85s cubic-bezier(.16,1,.3,1);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+body.portfolio-v2 .reveal.visible { filter: blur(0); }
+
+/* ---------- 3. การ์ด: แสงตามเมาส์ ----------
+   ใช้ชิ้นแสงแยกที่ JS ใส่เข้าไป เพราะการ์ดโปรเจกต์ใช้ ::after ทำพื้นหลังขอบไล่สีอยู่แล้ว
+   และไทม์ไลน์ใช้ ::after ทำจุดบนเส้น ถ้าไปแย่งช่องนั้นการ์ดเดิมจะพัง */
+body.portfolio-v2 .card-spot {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 4;
+  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(141,255,231,.14), transparent 45%);
+  opacity: 0; transition: opacity .35s;
+}
+@media (hover: hover) and (pointer: fine) {
+  body.portfolio-v2 .has-spot:hover > .card-spot { opacity: 1; }
+  body.portfolio-v2 :is(.project-card, .home-work-card, .achievement-card):hover {
+    box-shadow: 0 24px 60px rgba(0,0,0,.42), 0 0 0 1px rgba(141,255,231,.18);
+  }
+  body.portfolio-v2 .project-card:hover .project-thumb img { transform: scale(1.05); }
+}
+body.portfolio-v2 .project-thumb { overflow: hidden; }
+body.portfolio-v2 .project-thumb img { transition: transform .7s cubic-bezier(.16,1,.3,1); }
+
+/* ---------- 4. การ์ดโปรเจกต์ที่ยังไม่มีภาพ ----------
+   ของเดิมเป็นกล่องเปล่ากับไอคอนจาง ๆ ดูเหมือนงานยังทำไม่เสร็จ
+   ทำเป็นภาพไล่สีที่ขยับช้า ๆ พร้อมเส้นตาราง ให้เป็นงานออกแบบแทนที่ว่าง */
+body.portfolio-v2 .project-thumb-placeholder {
+  position: relative; overflow: hidden; isolation: isolate;
+  background:
+    radial-gradient(70% 90% at 15% 20%, rgba(86,240,206,.28), transparent 60%),
+    radial-gradient(60% 80% at 85% 80%, rgba(136,168,255,.30), transparent 60%),
+    linear-gradient(135deg, #0b1424, #101a30);
+  background-size: 160% 160%, 160% 160%, auto;
+  animation: phDrift 12s ease-in-out infinite alternate;
+}
+body.portfolio-v2 .project-thumb-placeholder::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: .5;
+  background-image: linear-gradient(rgba(141,255,231,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(141,255,231,.08) 1px, transparent 1px);
+  background-size: 26px 26px;
+  mask-image: linear-gradient(180deg, #000, transparent 85%);
+}
+body.portfolio-v2 .project-thumb-placeholder svg {
+  width: 56px; height: 56px; color: #c9fff4; opacity: .9;
+  filter: drop-shadow(0 0 18px rgba(141,255,231,.55));
+  animation: phFloat 5s ease-in-out infinite alternate;
+}
+@keyframes phDrift { to { background-position: 100% 100%, 0 0, 0 0; } }
+@keyframes phFloat { to { transform: translateY(-6px) scale(1.04); } }
+
+/* ---------- 5. ปุ่มหลัก: แสงวาบตอนชี้ ---------- */
+body.portfolio-v2 :is(.btn-primary, .btn-outline) { position: relative; overflow: hidden; isolation: isolate; }
+body.portfolio-v2 :is(.btn-primary, .btn-outline)::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%);
+  transform: translateX(-120%);
+}
+@media (hover: hover) {
+  body.portfolio-v2 :is(.btn-primary, .btn-outline):hover::before { transition: transform .7s ease; transform: translateX(120%); }
+}
+
+/* ---------- 6. หัวข้อหมวด: เส้นไล่สีวาดตามตอนโผล่ ---------- */
+body.portfolio-v2 :is(.section-header h2, .project-category-title) { position: relative; }
+body.portfolio-v2 .project-category-title::after,
+body.portfolio-v2 .section-header h2::after {
+  content: ""; display: block; height: 2px; width: 72px; margin-top: .65rem; border-radius: 2px;
+  background: linear-gradient(90deg, #8dffe7, #88a8ff, transparent);
+  transform: scaleX(0); transform-origin: left; transition: transform 1s .25s cubic-bezier(.16,1,.3,1);
+}
+body.portfolio-v2 .project-category-title.visible::after,
+body.portfolio-v2 .section-header.visible h2::after { transform: scaleX(1); }
+body.portfolio-v2 .project-category-title { flex-wrap: wrap; }
+
+/* ---------- 8. หน้าเกี่ยวกับ: สัญลักษณ์ JK แทนรูปที่ซ้ำ ----------
+   หัวหน้าเคยใช้รูปเดียวกับที่โผล่อีกครั้งข้างล่างห่างกันไม่ถึงจอ
+   เปลี่ยนเป็นสัญลักษณ์ที่บอกตัวตนแทน รูปจริงเหลือที่เดียวในส่วนแนะนำตัว */
+body.portfolio-v2 .showcase-about.is-emblem { display: grid; place-items: center; }
+body.portfolio-v2 .showcase-about.is-emblem .showcase-about-initials {
+  position: relative; inset: auto; z-index: 1;
+  font-size: clamp(7rem, 15vw, 12rem); letter-spacing: -.08em; line-height: .9;
+  background: linear-gradient(140deg, #f1fffc 10%, #8dffe7 45%, #88a8ff 90%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 40px rgba(86,240,206,.35));
+  animation: emblemFloat 6s ease-in-out infinite alternate;
+}
+body.portfolio-v2 .showcase-about.is-emblem .showcase-about-orbit { inset: 14%; transform: rotate(-18deg) scaleX(.9); animation: emblemSpin 26s linear infinite; }
+body.portfolio-v2 .emblem-ring {
+  position: absolute; inset: 4%; border-radius: 50%; border: 1px dashed rgba(136,168,255,.28);
+  animation: emblemSpin 40s linear infinite reverse;
+}
+body.portfolio-v2 .emblem-chip {
+  position: absolute; z-index: 2; padding: .35rem .7rem; border-radius: 999px;
+  font: 600 .66rem var(--font-mono); letter-spacing: .14em; color: #c9fff4;
+  background: rgba(8,16,28,.75); border: 1px solid rgba(141,255,231,.3);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  animation: emblemFloat 5s ease-in-out infinite alternate;
+}
+/* ใช้คลาสระบุตำแหน่ง ไม่ใช้ nth-of-type เพราะวงแหวนกับตัวอักษรก็เป็น span เหมือนกัน
+   นับรวมกันแล้วป้ายไปซ้อนกลางตัวอักษร */
+body.portfolio-v2 .emblem-chip-1 { top: 16%; left: 10%; }
+body.portfolio-v2 .emblem-chip-2 { top: 30%; right: 4%; animation-delay: -1.2s; }
+body.portfolio-v2 .emblem-chip-3 { bottom: 20%; left: 6%; animation-delay: -2.4s; }
+body.portfolio-v2 .emblem-chip-4 { bottom: 12%; right: 14%; animation-delay: -3.6s; }
+@keyframes emblemFloat { to { translate: 0 -10px; } }
+@keyframes emblemSpin { to { rotate: 360deg; } }
+
+/* ---------- ลดการเคลื่อนไหวตามที่ผู้ใช้ตั้งไว้ ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .pt-veil { display: none !important; }
+  body.portfolio-v2 .reveal { filter: none !important; transition-delay: 0s !important; }
+  body.portfolio-v2 :is(.project-thumb-placeholder, .project-thumb-placeholder svg,
+    .showcase-about.is-emblem .showcase-about-initials, .showcase-about-orbit, .emblem-ring, .emblem-chip) {
+    animation: none !important;
+  }
+}
+
+/* ฉากปิดตอนหน้าใหม่เพิ่งเริ่มโหลด ใส่ไว้ก่อนวาดหน้าแรกด้วยสคริปต์ใน head
+   เพราะสคริปต์หลักโหลดท้ายหน้า ถ้ารอมันหน้าใหม่จะโผล่แวบหนึ่งก่อนม่านขึ้น
+   มีตัวตั้งเวลาซ่อนเองเผื่อสคริปต์หลักล้ม จะได้ไม่มีจอมืดค้าง */
+html.pt-arriving::after {
+  content: ""; position: fixed; inset: 0; z-index: 8999; pointer-events: none;
+  background:
+    radial-gradient(60% 60% at 30% 30%, rgba(86,240,206,.22), transparent 70%),
+    radial-gradient(55% 55% at 75% 70%, rgba(136,168,255,.24), transparent 70%),
+    #060a12;
+  animation: ptCoverGiveUp 0s 2.5s forwards;
+}
+@keyframes ptCoverGiveUp { to { visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { html.pt-arriving::after { display: none; } }
