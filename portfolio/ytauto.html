@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="YouTube Shorts Auto — ระบบที่คิดเรื่อง พากย์เสียง ทำภาพ ตัดต่อ และอัปโหลดคลิปขึ้น YouTube เองทุกวัน ด้วยเครื่องมือฟรีทั้งหมด">
+  <meta property="og:title" content="YouTube Shorts Auto | ผลงานของ Jet Konkamon">
+  <meta property="og:description" content="ระบบผลิตคลิปสั้นอัตโนมัติ 2 ช่อง ทำงานเองทุกวัน ค่าใช้จ่าย 0 บาท">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/project-ytauto.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>YouTube Shorts Auto — ระบบผลิตคลิปอัตโนมัติ | Jet Konkamon</title>
+  <script>try { document.documentElement.dataset.theme = localStorage.getItem('portfolio-theme') || 'dark'; } catch {}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=ytauto-20261021">
+  <link rel="stylesheet" href="blockchain.css?v=mobile-20261009">
+  <style>
+    /* ---------- ตัวเลขสด ---------- */
+    .yt-live { margin-top: 2.6rem; padding: 1.4rem; border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg); background:
+        linear-gradient(135deg, rgba(56,189,248,.08), rgba(192,132,252,.06) 55%, rgba(239,68,68,.07));
+      position: relative; overflow: hidden; }
+    .yt-live::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.05), transparent);
+      transform: translateX(-100%); animation: yt-sweep 5s ease-in-out infinite; }
+    @keyframes yt-sweep { 60%, 100% { transform: translateX(100%); } }
+    .yt-live-head { display: flex; align-items: center; gap: .6rem; font: 600 .72rem var(--font-mono);
+      letter-spacing: .14em; color: var(--text-secondary); text-transform: uppercase; }
+    .yt-pulse { width: 9px; height: 9px; border-radius: 50%; background: #ef4444;
+      box-shadow: 0 0 0 0 rgba(239,68,68,.6); animation: yt-ping 1.8s infinite; }
+    @keyframes yt-ping { 70% { box-shadow: 0 0 0 10px rgba(239,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); } }
+    .yt-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-top: 1.1rem; }
+    .yt-stat b { display: block; font: 700 clamp(1.7rem, 4vw, 2.6rem) var(--font-sans);
+      letter-spacing: -.04em; font-variant-numeric: tabular-nums;
+      background: linear-gradient(120deg, #e0f2fe, #c084fc); -webkit-background-clip: text;
+      background-clip: text; color: transparent; }
+    .yt-stat span { color: var(--text-secondary); font-size: .85rem; }
+    .yt-live-foot { margin-top: .9rem; font-size: .75rem; color: var(--text-secondary); opacity: .8; }
+
+    /* ---------- สายพาน 6 ขั้น ---------- */
+    .yt-pipe { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: .8rem; margin-top: 1.6rem; }
+    .yt-pipe::before { content: ""; position: absolute; left: 6%; right: 6%; top: 34px; height: 2px;
+      background: linear-gradient(90deg, rgba(56,189,248,.25), rgba(192,132,252,.25), rgba(239,68,68,.35)); }
+    .yt-pipe::after { content: ""; position: absolute; top: 30px; left: 6%; width: 10px; height: 10px;
+      border-radius: 50%; background: #fff; box-shadow: 0 0 14px 4px rgba(192,132,252,.8);
+      animation: yt-travel 6s linear infinite; }
+    @keyframes yt-travel { from { left: 6%; } to { left: calc(94% - 10px); } }
+    .yt-node { position: relative; z-index: 1; text-align: center; }
+    .yt-node i { width: 68px; height: 68px; margin: 0 auto; display: grid; place-items: center;
+      font-style: normal; font-size: 1.6rem; border-radius: 18px; background: var(--bg-card);
+      border: 1px solid var(--border-color); animation: yt-glow 6s infinite;
+      animation-delay: calc(var(--n) * 1s); }
+    @keyframes yt-glow {
+      0%, 4% { border-color: var(--border-color); box-shadow: none; transform: none; }
+      8%, 14% { border-color: #c084fc; box-shadow: 0 0 22px rgba(192,132,252,.55); transform: translateY(-4px); }
+      22%, 100% { border-color: var(--border-color); box-shadow: none; transform: none; }
+    }
+    .yt-node strong { display: block; margin-top: .7rem; font-size: .92rem; }
+    .yt-node small { display: block; color: var(--text-secondary); font-size: .75rem; line-height: 1.5; margin-top: .2rem; }
+
+    /* ---------- คลิปจริง ---------- */
+    .yt-clips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-top: 1.4rem; }
+    .yt-clip { position: relative; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; display: block;
+      border: 1px solid var(--border-color); background: #0b1020; transition: transform .25s, box-shadow .25s; }
+    .yt-clip:hover { transform: translateY(-6px) rotate(-.6deg); box-shadow: 0 18px 40px rgba(0,0,0,.45); }
+    /* YouTube เก็บภาพคลิปแนวตั้งไว้เป็นแนวนอนที่เบลอขยายสองข้าง ครอปกลางจะได้ภาพคลิปจริง */
+    .yt-clip img { position: absolute; height: 100%; width: auto; max-width: none; left: 50%; transform: translateX(-50%); }
+    .yt-clip span { position: absolute; left: 0; right: 0; bottom: 0; padding: 2.2rem .8rem .8rem;
+      font-size: .78rem; line-height: 1.45; background: linear-gradient(transparent, rgba(0,0,0,.85)); color: #fff; }
+
+    .yt-lesson { margin-top: 1.4rem; padding: 1.3rem 1.5rem; border-radius: var(--radius-sm);
+      border: 1px solid rgba(192,132,252,.35); background: rgba(192,132,252,.07);
+      font-size: 1.05rem; line-height: 1.7; }
+    .yt-links { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.6rem; }
+    .yt-links a { display: inline-flex; align-items: center; gap: .5rem; padding: .75rem 1.2rem;
+      border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-primary);
+      text-decoration: none; font-weight: 600; font-size: .92rem; }
+    .yt-links a:first-child { background: linear-gradient(120deg, #38bdf8, #c084fc); color: #0a0a15; border-color: transparent; }
+
+    @media (max-width: 760px) {
+      .yt-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .yt-pipe { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 1.6rem; }
+      .yt-pipe::before, .yt-pipe::after { display: none; }
+      .yt-clips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .yt-live::after, .yt-pulse, .yt-pipe::after, .yt-node i { animation: none; }
+    }
+  </style>
+</head>
+<body class="slipform-page portfolio-v2">
+  <main class="slipform-main">
+    <div class="slipform-shell">
+      <a class="slipform-back" href="projects.html#ytauto">← กลับหน้าผลงาน</a>
+
+      <header class="slipform-hero">
+        <div>
+          <span class="slipform-kicker">PROJECT CASE STUDY / AUTOMATION · AI</span>
+          <h1>YouTube Shorts Auto</h1>
+          <p>ระบบที่คิดเรื่อง พากย์เสียง ทำภาพ ตัดต่อ และอัปโหลดคลิปขึ้น YouTube เองทุกวัน
+            ไม่ต้องเปิดคอม ไม่ต้องกดอะไร และใช้เครื่องมือฟรีทั้งหมด</p>
+          <div class="slipform-pills" aria-label="ภาพรวมโครงการ">
+            <span>ทำงานเองทุกวัน</span><span>ค่าใช้จ่าย 0 บาท</span><span>2 ช่อง</span><span>ภาษาไทย</span>
+          </div>
+        </div>
+        <img src="images/project-ytauto.png" alt="ภาพประกอบระบบผลิตคลิปอัตโนมัติ" width="1200" height="676">
+      </header>
+
+      <section class="yt-live" aria-label="ตัวเลขจากช่องจริง">
+        <div class="yt-live-head"><span class="yt-pulse"></span> Live · ตัวเลขจากช่องจริง</div>
+        <div class="yt-stats">
+          <div class="yt-stat"><b data-count="28" id="ytClips">28</b><span>คลิปที่ลงแล้ว</span></div>
+          <div class="yt-stat"><b data-count="34028" id="ytViews">34,028</b><span>ยอดวิวรวม</span></div>
+          <div class="yt-stat"><b data-count="92" id="ytSubs">92</b><span>ผู้ติดตาม</span></div>
+          <div class="yt-stat"><b data-count="34" id="ytDays">34</b><span>วันนับจากคลิปแรก</span></div>
+        </div>
+        <div class="yt-live-foot" id="ytStamp">ข้อมูล ณ 21 ต.ค. 2569</div>
+      </section>
+
+      <section class="slipform-section" aria-labelledby="yt-pipe-title">
+        <span class="slipform-kicker">01 / PIPELINE</span>
+        <h2 id="yt-pipe-title">หนึ่งคลิป หกขั้นตอน ไม่มีคนแตะ</h2>
+        <p>ทุกเย็น GitHub Actions ปลุกระบบขึ้นมาทำงาน ผ่านหกขั้นนี้แล้วคลิปก็ขึ้นช่องเอง
+          ทั้งหมดใช้เวลาราวสิบนาที</p>
+        <div class="yt-pipe" role="list">
+          <div class="yt-node" role="listitem" style="--n:0"><i>✍️</i><strong>คิดเรื่อง</strong><small>Gemini เขียนบท<br>และกันเรื่องซ้ำ</small></div>
+          <div class="yt-node" role="listitem" style="--n:1"><i>🎙️</i><strong>พากย์เสียง</strong><small>เสียงไทย<br>พร้อมซับ</small></div>
+          <div class="yt-node" role="listitem" style="--n:2"><i>🖼️</i><strong>ทำภาพ</strong><small>AI วาด หรือ<br>ภาพถ่ายจริง</small></div>
+          <div class="yt-node" role="listitem" style="--n:3"><i>🎞️</i><strong>ทำให้ขยับ</strong><small>โมเดลวิดีโอ<br>บน GPU ฟรี</small></div>
+          <div class="yt-node" role="listitem" style="--n:4"><i>✂️</i><strong>ตัดต่อ</strong><small>FFmpeg<br>และทำปก</small></div>
+          <div class="yt-node" role="listitem" style="--n:5"><i>▶️</i><strong>อัปโหลด</strong><small>ขึ้น YouTube<br>อัตโนมัติ</small></div>
+        </div>
+      </section>
+
+      <section class="slipform-section" aria-labelledby="yt-clips-title">
+        <span class="slipform-kicker">02 / OUTPUT</span>
+        <h2 id="yt-clips-title">คลิปที่ระบบทำเอง</h2>
+        <p>สองช่องคนละแนว ช่องนิทานใช้ภาพที่ AI วาด ส่วนช่องเรื่องน่ารู้ใช้ภาพถ่ายจริงจากคลังภาพเสรี
+          เพราะเรื่องจริงไม่ควรใช้ภาพที่แต่งขึ้น กดที่ภาพเพื่อดูบน YouTube</p>
+        <div class="yt-clips">
+          <a class="yt-clip" href="https://youtube.com/shorts/hyfmbTfZqBg" target="_blank" rel="noopener noreferrer">
+            <img src="https://i.ytimg.com/vi/hyfmbTfZqBg/hq720.jpg" alt="" loading="lazy"><span>นิทาน · ป้าเอารองเท้าเด็กข้างเดียวมาซ่อมทุกเดือน</span></a>
+          <a class="yt-clip" href="https://youtube.com/shorts/ZQpvIsa0c8A" target="_blank" rel="noopener noreferrer">
+            <img src="https://i.ytimg.com/vi/ZQpvIsa0c8A/hq720.jpg" alt="" loading="lazy"><span>นิทาน · หนุ่มใหญ่ซื้อข้าวไหม้ก้นหม้อทุกวัน</span></a>
+          <a class="yt-clip" href="https://youtube.com/shorts/0iK9FQvX5Qg" target="_blank" rel="noopener noreferrer">
+            <img src="https://i.ytimg.com/vi/0iK9FQvX5Qg/hq720.jpg" alt="" loading="lazy"><span>รอบรู้ · พอยต์นีโม จุดที่มนุษย์ใกล้สุดอยู่บนอวกาศ</span></a>
+          <a class="yt-clip" href="https://youtube.com/shorts/GFIe9yZhPYg" target="_blank" rel="noopener noreferrer">
+            <img src="https://i.ytimg.com/vi/GFIe9yZhPYg/hq720.jpg" alt="" loading="lazy"><span>รอบรู้ · สถานที่ที่ฟ้าผ่ามากที่สุดในโลก</span></a>
+        </div>
+      </section>
+
+      <section class="slipform-section" aria-labelledby="yt-hard-title">
+        <span class="slipform-kicker">03 / CHALLENGES</span>
+        <h2 id="yt-hard-title">โจทย์ที่ยากกว่าที่คิด</h2>
+        <div class="slipform-grid">
+          <div class="slipform-tile"><strong>ภาพขยับทุกฉาก แต่ต้องฟรี</strong>
+            <p>โควตา GPU ฟรีนับเป็นวินาทีที่ใช้ ไม่ใช่จำนวนครั้ง เลยขอคลิปสั้นลงครึ่งหนึ่งแล้วเล่นกลับไปกลับมา
+              ได้ภาพขยับครบทุกฉากในโควตาเท่าเดิม</p></div>
+          <div class="slipform-tile"><strong>ภาษาไทยพังทุกชั้น</strong>
+            <p>สระลอย ซับตัดกลางคำ สระหน้าค้างท้ายบรรทัด แก้ด้วยตัววาดข้อความที่รองรับไทยจริง
+              และตัวแบ่งคำภาษาไทย</p></div>
+          <div class="slipform-tile"><strong>เลือกเสียงพากย์ด้วยการวัด</strong>
+            <p>ให้ AI ถอดเสียงพากย์กลับมาเทียบกับบท พบว่าเสียงที่ฟังเพราะกว่าอ่าน "ข้างเดียว" เป็น "ครั้งเดียว"
+              จึงเลือกตัวที่อ่านถูกทุกคำแทน</p></div>
+          <div class="slipform-tile"><strong>บริการฟรีล่มได้ทุกเมื่อ</strong>
+            <p>ทุกขั้นมีตัวสำรองเรียงไว้หลายชั้น ตัวไหนล่มก็ไหลไปตัวถัดไปเอง
+              ยอมได้คลิปที่ดีน้อยลง ดีกว่าไม่ได้คลิปเลย</p></div>
+        </div>
+      </section>
+
+      <section class="slipform-section" aria-labelledby="yt-incident-title">
+        <span class="slipform-kicker">04 / WHEN IT BROKE</span>
+        <h2 id="yt-incident-title">วันที่ระบบพังจริง</h2>
+        <p>ระบบหยุดลงคลิปไปสามวัน และอีกช่องลงเรื่องเดียวกันซ้ำหกคลิป
+          สืบไปเจอว่าเป็นลูกโซ่ — สองงานบันทึกไฟล์ชนกัน ประวัติเลยไม่ถูกเก็บ
+          ระบบจึงจำไม่ได้ว่าลงอะไรไปแล้ว ส่วนตัวตรวจสุขภาพขึ้นเขียวตลอด เพราะมันตรวจคนละจุดกับที่ใช้จริง</p>
+        <div class="yt-lesson">บทเรียน: <strong>ตรวจสิ่งที่ไม่ได้ใช้จริง ก็เท่ากับไม่ได้ตรวจ</strong></div>
+      </section>
+
+      <section class="slipform-section" aria-labelledby="yt-stack-title">
+        <span class="slipform-kicker">05 / STACK</span>
+        <h2 id="yt-stack-title">เครื่องมือที่ใช้</h2>
+        <div class="slipform-pills" aria-label="เทคโนโลยีที่ใช้">
+          <span>Python</span><span>GitHub Actions</span><span>YouTube Data API</span><span>Gemini</span>
+          <span>Hugging Face</span><span>FFmpeg</span><span>edge-tts</span><span>GitHub Pages</span>
+        </div>
+        <div class="yt-links">
+          <a href="https://konkamon4717-alt.github.io/YTAUTO/" target="_blank" rel="noopener noreferrer">เปิดห้องควบคุม ↗</a>
+          <a href="https://github.com/konkamon4717-alt/YTAUTO" target="_blank" rel="noopener noreferrer">ดูโค้ดบน GitHub ↗</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // ดึงตัวเลขสดจากห้องควบคุมของระบบ ถ้าดึงไม่ได้จะใช้ตัวเลขที่เขียนไว้ในหน้า
+    // ไม่ปล่อยให้เป็นศูนย์หรือว่างเปล่า เพราะคนเปิดดูพอร์ตไม่ควรเห็นหน้าที่ดูเหมือนพัง
+    (async () => {
+      const BASE = 'https://konkamon4717-alt.github.io/YTAUTO';
+      const START = new Date('2026-09-17');
+      const fmt = n => Math.round(n).toLocaleString('th-TH');
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function countUp(el, to) {
+        if (reduce) { el.textContent = fmt(to); return; }
+        const t0 = performance.now(), dur = 1400;
+        const step = now => {
+          const p = Math.min(1, (now - t0) / dur);
+          el.textContent = fmt(to * (1 - Math.pow(1 - p, 3)));
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }
+
+      const values = {
+        ytClips: 28, ytViews: 34028, ytSubs: 92,
+        ytDays: Math.floor((Date.now() - START) / 864e5),
+      };
+
+      try {
+        const rows = await Promise.all(['nithan', 'world'].map(ch =>
+          fetch(`${BASE}/${ch}/channel.json`, { cache: 'no-store' }).then(r => {
+            if (!r.ok) throw new Error(r.status);
+            return r.json();
+          })));
+        values.ytClips = rows.reduce((s, d) => s + d.videos.filter(v => v.privacy === 'public').length, 0);
+        values.ytViews = rows.reduce((s, d) => s + d.channel.views, 0);
+        values.ytSubs = rows.reduce((s, d) => s + d.channel.subscribers, 0);
+        const latest = rows.map(d => new Date(d.fetched_at)).sort((a, b) => b - a)[0];
+        document.getElementById('ytStamp').textContent =
+          'อัปเดตอัตโนมัติจากระบบจริง · ล่าสุด ' +
+          latest.toLocaleString('th-TH', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+      } catch {
+        /* ดึงไม่ได้ก็ใช้ตัวเลขที่เขียนไว้ */
+      }
+
+      // เริ่มนับเมื่อเลื่อนมาเห็น ไม่ใช่นับจบไปก่อนที่ใครจะได้ดู
+      const box = document.querySelector('.yt-live');
+      new IntersectionObserver((entries, obs) => {
+        if (!entries[0].isIntersecting) return;
+        obs.disconnect();
+        for (const [id, v] of Object.entries(values)) countUp(document.getElementById(id), v);
+      }, { threshold: .4 }).observe(box);
+    })();
+  </script>
+  <script src="blockchain-motion.js?v=mobile-20261009"></script>
+</body>
+</html>

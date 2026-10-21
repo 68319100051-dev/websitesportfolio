@@ -387,6 +387,23 @@ const projectData = {
     live: 'https://google-form-ai-assistant.onrender.com/',
     code: 'https://github.com/JetKomon',
     render: true
+  },
+  ytauto: {
+    title: 'YouTube Shorts Auto',
+    category: 'Automation / AI',
+    status: '<span class="project-status live"><span class="dot"></span> ออนไลน์</span>',
+    description: 'ระบบผลิตและเผยแพร่คลิปสั้นบน YouTube อัตโนมัติ ทำงานเองทุกวันบน GitHub Actions โดยไม่ต้องเปิดคอม ใช้บริการฟรีทั้งหมด ดูแล 2 ช่อง (นิทานสั้น และเรื่องน่ารู้รอบโลก)',
+    tech: ['Python', 'GitHub Actions', 'YouTube Data API', 'Gemini', 'FFmpeg', 'Hugging Face'],
+    features: [
+      'AI คิดเรื่อง เขียนบท และกันเรื่องซ้ำเอง',
+      'พากย์เสียงภาษาไทยพร้อมซับที่ตัดคำถูกต้อง',
+      'ทำภาพประกอบและทำให้ภาพขยับ',
+      'ตัดต่อ ทำปก และอัปโหลดขึ้น YouTube อัตโนมัติ',
+      'มีตัวสำรองหลายชั้น บริการไหนล่มก็ยังได้คลิป',
+      'หน้าเว็บดูสถานะและสั่งงานจากมือถือ',
+    ],
+    live: 'https://konkamon4717-alt.github.io/YTAUTO/',
+    code: 'https://github.com/konkamon4717-alt/YTAUTO'
   }
 };
 
@@ -1133,6 +1150,7 @@ const i18n = {
     'home-work-title': 'ผลงานที่สะท้อนวิธีทำงาน',
     'home-work-all': 'ดูโปรเจกต์ทั้งหมด ↗',
     'home-work-formfiller': 'เครื่องมือใช้ AI ช่วยกรอกแบบฟอร์ม เพื่อให้งานซ้ำ ๆ ทำได้เร็วและเป็นระบบขึ้น',
+    'home-work-ytauto': 'ระบบที่คิดเรื่อง พากย์เสียง ทำภาพ ตัดต่อ และอัปโหลดคลิปขึ้น YouTube เองทุกวัน ด้วยเครื่องมือฟรีทั้งหมด',
     'home-work-featured': '★ โปรเจ็กต์แนะนำ',
     'home-work-jetmusic': 'ลองฟังเพลง จัดเพลย์ลิสต์ และดาวน์โหลดแอป Android ได้จากเว็บไซต์ Jet Music',
     'home-work-slipform': 'ระบบตรวจความดิ่งปล่องลิฟต์ที่ใช้งานจริงในไซต์ก่อสร้าง พร้อมภาพ 3D และวิดีโอแนะนำ',
@@ -1228,6 +1246,7 @@ const i18n = {
     'home-work-title': 'Projects that show how I work',
     'home-work-all': 'View all projects ↗',
     'home-work-formfiller': 'An AI-assisted form tool that makes repetitive tasks faster and more structured.',
+    'home-work-ytauto': 'A system that writes, narrates, illustrates, edits and uploads YouTube Shorts on its own every day, built entirely on free tools.',
     'home-work-featured': '★ Featured project',
     'home-work-jetmusic': 'Listen to music, make playlists, and download the Android app from the Jet Music website.',
     'home-work-slipform': 'A real-world lift shaft alignment system with 3D visualization and a video overview.',

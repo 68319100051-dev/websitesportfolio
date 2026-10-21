@@ -91,7 +91,7 @@ const CONTENT_SECURITY_POLICY = [
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https:",
   "media-src 'self' blob: https:",
-  "connect-src 'self' https://api.cloudinary.com",
+  "connect-src 'self' https://api.cloudinary.com https://konkamon4717-alt.github.io",
   "upgrade-insecure-requests"
 ].join('; ');
 
