@@ -429,21 +429,6 @@ function openModal(id) {
   modalTitle.textContent = data.title;
   modalCategory.textContent = data.category;
   modalStatus.innerHTML = data.status;
-  // โปรเจกต์ที่มีหน้ารายละเอียดเต็ม ให้เห็นปุ่มทันทีใต้ชื่อ ไม่ต้องเลื่อนลงไปหาท้ายหน้าต่าง
-  let detailCta = document.getElementById('modalDetailCta');
-  if (data.detail) {
-    if (!detailCta) {
-      detailCta = document.createElement('a');
-      detailCta.id = 'modalDetailCta';
-      detailCta.className = 'modal-detail-cta';
-      modalStatus.insertAdjacentElement('afterend', detailCta);
-    }
-    detailCta.href = data.detail;
-    detailCta.innerHTML = 'ดูรายละเอียดโครงการ <span aria-hidden="true">→</span>';
-    detailCta.hidden = false;
-  } else if (detailCta) {
-    detailCta.hidden = true;
-  }
   modalDescription.textContent = data.description;
   // ภาพปกบนหัวหน้าต่าง ดึงจากการ์ดที่ถูกกด ไม่ต้องเก็บ path ซ้ำในข้อมูลโปรเจกต์
   const modalBox = modal.querySelector('.modal');

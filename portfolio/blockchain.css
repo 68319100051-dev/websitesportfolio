@@ -2161,18 +2161,3 @@ body.portfolio-v2 .modal-links a { border-radius: 999px; }
   body.portfolio-v2 .modal-links a { justify-content: center; }
 }
 
-/* ปุ่มดูรายละเอียดโครงการ ใต้ชื่อในหน้าต่าง (เฉพาะโปรเจกต์ที่มีหน้ารายละเอียด) */
-body.portfolio-v2 .modal-detail-cta {
-  display: inline-flex; align-items: center; gap: .5rem; margin: .9rem 0 0 .6rem;
-  padding: .6rem 1.15rem; border-radius: 999px; font-weight: 700; font-size: .88rem;
-  text-decoration: none; color: #0a0a15;
-  background: linear-gradient(120deg, #38bdf8, #c084fc);
-  box-shadow: 0 8px 24px rgba(192,132,252,.28); transition: transform .2s, box-shadow .2s;
-}
-body.portfolio-v2 .modal-detail-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(192,132,252,.4); }
-body.portfolio-v2 .modal-detail-cta span { transition: transform .2s; }
-body.portfolio-v2 .modal-detail-cta:hover span { transform: translateX(3px); }
-body.portfolio-v2 .modal-detail-cta[hidden] { display: none; }
-@media (max-width: 640px) {
-  body.portfolio-v2 .modal-detail-cta { display: flex; justify-content: center; margin: 1rem 0 0; }
-}
