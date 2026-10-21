@@ -2800,8 +2800,10 @@ html.theme-changing * {
   background: conic-gradient(from var(--yt-angle), #38bdf8, #c084fc, #ef4444, #38bdf8);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
-  animation: yt-card-spin 6s linear infinite; opacity: .85;
+  opacity: .85;
 }
-.ytauto-project-card:hover::before { opacity: 1; }
+/* หมุนเฉพาะตอนชี้ การหมุนไล่สีแบบนี้ต้องวาดใหม่ทั้งขอบทุกเฟรม
+   ถ้าหมุนตลอดเวลาหน้าแรกจะเสียไปราวเจ็ดเฟรมต่อวินาทีแค่กับการ์ดใบเดียว */
+.ytauto-project-card:hover::before { opacity: 1; animation: yt-card-spin 3s linear infinite; }
 @keyframes yt-card-spin { to { --yt-angle: 360deg; } }
 @media (prefers-reduced-motion: reduce) { .ytauto-project-card::before { animation: none; } }

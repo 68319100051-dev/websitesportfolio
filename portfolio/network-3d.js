@@ -154,16 +154,28 @@ if (stage && body.classList.contains('portfolio-v2') && !reduced.matches) {
       }, { passive: true });
     }
 
+    // เดิมเปิดลูปไว้ตลอดแล้วข้ามการวาดเอาตอนมองไม่เห็น แต่ setAnimationLoop ยังขอเฟรมทุกเฟรม
+    // เครื่องจึงถูกปลุกให้คำนวณสไตล์และวาดทั้งหน้าใหม่ราวร้อยกว่าครั้งต่อวินาทีแม้ภาพ 3D อยู่นอกจอ
+    // หน้าแรกเลยกระตุกตลอด ตอนนี้หยุดลูปจริง ๆ เมื่อไม่ต้องวาด แล้วค่อยเปิดใหม่ตอนเลื่อนกลับมา
     let visible = true;
+    let looping = false;
+    const syncLoop = () => {
+      const should = visible && !document.hidden && !reduced.matches;
+      if (should === looping) return;
+      looping = should;
+      renderer.setAnimationLoop(should ? frameLoop : null);
+    };
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(entries => {
         visible = entries[0]?.isIntersecting ?? true;
+        syncLoop();
       }, { rootMargin: '100px' }).observe(stage);
     }
+    document.addEventListener('visibilitychange', syncLoop);
     let lastFrame = 0;
-    renderer.setAnimationLoop(time => {
-      if (document.hidden || reduced.matches || !visible) return;
-      if (time - lastFrame < (isMobile ? 33 : 22)) return;
+    function frameLoop(time) {
+      // ฉากหมุนช้ามาก 30 เฟรมต่อวินาทีตาแยกไม่ออกจาก 45 แต่ลดงานวาดลงหนึ่งในสาม
+      if (time - lastFrame < 33) return;
       lastFrame = time;
       const seconds = time * 0.001;
       rig.rotation.y = seconds * 0.12 + pointer.x * 0.14;
@@ -182,7 +194,8 @@ if (stage && body.classList.contains('portfolio-v2') && !reduced.matches) {
       key.position.y = Math.sin(seconds * 0.45) * 2.1;
       fill.position.y = Math.cos(seconds * 0.6) * 2.5;
       renderer.render(scene, camera);
-    });
+    }
+    syncLoop();
     body.classList.add('network-3d-active');
     document.dispatchEvent(new Event('network3dchange'));
     canvas.addEventListener('webglcontextlost', () => {
@@ -191,6 +204,7 @@ if (stage && body.classList.contains('portfolio-v2') && !reduced.matches) {
       renderer.setAnimationLoop(null);
     }, { once: true });
     reduced.addEventListener('change', event => {
+      syncLoop();
       if (event.matches) {
         body.classList.remove('network-3d-active');
         document.dispatchEvent(new Event('network3dchange'));

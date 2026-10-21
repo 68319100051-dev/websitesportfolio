@@ -199,7 +199,7 @@
     document.body.prepend(bar);
     const update = () => {
       const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
-      bar.style.width = Math.min(100, scrollY / max * 100) + '%';
+      bar.style.transform = `scaleX(${Math.min(1, scrollY / max)})`;
     };
     window.addEventListener('scroll', update, { passive: true });
     update();
@@ -320,7 +320,14 @@
     });
     decorate(document);
     // บางหน้าสร้างการ์ดทีหลังจากข้อมูลที่โหลดมา ต้องตามใส่ให้ด้วย
-    new MutationObserver(() => decorate(document)).observe(document.body, { childList: true, subtree: true });
+    // ตอบเฉพาะตอนมี element ใหม่เข้ามา และรวบเป็นรอบเดียวต่อเฟรม
+    // ของเดิมไล่หาการ์ดทั้งหน้าทุกครั้งที่ข้อความพิมพ์ทีละตัวบนหน้าแรกเปลี่ยน ราวสิบกว่าครั้งต่อวินาที
+    let pending = false;
+    new MutationObserver(records => {
+      if (pending || !records.some(r => [...r.addedNodes].some(n => n.nodeType === 1))) return;
+      pending = true;
+      requestAnimationFrame(() => { pending = false; decorate(document); });
+    }).observe(document.body, { childList: true, subtree: true });
 
     let frame = 0, last = null;
     document.addEventListener('pointermove', e => {
@@ -335,5 +342,14 @@
         card.style.setProperty('--my', (last.clientY - r.top) + 'px');
       });
     }, { passive: true });
+  }
+
+  // ---------- หยุดของที่มองไม่เห็น ----------
+  // หัวหน้าแรกมีวงแสง การ์ดพลิก และรูปลอยที่วิ่งตลอด เลื่อนลงไปแล้วก็ยังกินแรงอยู่
+  if ('IntersectionObserver' in window) {
+    const heavy = document.querySelectorAll('#hero, .network-3d-stage, .home-work, .page-hero');
+    const io = new IntersectionObserver(entries => entries.forEach(e =>
+      e.target.classList.toggle('is-offscreen', !e.isIntersecting)), { rootMargin: '120px 0px' });
+    heavy.forEach(el => io.observe(el));
   }
 })();

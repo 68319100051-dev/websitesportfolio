@@ -2226,13 +2226,9 @@ body.portfolio-v2.page-is-leaving .page-wrapper { animation: pageSceneOut .45s c
 
 /* ---------- 2. โผล่ตอนเลื่อน: ไล่ทีละชิ้น ----------
    ของเดิมโผล่พร้อมกันทั้งแถว ตอนนี้ชิ้นในตารางเดียวกันไล่ตามกัน (ใส่ --i ด้วย JS) */
-body.portfolio-v2 .reveal {
-  filter: blur(6px);
-  transition: opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1),
-    filter .85s cubic-bezier(.16,1,.3,1);
-  transition-delay: calc(var(--i, 0) * 70ms);
-}
-body.portfolio-v2 .reveal.visible { filter: blur(0); }
+/* ไม่ใช้เบลอแล้ว การเบลอหลายการ์ดพร้อมกันระหว่างเลื่อนต้องวาดใหม่ทุกเฟรม หน้าแรกเลยกระตุก
+   เหลือจางเข้ากับเลื่อนขึ้น ซึ่งการ์ดจอทำได้เองโดยไม่ต้องวาดใหม่ */
+body.portfolio-v2 .reveal { transition-delay: calc(var(--i, 0) * 70ms); }
 
 /* ---------- 3. การ์ด: แสงตามเมาส์ ----------
    ใช้ชิ้นแสงแยกที่ JS ใส่เข้าไป เพราะการ์ดโปรเจกต์ใช้ ::after ทำพื้นหลังขอบไล่สีอยู่แล้ว
@@ -2276,7 +2272,7 @@ body.portfolio-v2 .project-thumb-placeholder svg {
   filter: drop-shadow(0 0 18px rgba(141,255,231,.55));
   animation: phFloat 5s ease-in-out infinite alternate;
 }
-@keyframes phDrift { to { background-position: 100% 100%, 0 0, 0 0; } }
+@keyframes phDrift { to { transform: translate3d(9%, 7%, 0) rotate(10deg); } }
 @keyframes phFloat { to { transform: translateY(-6px) scale(1.04); } }
 
 /* ---------- 5. ปุ่มหลัก: แสงวาบตอนชี้ ---------- */
@@ -2338,8 +2334,9 @@ body.portfolio-v2 .emblem-chip-4 { bottom: 12%; right: 14%; animation-delay: -3.
 /* ---------- ลดการเคลื่อนไหวตามที่ผู้ใช้ตั้งไว้ ---------- */
 @media (prefers-reduced-motion: reduce) {
   .pt-veil { display: none !important; }
-  body.portfolio-v2 .reveal { filter: none !important; transition-delay: 0s !important; }
-  body.portfolio-v2 :is(.project-thumb-placeholder, .project-thumb-placeholder svg,
+  body.portfolio-v2 .reveal { transition-delay: 0s !important; }
+  body.portfolio-v2 .project-thumb-placeholder::after { animation: none !important; }
+  body.portfolio-v2 :is(.project-thumb-placeholder svg,
     .showcase-about.is-emblem .showcase-about-initials, .showcase-about-orbit, .emblem-ring, .emblem-chip) {
     animation: none !important;
   }
@@ -2358,3 +2355,32 @@ html.pt-arriving::after {
 }
 @keyframes ptCoverGiveUp { to { visibility: hidden; } }
 @media (prefers-reduced-motion: reduce) { html.pt-arriving::after { display: none; } }
+
+/* =====================================================================
+   PERFORMANCE — หน้าแรกเคยเลื่อนได้แค่ราว 25 เฟรมต่อวินาที (ทดสอบบนเครื่องจำลองช้าลงสี่เท่า)
+   วัดทีละชิ้นแล้วพบว่าตัวกินแรงคือของที่ "ถูกวาดใหม่ทุกเฟรม" ไม่ใช่จำนวนอนิเมชัน
+   หน้าตาทุกอย่างเหมือนเดิม แค่ย้ายงานไปให้การ์ดจอทำ และหยุดของที่มองไม่เห็นอยู่
+   ===================================================================== */
+
+/* วงกลมแสงเบลอ 80px ขยับและย่อขยายตลอด ถ้าไม่บอกล่วงหน้า เบราว์เซอร์จะคำนวณเบลอใหม่ทุกเฟรม
+   will-change ทำให้วาดเบลอครั้งเดียวแล้วเลื่อนทั้งก้อนด้วยการ์ดจอ */
+body.portfolio-v2 .blob { will-change: transform; }
+/* รูปโปรไฟล์ลอยขึ้นลงพร้อมเงา เหตุผลเดียวกัน */
+body.portfolio-v2 .hero-professional-photo { will-change: transform; }
+
+/* ป้ายเล็กที่วางทับภาพเคลื่อนไหว เคยใช้กระจกเบลอ ซึ่งต้องเบลอใหม่ทุกครั้งที่ภาพข้างหลังขยับ
+   เปลี่ยนเป็นพื้นทึบเกือบสนิท ตาแยกไม่ออกเพราะป้ายเล็กมาก */
+body.portfolio-v2 :is(.hero-profile-chip, .hero-gacha-hint, .project-badge) {
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+}
+body.portfolio-v2 :is(.hero-profile-chip, .hero-gacha-hint) { background-color: rgba(7, 14, 24, .86) !important; }
+body.portfolio-v2 .project-badge.featured { background-color: rgba(7, 14, 24, .82); }
+
+/* หยุดอนิเมชันในส่วนที่เลื่อนพ้นจอไปแล้ว (JS ใส่คลาสนี้ให้) ไม่มีใครเห็นแต่ยังกินแรงอยู่ */
+.is-offscreen, .is-offscreen *, .is-offscreen *::before, .is-offscreen *::after {
+  animation-play-state: paused !important;
+}
+
+/* แถบความคืบหน้าการเลื่อน: ยืดด้วย scaleX แทนการเปลี่ยนความกว้าง
+   การเปลี่ยนความกว้างทำให้ต้องจัดเลย์เอาต์ใหม่ทุกครั้งที่เลื่อนแม้แค่พิกเซลเดียว */
+body.portfolio-v2 .scroll-progress { width: 100% !important; transform-origin: left; will-change: transform; }
