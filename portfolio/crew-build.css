@@ -1,0 +1,81 @@
+/* The crew works directly on page elements. It never captures pointer input. */
+body.portfolio-v2 .crew-piece:not(.crew-built) {
+  opacity: 0 !important;
+  clip-path: inset(0 100% 0 0 round 10px) !important;
+}
+body.portfolio-v2 .crew-piece.crew-preview {
+  opacity: .34 !important;
+  clip-path: inset(0 0 0 0) !important;
+}
+body.portfolio-v2 .crew-piece.crew-built {
+  opacity: 1 !important;
+  clip-path: inset(0 0 0 0) !important;
+  transition: opacity .42s ease, clip-path .62s cubic-bezier(.16,1,.3,1) !important;
+}
+.site-crew { position: fixed; inset: 0; z-index: 8800; pointer-events: none; overflow: hidden; }
+.site-crew__cursor {
+  --crew-color: #78f1d9;
+  position: absolute; z-index: 4; top: 0; left: 0; display: flex; align-items: flex-start;
+  gap: 2px; color: var(--crew-color); opacity: 0;
+  will-change: transform; filter: drop-shadow(0 5px 9px #0009);
+}
+.site-crew__cursor.is-active { opacity: 1; }
+.site-crew__cursor svg { width: 22px; height: 26px; fill: currentColor; stroke: #061321; stroke-width: 1.4; }
+.site-crew__cursor span {
+  margin-top: 17px; padding: .23rem .38rem; border-radius: 4px;
+  color: #051923; background: var(--crew-color);
+  font: 700 .56rem/1.2 var(--font-mono, monospace); letter-spacing: .05em;
+  white-space: nowrap;
+}
+.site-crew__cursor:nth-child(2) { --crew-color: #91b6ff; }
+.site-crew__cursor:nth-child(3) { --crew-color: #d4a6ff; }
+.site-crew__cursor:nth-child(4) { --crew-color: #f2cf8a; }
+.site-crew__cursor.is-pressing svg { transform: scale(.78); }
+.site-crew__cursor.is-pressing span { box-shadow: 0 0 0 5px color-mix(in srgb, var(--crew-color) 28%, transparent); }
+.site-crew__selection {
+  position: absolute; z-index: 1; top: 0; left: 0; height: 0; width: 0;
+  border-radius: 5px; background: rgba(117, 218, 255, .34);
+  box-shadow: inset 0 0 0 1px rgba(159, 240, 255, .6), 0 0 18px rgba(84, 202, 255, .36);
+  transform-origin: left; transform: scaleX(0); opacity: 0;
+}
+.site-crew__selection.is-on { opacity: 1; transform: scaleX(1); transition: transform .38s ease-out; }
+.site-crew__ghost {
+  position: absolute; z-index: 2; top: 0; left: 0; width: 90px; height: 60px;
+  border: 1px solid #adfff1; border-radius: 8px; background: #143846ed;
+  box-shadow: 0 8px 24px #0009, 0 0 24px #78f1d988;
+  overflow: hidden; opacity: 0; will-change: transform;
+}
+.site-crew__ghost.is-on { opacity: .85; }
+.site-crew__ghost img { width: 100%; height: 100%; object-fit: cover; }
+.site-crew__ghost:not(:has(img))::before {
+  content: '▧  COMPONENT'; display: grid; place-items: center; height: 100%;
+  color: #c6fff4; font: 700 .54rem var(--font-mono, monospace); letter-spacing: .06em;
+}
+.site-crew__menu {
+  position: absolute; z-index: 3; top: 0; left: 0; width: 150px; padding: .3rem;
+  border: 1px solid #86e9dc88; border-radius: 9px; background: #0b1a2bf2;
+  box-shadow: 0 16px 38px #000b; color: #c9e9ed;
+  font: 600 .6rem/1.3 var(--font-mono, monospace); opacity: 0;
+  transform: translateY(5px) scale(.96); transition: opacity .15s, transform .15s;
+}
+.site-crew__menu.is-on { opacity: 1; transform: none; }
+.site-crew__menu small { display: block; padding: .26rem .45rem .4rem; color: #83a8b6; letter-spacing: .1em; }
+.site-crew__menu span { display: block; padding: .42rem .45rem; border-radius: 5px; }
+.site-crew__menu span.is-picked { color: #06221f; background: #88f7df; }
+.site-crew__flash {
+  position: absolute; z-index: 5; top: 0; left: 0; width: 56px; height: 56px;
+  border: 2px solid #9dffe8; border-radius: 50%;
+  transform: translate(-50%, -50%) scale(.2); opacity: 0;
+}
+.site-crew__flash.is-on { animation: crew-flash .38s ease-out forwards; }
+@keyframes crew-flash { 15% { opacity: 1; } 100% { transform: translate(-50%,-50%) scale(1.4); opacity: 0; } }
+@media (max-width: 700px) {
+  .site-crew__cursor:nth-child(n+3) { display: none; }
+  .site-crew__cursor svg { width: 17px; height: 21px; }
+  .site-crew__cursor span { font-size: .48rem; margin-top: 13px; }
+  .site-crew__menu { width: 132px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-crew { display: none !important; }
+  body.portfolio-v2 .crew-piece { opacity: 1 !important; filter: none !important; clip-path: none !important; }
+}
