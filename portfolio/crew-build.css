@@ -1,16 +1,13 @@
 /* The crew works directly on page elements. It never captures pointer input. */
 body.portfolio-v2 .crew-piece:not(.crew-built) {
   opacity: 0 !important;
-  clip-path: inset(0 100% 0 0 round 10px) !important;
 }
 body.portfolio-v2 .crew-piece.crew-preview {
   opacity: .34 !important;
-  clip-path: inset(0 0 0 0) !important;
 }
 body.portfolio-v2 .crew-piece.crew-built {
   opacity: 1 !important;
-  clip-path: inset(0 0 0 0) !important;
-  transition: opacity .42s ease, clip-path .62s cubic-bezier(.16,1,.3,1) !important;
+  transition: opacity .42s ease !important;
 }
 .site-crew { position: fixed; inset: 0; z-index: 8800; pointer-events: none; overflow: hidden; }
 .site-crew__cursor {

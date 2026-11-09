@@ -36,7 +36,9 @@
   });
   const workers = cursors.map(() => false);
   const queue = [];
+  const pending = new Set();
   const known = new WeakSet();
+  const enqueued = new WeakSet();
   let stopped = false;
 
   const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -53,6 +55,7 @@
     return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 10 && rect.height > 8;
   };
   const show = element => {
+    pending.delete(element);
     element.classList.remove('crew-preview');
     element.classList.add('crew-built', 'visible', 'network-in');
   };
@@ -60,6 +63,7 @@
     stopped = true;
     queue.splice(0).forEach(show);
     document.querySelectorAll('.crew-piece:not(.crew-built)').forEach(show);
+    pending.clear();
     stage.remove();
   };
 
@@ -201,16 +205,26 @@
       });
     });
   }
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      observer.unobserve(entry.target);
-      queue.push(entry.target);
-      // A throttled browser must still make this element readable.
-      setTimeout(() => { if (!entry.target.classList.contains('crew-built')) show(entry.target); }, 5000);
-    });
+  function enqueue(element) {
+    if (stopped || enqueued.has(element) || element.classList.contains('crew-built')) return;
+    enqueued.add(element);
+    pending.delete(element);
+    observer.unobserve(element);
+    queue.push(element);
+    // A throttled browser must still make this element readable.
+    setTimeout(() => { if (!element.classList.contains('crew-built')) show(element); }, 5000);
     pump();
+  }
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => { if (entry.isIntersecting) enqueue(entry.target); });
   }, { threshold: .06, rootMargin: '0px 0px -4% 0px' });
+  function scanVisible() {
+    for (const element of pending) {
+      if (!usable(element)) continue;
+      const r = element.getBoundingClientRect();
+      if (r.bottom > 0 && r.top < innerHeight - 10 && r.right > 0 && r.left < innerWidth) enqueue(element);
+    }
+  }
 
   const selector = [
     '.navbar .nav-logo', '.footer .container',
@@ -246,20 +260,29 @@
       known.add(element);
       if (!usable(element)) return;
       element.classList.add('crew-piece');
+      pending.add(element);
       observer.observe(element);
     });
   }
   collect();
+  scanVisible();
+  let scanFrame = 0;
+  const scheduleScan = () => {
+    if (scanFrame || stopped) return;
+    scanFrame = requestAnimationFrame(() => { scanFrame = 0; scanVisible(); });
+  };
+  window.addEventListener('scroll', scheduleScan, { passive: true });
+  window.addEventListener('resize', scheduleScan, { passive: true });
   // Guestbook entries and other cards can be rendered after the initial HTML.
   let scanQueued = false;
   new MutationObserver(records => {
     if (scanQueued || !records.some(record => [...record.addedNodes].some(node => node.nodeType === 1))) return;
     scanQueued = true;
-    requestAnimationFrame(() => { scanQueued = false; if (!stopped) collect(); });
+    requestAnimationFrame(() => { scanQueued = false; if (!stopped) { collect(); scanVisible(); } });
   }).observe(document.querySelector('.page-wrapper, .slipform-main, .argo-preview-main, .slide-track') || document.body,
     { childList: true, subtree: true });
   const slides = document.querySelector('.slide-track');
-  if (slides) new MutationObserver(() => collect(slides))
+  if (slides) new MutationObserver(() => { collect(slides); scanVisible(); })
     .observe(slides, { attributes: true, subtree: true, attributeFilter: ['class'] });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) pump(); });
   motion.addEventListener('change', event => { if (event.matches) allBuilt(); });
