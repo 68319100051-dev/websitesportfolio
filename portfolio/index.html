@@ -15,10 +15,41 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=perf-20261021">
   <link rel="stylesheet" href="blockchain.css?v=perf-20261021">
-<script>try{if(sessionStorage.getItem('pt-veil-label')!==null&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('pt-arriving')}catch(e){}</script>
+  <link rel="stylesheet" href="intro-build.css?v=1">
+<script>try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){if(sessionStorage.getItem('pt-veil-label')!==null){document.documentElement.classList.add('pt-arriving');sessionStorage.setItem('jet-build-intro-seen-v1','1')}else if(sessionStorage.getItem('jet-build-intro-seen-v1')!=='1')document.documentElement.classList.add('intro-pending')}}catch(e){}</script>
 </head>
 <body class="portfolio-v2">
   <a class="skip-link" href="#hero">ข้ามไปเนื้อหา</a>
+
+  <div class="build-intro" id="buildIntro" hidden aria-label="กำลังประกอบหน้าเว็บพอร์ตโฟลิโอ">
+    <div class="build-intro__topline"><span>JET / PORTFOLIO</span><span>COLLABORATIVE BUILD <i aria-hidden="true"></i></span></div>
+    <div class="build-intro__workspace">
+      <div class="build-intro__window">
+        <div class="build-intro__browser"><span class="build-intro__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>jet-konkamon / portfolio</span><span>● LIVE</span></div>
+        <div class="build-intro__site">
+          <div class="build-intro__header">
+            <div class="build-piece build-intro__brand" data-build="brand"><b>Jet<span>.</span></b><small>/ DEV</small></div>
+            <div class="build-piece build-intro__nav" data-build="nav"><span></span><span></span><span></span><span></span></div>
+          </div>
+          <div class="build-intro__hero">
+            <div class="build-intro__copy">
+              <div class="build-piece build-intro__eyebrow" data-build="eyebrow">PORTFOLIO / AI & WEB DEVELOPMENT</div>
+              <div class="build-piece build-intro__heading" data-build="heading">Jet<br><strong>Konkamon</strong><em>↗</em></div>
+              <div class="build-piece build-intro__subtitle" data-build="subtitle"><span></span><span></span><span></span></div>
+              <div class="build-piece build-intro__button" data-build="button">EXPLORE WORK <span>→</span></div>
+            </div>
+            <div class="build-piece build-intro__preview" data-build="preview"><div class="build-intro__preview-grid"></div><div class="build-intro__preview-mark">JK</div><div class="build-intro__preview-chip">AI SYSTEMS<br>WEB APPS</div><div class="build-intro__preview-foot">DESIGN × DEVELOPMENT</div></div>
+          </div>
+          <div class="build-intro__cards"><div class="build-piece" data-build="card1"><small>01 / WEB APP</small><b>JET MUSIC</b></div><div class="build-piece" data-build="card2"><small>02 / AUTOMATION</small><b>YOUTUBE AUTO</b></div><div class="build-piece" data-build="card3"><small>03 / 3D SYSTEM</small><b>SLIPFORM</b></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="build-intro__bottom"><span id="buildIntroStatus" role="status" aria-live="polite">กำลังประกอบหน้าเว็บ...</span><span class="build-intro__progress" aria-hidden="true"><i></i></span><button type="button" id="buildIntroSkip">ข้ามแอนิเมชัน <span aria-hidden="true">↗</span></button></div>
+    <div class="builder-cursor builder-cursor--mint" data-cursor="layout" aria-hidden="true"><svg viewBox="0 0 28 32"><path d="M2 2v24l6.5-6 4.5 10 4-2-4.5-10H23z"/></svg><span>layout</span></div>
+    <div class="builder-cursor builder-cursor--blue" data-cursor="type" aria-hidden="true"><svg viewBox="0 0 28 32"><path d="M2 2v24l6.5-6 4.5 10 4-2-4.5-10H23z"/></svg><span>type</span></div>
+    <div class="builder-cursor builder-cursor--violet" data-cursor="media" aria-hidden="true"><svg viewBox="0 0 28 32"><path d="M2 2v24l6.5-6 4.5 10 4-2-4.5-10H23z"/></svg><span>media</span></div>
+    <div class="builder-cursor builder-cursor--gold" data-cursor="ship" aria-hidden="true"><svg viewBox="0 0 28 32"><path d="M2 2v24l6.5-6 4.5 10 4-2-4.5-10H23z"/></svg><span>ship</span></div>
+  </div>
 
   <canvas id="particles"></canvas>
   <div class="blob blob-1"></div>
@@ -187,6 +218,7 @@
   <script src="script.js?v=modal-20261021b"></script>
   <script src="hero-motion.js?v=prism-20261009"></script>
   <script src="blockchain-motion.js?v=perf-20261021"></script>
+  <script src="intro-build.js?v=1" defer></script>
   <script type="module" src="network-3d.js?v=perf-20261021"></script>
 </body>
 </html>
