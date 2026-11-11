@@ -64,7 +64,7 @@
     interrupted[index] = true;
     activeAnimations[index].forEach(animation => animation.cancel());
     activeAnimations[index].clear();
-    if (activeTargets[index]) show(activeTargets[index]);
+    if (activeTargets[index]) activeTargets[index].classList.remove('crew-preview', 'crew-typing');
     hideEffects(index);
   };
   const point = element => {
@@ -85,8 +85,16 @@
   };
   const show = element => {
     pending.delete(element);
+    enqueued.delete(element);
     element.classList.remove('crew-preview', 'crew-typing');
     element.classList.add('crew-built', 'visible', 'network-in');
+  };
+  const defer = element => {
+    if (!element.isConnected || element.classList.contains('crew-built')) return;
+    element.classList.remove('crew-preview', 'crew-typing');
+    enqueued.delete(element);
+    pending.add(element);
+    observer.observe(element);
   };
   const allBuilt = () => {
     stopped = true;
@@ -194,6 +202,7 @@
       if (halted(index)) return;
       cursor.querySelector('span').textContent = 'right click';
       await press(index, start);
+      if (halted(index)) return;
       menu.style.left = `${clamp(left + 12, 6, innerWidth - 160)}px`;
       menu.style.top = `${clamp(y + 14, 6, innerHeight - 155)}px`;
       menu.classList.add('is-on');
@@ -203,6 +212,7 @@
       const option = row.getBoundingClientRect();
       const choose = { x: option.left + 22, y: option.top + option.height / 2 };
       await move(index, choose, 220);
+      if (halted(index)) return;
       row.classList.add('is-picked');
       await press(index, choose);
       if (halted(index)) return;
@@ -268,6 +278,7 @@
     if (halted(index)) return;
     cursors[index].querySelector('span').textContent = 'right click';
     await press(index, to);
+    if (halted(index)) return;
     menu.style.left = `${clamp(to.x + 12, 8, innerWidth - 164)}px`;
     menu.style.top = `${clamp(to.y + 16, 8, innerHeight - 155)}px`;
     menu.classList.add('is-on');
@@ -277,6 +288,7 @@
     if (halted(index)) return;
     const r = row.getBoundingClientRect();
     await move(index, { x: r.left + 24, y: r.top + r.height / 2 }, 260);
+    if (halted(index)) return;
     row.classList.add('is-picked');
     await press(index, { x: r.left + 24, y: r.top + r.height / 2 });
     if (halted(index)) return;
@@ -306,15 +318,17 @@
     await move(index, to, 380);
     insertion.cancel();
     ghost.classList.remove('is-on');
+    if (halted(index)) return;
     show(element);
     await press(index, to);
     hideGuide();
   }
 
   async function build(index, element) {
-    if (stopped || element.classList.contains('crew-built') || !usable(element)) { show(element); return; }
+    if (stopped || element.classList.contains('crew-built')) return;
+    if (!usable(element)) { defer(element); return; }
     const r = element.getBoundingClientRect();
-    if (r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth) { show(element); return; }
+    if (r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth) { defer(element); return; }
     const isTypedText = element.matches('h1,h2,.hero-name,.hero-title,.hero-summary,.page-hero .container > p,.argo-preview-lead,.slipform-hero > div > p,.slipform-section > p,.network-3d-copy,.home-section-heading,.home-contact-strip');
     const isSelectedText = element.matches('.page-accent,.hero-eyebrow,.project-category-title');
     const isButton = element.matches('.hero-buttons,.home-all-link,.project-filters,.project-links,.btn-primary,.btn-outline');
@@ -329,7 +343,7 @@
       const hideGuide = guideFor(index, element);
       const to = point(element);
       await move(index, to, 320);
-    if (halted(index)) return;
+      if (halted(index)) return;
       show(element);
       await press(index, to);
       hideGuide();
@@ -355,7 +369,8 @@
       workers[index] = true;
       activeTargets[index] = element;
       interrupted[index] = false;
-      build(index, element).catch(() => show(element)).finally(() => {
+      build(index, element).catch(() => { if (interrupted[index]) defer(element); else show(element); }).finally(() => {
+        if (interrupted[index]) defer(element);
         activeTargets[index] = null;
         if (interrupted[index]) hideEffects(index);
         else {
@@ -363,6 +378,7 @@
           cursors[index].classList.remove('is-pressing', 'is-typing');
         }
         workers[index] = false;
+        if (!scrolling) scanVisible();
         pump();
       });
     });
@@ -452,7 +468,7 @@
         observer.observe(element);
       }
     }
-    scrollIdleTimer = setTimeout(() => { scrolling = false; scanVisible(); pump(); }, 170);
+    scrollIdleTimer = setTimeout(() => { scrolling = false; scanVisible(); pump(); }, 90);
   }, { passive: true });
   window.addEventListener('resize', scheduleScan, { passive: true });
   // Guestbook entries and other cards can be rendered after the initial HTML.
