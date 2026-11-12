@@ -18,10 +18,13 @@
     <div class="site-crew__flash"></div><div class="site-crew__guide"></div>
     <div class="site-crew__frame"><span class="site-crew__measure"></span></div>
     <div class="site-crew__caret"></div><div class="site-crew__line"></div>
-    <div class="site-crew__ruler-x"></div><div class="site-crew__ruler-y"></div>`;
+    <div class="site-crew__ruler-x"></div><div class="site-crew__ruler-y"></div>
+    <svg class="site-crew__trail" aria-hidden="true"><path></path></svg>
+    <div class="site-crew__target"></div>
+    <div class="site-crew__keys"><kbd></kbd><kbd></kbd><kbd></kbd><small></small></div>`;
   document.body.append(stage);
   const cursors = [...stage.querySelectorAll('.site-crew__cursor')].slice(0, innerWidth <= 700 ? 2 : 4);
-  const effectSelectors = ['.site-crew__selection', '.site-crew__ghost', '.site-crew__menu', '.site-crew__flash', '.site-crew__guide', '.site-crew__frame', '.site-crew__caret', '.site-crew__line', '.site-crew__ruler-x', '.site-crew__ruler-y'];
+  const effectSelectors = ['.site-crew__selection', '.site-crew__ghost', '.site-crew__menu', '.site-crew__flash', '.site-crew__guide', '.site-crew__frame', '.site-crew__caret', '.site-crew__line', '.site-crew__ruler-x', '.site-crew__ruler-y', '.site-crew__trail', '.site-crew__target', '.site-crew__keys'];
   const effects = cursors.map((_, index) => {
     const nodes = effectSelectors.map(selector => {
       const node = stage.querySelector(selector);
@@ -30,7 +33,7 @@
       stage.append(copy);
       return copy;
     });
-    return { selection: nodes[0], ghost: nodes[1], menu: nodes[2], flash: nodes[3], guide: nodes[4], frame: nodes[5], caret: nodes[6], line: nodes[7], rulerX: nodes[8], rulerY: nodes[9] };
+    return { selection: nodes[0], ghost: nodes[1], menu: nodes[2], flash: nodes[3], guide: nodes[4], frame: nodes[5], caret: nodes[6], line: nodes[7], rulerX: nodes[8], rulerY: nodes[9], trail: nodes[10], target: nodes[11], keys: nodes[12] };
   });
   const positions = cursors.map((cursor, index) => {
     const p = { x: index % 2 ? innerWidth - 65 : 25, y: index < 2 ? 90 : innerHeight - 100 };
@@ -73,13 +76,13 @@
   };
   const hideEffects = index => {
     Object.values(effects[index]).forEach(effect => effect.classList.remove('is-on'));
-    cursors[index].classList.remove('is-active', 'is-pressing', 'is-typing', 'is-crosshair', 'is-pen');
+    cursors[index].classList.remove('is-active', 'is-pressing', 'is-typing', 'is-crosshair', 'is-pen', 'is-dragging');
   };
   const interrupt = index => {
     interrupted[index] = true;
     activeAnimations[index].forEach(animation => animation.cancel());
     activeAnimations[index].clear();
-    if (activeTargets[index]) activeTargets[index].classList.remove('crew-preview', 'crew-typing', 'crew-sweeping');
+    if (activeTargets[index]) activeTargets[index].classList.remove('crew-preview', 'crew-typing', 'crew-sweeping', 'crew-selecting');
     hideEffects(index);
   };
   const point = element => {
@@ -101,12 +104,12 @@
   const show = element => {
     pending.delete(element);
     enqueued.delete(element);
-    element.classList.remove('crew-preview', 'crew-typing', 'crew-sweeping');
+    element.classList.remove('crew-preview', 'crew-typing', 'crew-sweeping', 'crew-selecting');
     element.classList.add('crew-built', 'visible', 'network-in');
   };
   const defer = element => {
     if (!element.isConnected || element.classList.contains('crew-built')) return;
-    element.classList.remove('crew-preview', 'crew-typing', 'crew-sweeping');
+    element.classList.remove('crew-preview', 'crew-typing', 'crew-sweeping', 'crew-selecting');
     enqueued.delete(element);
     pending.add(element);
     observer.observe(element);
@@ -123,6 +126,31 @@
     stage.remove();
   };
 
+  const focusTarget = (index, to) => {
+    const target = effects[index].target;
+    target.style.left = `${to.x}px`;
+    target.style.top = `${to.y}px`;
+    target.classList.add('is-on');
+    return () => target.classList.remove('is-on');
+  };
+  const traceMove = (index, from, to, duration, bend = true) => {
+    const trail = effects[index].trail;
+    const path = trail.querySelector('path');
+    trail.setAttribute('viewBox', `0 0 ${innerWidth} ${innerHeight}`);
+    const midX = (from.x + to.x) / 2;
+    const midY = (from.y + to.y) / 2 - (bend ? Math.min(34, Math.abs(to.y - from.y) * .12 + 12) : 0);
+    path.setAttribute('d', `M ${from.x} ${from.y} Q ${midX} ${midY} ${to.x} ${to.y}`);
+    const length = path.getTotalLength();
+    path.style.strokeDasharray = `${length}`;
+    const ink = track(index, path.animate([
+      { strokeDashoffset: length }, { strokeDashoffset: 0 }
+    ], { duration, easing: 'ease-out', fill: 'both' }));
+    const glow = track(index, trail.animate([
+      { opacity: 0 }, { opacity: .72, offset: .22 }, { opacity: .36, offset: .74 }, { opacity: 0 }
+    ], { duration: duration + 130, easing: 'ease-out', fill: 'both' }));
+    return () => { ink.cancel(); glow.cancel(); };
+  };
+
   async function move(index, to, duration = 350) {
     if (halted(index)) return;
     const cursor = cursors[index];
@@ -131,12 +159,17 @@
     const dx = to.x - from.x, dy = to.y - from.y;
     const mid = { x: from.x + dx * .5 + (index % 2 ? 1 : -1) * Math.min(24, Math.abs(dx) * .12),
       y: from.y + dy * .5 - Math.min(34, Math.abs(dy) * .12 + 12) };
+    const ms = pace(duration);
+    const hideTarget = focusTarget(index, to);
+    const hideTrail = traceMove(index, from, to, ms);
     const animation = track(index, cursor.animate([
       { transform: `translate3d(${from.x}px,${from.y}px,0) rotate(-8deg)` },
       { transform: `translate3d(${mid.x}px,${mid.y}px,0) rotate(4deg)`, offset: .5 },
       { transform: `translate3d(${to.x}px,${to.y}px,0) rotate(0deg)` }
-    ], { duration: pace(duration), easing: 'cubic-bezier(.3,.65,.2,1)', fill: 'forwards' }));
-    try { await animation.finished; } catch { return; }
+    ], { duration: ms, easing: 'cubic-bezier(.3,.65,.2,1)', fill: 'forwards' }));
+    try { await animation.finished; } catch { hideTrail(); hideTarget(); return; }
+    hideTrail();
+    hideTarget();
     if (halted(index)) return;
     cursor.style.transform = `translate3d(${to.x}px,${to.y}px,0)`;
     animation.cancel();
@@ -146,11 +179,13 @@
     if (halted(index)) return;
     const cursor = cursors[index];
     const from = positions[index];
+    const hideTrail = traceMove(index, from, to, duration, false);
     const animation = track(index, cursor.animate([
       { transform: `translate3d(${from.x}px,${from.y}px,0)` },
       { transform: `translate3d(${to.x}px,${to.y}px,0)` }
     ], { duration, easing: 'linear', fill: 'forwards' }));
-    try { await animation.finished; } catch { return; }
+    try { await animation.finished; } catch { hideTrail(); return; }
+    hideTrail();
     if (halted(index)) return;
     cursor.style.transform = `translate3d(${to.x}px,${to.y}px,0)`;
     animation.cancel();
@@ -190,23 +225,27 @@
     const start = { x: left, y };
     await move(index, start, 320);
     if (halted(index)) return;
-    element.classList.add('crew-preview');
+    element.classList.add('crew-selecting');
     selection.style.left = `${left}px`;
     selection.style.top = `${y - 16}px`;
     selection.style.width = `${width}px`;
     selection.style.height = '32px';
     void selection.offsetWidth;
     selection.classList.add('is-on');
-    cursors[index].classList.add('is-pressing');
-    await move(index, { x: left + width, y }, 410);
-    cursors[index].classList.remove('is-pressing');
+    cursors[index].classList.add('is-pressing', 'is-dragging');
+    const reveal = track(index, element.animate([
+      { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0 0 0)' }
+    ], { duration: pace(410), easing: 'steps(16,end)', fill: 'both' }));
+    try { await Promise.all([moveStraight(index, { x: left + width, y }, pace(410)), reveal.finished]); } catch {}
+    cursors[index].classList.remove('is-pressing', 'is-dragging');
     if (halted(index)) return;
     show(element);
+    reveal.cancel();
     await pause(100);
     selection.classList.remove('is-on');
   }
   async function typeText(index, element) {
-    const { caret, rulerX, rulerY } = effects[index];
+    const { caret, rulerX, rulerY, keys } = effects[index];
     const textNode = element.matches('h1,h2,p') ? element : element.querySelector('h1,h2,p') || element;
     const rect = textNode.getBoundingClientRect();
     const left = clamp(rect.left + 3, 12, innerWidth - 65);
@@ -253,6 +292,30 @@
     caret.classList.add('is-on');
     const duration = pace(clamp(520 + width * .5, 590, 850));
     const steps = clamp(Math.round((textNode.textContent || '').length / 2), 12, 34);
+    const glyphs = Array.from((textNode.textContent || '').trim().replace(/\s+/g, ' '));
+    const keycaps = [...keys.querySelectorAll('kbd')];
+    const counter = keys.querySelector('small');
+    keys.style.left = `${clamp(left + 8, 8, innerWidth - 115)}px`;
+    keys.style.top = `${clamp(y - 61, 8, innerHeight - 38)}px`;
+    keys.classList.add('is-on');
+    let typingActive = true;
+    let lastStep = -1;
+    const started = performance.now();
+    const updateKeys = () => {
+      if (!typingActive || halted(index)) return;
+      const step = Math.min(steps, Math.floor((performance.now() - started) / duration * steps));
+      if (step !== lastStep) {
+        const glyphIndex = glyphs.length ? Math.min(glyphs.length - 1, Math.floor(step / steps * glyphs.length)) : 0;
+        keycaps.forEach((key, keyIndex) => {
+          key.textContent = glyphs[glyphIndex + keyIndex] || '·';
+          key.classList.toggle('is-hit', keyIndex === step % keycaps.length);
+        });
+        counter.textContent = `${String(step).padStart(2, '0')}/${steps}`;
+        lastStep = step;
+      }
+      if (step < steps) requestAnimationFrame(updateKeys);
+    };
+    requestAnimationFrame(updateKeys);
     const reveal = track(index, textNode.animate([
       { clipPath: 'inset(0 100% 0 0)' },
       { clipPath: 'inset(0 0 0 0)' }
@@ -264,6 +327,8 @@
       { transform: 'translateY(7px) scale(.9)' }, { transform: 'translateY(0) scale(1)' }
     ], { duration: Math.min(duration, 500), easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'both' })) : null;
     try { await Promise.all([moveStraight(index, { x: left + width, y }, duration), reveal.finished, caretMotion.finished, headingGrow?.finished]); } catch {}
+    typingActive = false;
+    keys.classList.remove('is-on');
     cursor.classList.remove('is-typing');
     if (halted(index)) return;
     show(element);
@@ -294,16 +359,22 @@
     }
     ghost.style.transform = `translate3d(${from.x + 10}px,${from.y + 10}px,0)`;
     ghost.classList.add('is-on');
-    cursors[index].classList.add('is-pressing');
+    cursors[index].classList.add('is-pressing', 'is-dragging');
+    const hideTarget = focusTarget(index, to);
+    const ghostMid = { x: (from.x + to.x) / 2 + (index % 2 ? 12 : -12),
+      y: (from.y + to.y) / 2 - 18 };
     const movingGhost = track(index, ghost.animate([
-      { transform: `translate3d(${from.x + 10}px,${from.y + 10}px,0) scale(.75)` },
-      { transform: `translate3d(${to.x + 10}px,${to.y + 10}px,0) scale(1)` }
+      { transform: `translate3d(${from.x + 10}px,${from.y + 10}px,0) scale(.75) rotate(-9deg)` },
+      { transform: `translate3d(${ghostMid.x + 10}px,${ghostMid.y + 10}px,0) scale(1.08) rotate(5deg)`, offset: .55 },
+      { transform: `translate3d(${to.x + 10}px,${to.y + 10}px,0) scale(1) rotate(0deg)` }
     ], { duration: pace(440), easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'forwards' }));
     await move(index, to, 440);
-    cursors[index].classList.remove('is-pressing');
+    cursors[index].classList.remove('is-pressing', 'is-dragging');
+    hideTarget();
     movingGhost.cancel();
     ghost.classList.remove('is-on');
     if (halted(index)) return;
+    cursors[index].querySelector('span').textContent = 'place media';
     element.classList.add('crew-sweeping');
     const sweep = track(index, element.animate([
       { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0 0)' }
@@ -356,11 +427,14 @@
     ghost.style.transform = `translate3d(${from.x}px,${from.y}px,0)`;
     ghost.classList.add('is-on');
     const insertion = track(index, ghost.animate([
-      { transform: `translate3d(${from.x}px,${from.y}px,0) scale(.72)` },
-      { transform: `translate3d(${to.x}px,${to.y}px,0) scale(1)` }
+      { transform: `translate3d(${from.x}px,${from.y}px,0) scale(.72) rotate(-8deg)` },
+      { transform: `translate3d(${(from.x + to.x) / 2}px,${(from.y + to.y) / 2 - 14}px,0) scale(1.08) rotate(4deg)`, offset: .62 },
+      { transform: `translate3d(${to.x}px,${to.y}px,0) scale(1) rotate(0deg)` }
     ], { duration: 380, easing: 'cubic-bezier(.22,.7,.2,1)', fill: 'forwards' }));
     cursors[index].querySelector('span').textContent = button ? 'insert button' : 'insert image';
+    cursors[index].classList.add('is-dragging');
     await move(index, to, 380);
+    cursors[index].classList.remove('is-dragging');
     insertion.cancel();
     ghost.classList.remove('is-on');
     if (halted(index)) return;
@@ -394,7 +468,7 @@
     const measure = frame.querySelector('.site-crew__measure');
     measure.textContent = '0 × 0';
     frame.classList.add('is-on');
-    cursor.classList.add('is-pressing');
+    cursor.classList.add('is-pressing', 'is-dragging');
     const duration = pace(460);
     const drawing = track(index, frame.animate([
       { width: '0px', height: '0px', opacity: .4 },
@@ -411,7 +485,7 @@
     requestAnimationFrame(updateMeasure);
     try { await Promise.all([moveStraight(index, end, duration), drawing.finished]); } catch {}
     measuring = false;
-    cursor.classList.remove('is-pressing', 'is-crosshair');
+    cursor.classList.remove('is-pressing', 'is-crosshair', 'is-dragging');
     drawing.cancel();
     if (halted(index)) return;
     show(element);
@@ -453,14 +527,17 @@
     frame.style.height = `${Math.min(r.height, innerHeight - 18)}px`;
     frame.querySelector('.site-crew__measure').textContent = '⌥ COPY';
     frame.classList.add('is-on');
-    cursor.classList.add('is-pressing');
+    cursor.classList.add('is-pressing', 'is-dragging');
+    const hideTarget = focusTarget(index, target);
     const duration = pace(470);
     const copying = track(index, ghost.animate([
-      { transform: `translate3d(${from.x}px,${from.y}px,0) scale(.8)` },
-      { transform: `translate3d(${target.x}px,${target.y}px,0) scale(1)` }
+      { transform: `translate3d(${from.x}px,${from.y}px,0) scale(.8) rotate(-7deg)` },
+      { transform: `translate3d(${(from.x + target.x) / 2}px,${(from.y + target.y) / 2 - 18}px,0) scale(1.06) rotate(4deg)`, offset: .55 },
+      { transform: `translate3d(${target.x}px,${target.y}px,0) scale(1) rotate(0deg)` }
     ], { duration, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'both' }));
     try { await Promise.all([moveStraight(index, target, duration), copying.finished]); } catch {}
-    cursor.classList.remove('is-pressing');
+    cursor.classList.remove('is-pressing', 'is-dragging');
+    hideTarget();
     copying.cancel();
     if (halted(index)) return;
     show(element);
@@ -520,7 +597,7 @@
     if (stopped || document.hidden || scrolling || introActive) return;
     if (performance.now() > fastUntil) speedBoost = 1;
     clearTimeout(idleTimer);
-    const agentCount = performance.now() < fastUntil ? cursors.length : innerWidth <= 700 ? 1 : 2;
+    const agentCount = performance.now() < fastUntil ? cursors.length : Math.min(cursors.length, innerWidth <= 700 ? 2 : 3);
     workers.forEach((busy, index) => {
       if (busy || index >= agentCount) return;
       let element;
